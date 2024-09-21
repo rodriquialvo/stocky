@@ -1,0 +1,26 @@
+/* Sidebar.module.css */
+.sidebar {
+    background-color: #2D3748;
+    color: white;
+    padding: 16px;
+    transition: width 0.3s ease;
+    z-index: 1;
+  }
+  
+  .sidebarExpanded {
+    width: 250px;
+  }
+  
+  .sidebarCollapsed {
+    width: 70px;
+  }
+  
+  .iconButton {
+    margin-bottom: 16px;
+    color: white;
+  }
+  
+  .accordionPanel {
+    padding-bottom: 16px;
+  }
+  
