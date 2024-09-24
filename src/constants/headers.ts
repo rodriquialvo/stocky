@@ -1,0 +1,10 @@
+export const TRANSFER_HEADER = 'Transferir dinero';
+export const SELECT_ACCOUNT_HEADER = 'Seleccioná una cuenta';
+export const CHOOSING_AMOUNT_HEADER = '¿Cuánto querés transferir?';
+export const CONFIRM_TRANSFER_HEADER = 'Confirmá tu transferencia';
+export const ADD_NEW_CONTACT_HEADER = 'Agregar nuevo destinatario';
+export const DETAILS_TRANSACTION_HEADER = 'Detalle del movimiento';
+export const TRANSACTION_LIST_HEADER = 'Tus movimientos';
+export const MY_WALLET_HEADER = 'Mi billetera';
+export const CASH_OUT_HEADER = 'Retirar dinero';
+export const CONFIRM_CASH_OUT_ORDER = 'Confirmá tu retiro';
