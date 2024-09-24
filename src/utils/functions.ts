@@ -69,10 +69,6 @@ export const formatNumberWithDots = (number: string | number) => {
   return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
 
-export const parseStringToUtcDate = (string: string) => {
-  return dayjs(string, 'MM/DD/YYYY').utc();
-};
-
 export const formatDate = (dateString: string) => {
   const formattedDate = dayjs(dateString)
     .locale('es-AR')
