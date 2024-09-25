@@ -1,7 +1,7 @@
 import {SessionService} from './session.service';
-import {Session} from '../../../../../mobile/CCN.Novavizija.Rialex.App/src/tools/session/session';
-import Http from '../../../../../mobile/CCN.Novavizija.Rialex.App/src/services/http';
+import {Session} from '../../../src/tools/session/session';
 import {SessionResponse} from './dtos/session.dto';
+import Http from '../http';
 
 export class ApiSessionService implements SessionService {
   private http: Http;

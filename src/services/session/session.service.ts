@@ -1,4 +1,4 @@
-import {useLocalSession} from '../../../../../mobile/CCN.Novavizija.Rialex.App/src/tools/session/session.hooks';
+import {useLocalSession} from '../../../src/tools/session/session.hooks';
 import {ApiSessionService} from './api-session.service';
 import {SessionResponse} from './dtos/session.dto';
 

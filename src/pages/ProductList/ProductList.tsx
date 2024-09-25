@@ -1,121 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  Box,
-  Flex,
-  Button,
-  Text,
-  useBreakpointValue
-} from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Box, Table, Thead, Tbody, Tr, Th, Td, Button, Stack, useBreakpointValue } from '@chakra-ui/react';
 
-interface Product {
-  name: string;
-  description: string;
-  brand: string;
-  category: string;
-  size: string;
-  salePrice: number;
-  resellerPrice: number;
-  costPrice: number;
-  saleProfit: number;
-  quantity: number;
-}
-
-const sampleData: Product[] = [
-  // ... (mantenemos los mismos datos de muestra)
+const data = [
+  { name: 'Producto 1', description: 'Descripción 1', brand: 'Marca A', category: 'Categoría 1', size: 'M', total: 10 },
+  { name: 'Producto 2', description: 'Descripción 2', brand: 'Marca B', category: 'Categoría 2', size: 'L', total: 20 },
+  { name: 'Producto 3', description: 'Descripción 3', brand: 'Marca C', category: 'Categoría 3', size: 'S', total: 15 },
+  { name: 'Producto 4', description: 'Descripción 4', brand: 'Marca D', category: 'Categoría 4', size: 'XL', total: 25 },
+  { name: 'Producto 5', description: 'Descripción 5', brand: 'Marca E', category: 'Categoría 5', size: 'XS', total: 30 },
+  // Añade más productos para simular más filas
 ];
 
-// Añadimos más datos de muestra para demostrar la paginación
-for (let i = 0; i < 43; i++) {
-  sampleData.push({
-    name: `Product ${i + 4}`,
-    description: `Description ${i + 4}`,
-    brand: `Brand ${i + 4}`,
-    category: `Category ${i % 3}`,
-    size: `Size ${i % 5}`,
-    salePrice: Math.round(Math.random() * 100 + 10),
-    resellerPrice: Math.round(Math.random() * 80 + 10),
-    costPrice: Math.round(Math.random() * 50 + 5),
-    saleProfit: Math.round(Math.random() * 30 + 5),
-    quantity: Math.round(Math.random() * 20),
-  });
-}
-
-const itemsPerPage = 10;
-
-export const ProductList: React.FC = () => {
+export const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  
 
-  const indexOfLastItem = currentPage * itemsPerPage!;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage!;
-  const currentItems = sampleData.slice(indexOfFirstItem, indexOfLastItem);
+  // Cambia el número de filas por página según el tamaño de la pantalla
+  const itemsPerPage = useBreakpointValue({ base: 2, md: 4, lg: 6 });
 
-  const totalPages = Math.ceil(sampleData.length / itemsPerPage!);
+  const totalPages = Math.ceil(data.length / itemsPerPage);
+
+  const currentData = data.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
-
-    <Box display="flex" flexDirection="column" height="100vh" bg="gray.50" p={4} borderRadius="lg">
-      {/* <TableContainer> */}
-        <Table variant="unstyled">
-          <Thead>
-            <Tr>
-              {Object.keys(sampleData[0]).map((key) => (
-                <Th key={key} textAlign="left" pl={4}>
-                  {key}
-                </Th>
-              ))}
+    <Box w="100%" overflowX="auto">
+      <Table variant="striped" size="sm">
+        <Thead>
+          <Tr>
+            <Th>Name</Th>
+            <Th>Description</Th>
+            <Th>Brand</Th>
+            <Th>Category</Th>
+            <Th>Size</Th>
+            <Th>Total</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {currentData.map((item, index) => (
+            <Tr key={index}>
+              <Td>{item.name}</Td>
+              <Td>{item.description}</Td>
+              <Td>{item.brand}</Td>
+              <Td>{item.category}</Td>
+              <Td>{item.size}</Td>
+              <Td>{item.total}</Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {currentItems.map((product, index) => (
-              <Tr key={index}>
-                <Td colSpan={Object.keys(product).length} p={2}>
-                  <Flex
-                    bg={product.quantity < 5 ? 'red.100' : 'white'}
-                    py={2}
-                    px={3}
-                    borderRadius="full"
-                    justifyContent="space-between"
-                    alignItems="left"
-                    boxShadow="sm"
-                  >
-                    {Object.entries(product).map(([key, value], cellIndex) => (
-                      <Box key={key} textAlign="center" flex={1}>
-                        {value}
-                      </Box>
-                    ))}
-                  </Flex>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      {/* </TableContainer> */}
-      
-      <Flex justifyContent="center" mt={4}>
+          ))}
+        </Tbody>
+      </Table>
+
+      {/* Paginación */}
+      <Stack direction="row" spacing={4} justify="center" mt={4}>
         <Button
-          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-          isDisabled={currentPage === 1}
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+          size="sm"
+          colorScheme="blue"
         >
           Previous
         </Button>
-        <Text mx={4}>
-          Page {currentPage} of {totalPages}
-        </Text>
         <Button
-          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-          isDisabled={currentPage === totalPages}
+          onClick={handleNextPage}
+          disabled={currentPage === totalPages}
+          size="sm"
+          colorScheme="blue"
         >
           Next
         </Button>
-      </Flex>
+      </Stack>
     </Box>
   );
 };
