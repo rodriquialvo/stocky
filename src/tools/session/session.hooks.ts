@@ -1,7 +1,7 @@
-import {useContext} from 'react';
-import {SessionContext} from './session.context';
-import {Session} from './session';
-import {localStore} from '../local-storage/local-storage';
+import { useContext } from 'react';
+import { localStore } from '../local-storage/local-storage';
+import { Session } from './session';
+import { SessionContext } from './session.context';
 
 export const SESSION_STORAGE_SESSION_KEY = 'SESSION_STORAGE_SESSION_KEY';
 

@@ -12,6 +12,7 @@ export const SessionAction = () => {
   const sessionService = useAPISessionService();
   const setUserLogged = useUsersStore(state => state.setUserLogged);
   const setStatus = useUsersStore(state => state.setStatus);
+  const setIsAuthenticated = useUsersStore(state => state.setIsAuthenticated);
 
   const {setSessionOnLocalStorage, session} = useLocalSession();
 
@@ -19,17 +20,19 @@ export const SessionAction = () => {
     setStatus(getStartStatus());
     try {
       const response = await sessionService.login({username, password});
-      if (!response.success) {
+      if (!response.user) {
         setStatus(getErrorStatus(response.message));
         return;
       }
       setSessionOnLocalStorage(
-        new Session(response.token, response.refreshToken),
+        new Session(response.accessToken, response.refreshToken || ''),
       );
       setUserLogged(response.user);
+      setIsAuthenticated(true);
       setStatus(getSuccessStatus());
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
+      setIsAuthenticated(false);
     }
   };
 
@@ -44,7 +47,7 @@ export const SessionAction = () => {
         return;
       }
       setSessionOnLocalStorage(
-        new Session(response.token, session.accessTokenRefresh),
+        new Session(response.accessToken, session.accessTokenRefresh),
       );
       setStatus(getSuccessStatus());
     } catch (e) {
