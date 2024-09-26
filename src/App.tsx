@@ -13,7 +13,7 @@ function App() {
     <BrowserRouter>
       <Box display="flex">
         {/* Sidebar, pasamos la función para manejar el estado de expansión */}
-        <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
+        {/* <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} /> */}
 
         {/* Contenido principal */}
         <Box
