@@ -1,39 +1,32 @@
 import { Box, Button, Stack, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import { ProductAction } from '../../store/product/actions';
+import { useProductStore } from '../../store/product/slice';
 
 interface Product {
   id: number;
   name: string;
   description: string;
   brand: string;
-  price: number;
-  stock: number;
-  category: string;
-  vendorPrice: number;
+  quantity: number;
+  categories: string;
+  costPrice: number;
+  resellerPrice: number;
   publicPrice: number;
 }
 
 export const ProductList = () => {
-  const products: Product[] = [];
-  for (let i = 0; i < 100; i++) {
-    products.push({
-      id: i + 1,
-      name: `Product ${i + 1}`,
-      description: 'Description',
-      brand: 'Brand',
-      price: 10.99,
-      stock: 10,
-      category: 'Category',
-      vendorPrice: 9.99,
-      publicPrice: 8.99,
-    });
-  }
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Ajustado dinámicamente
   const [isMobile, setIsMobile] = useState(false);
+  const { getProducts } = ProductAction();
+  const productsFromApi: Product[] = useProductStore(state => state.products);
+
+  console.log(productsFromApi);
 
   useEffect(() => {
+    getProducts();
     // Ajustar dinámicamente los items por página
     const updateItemsPerPage = () => {
       const rowHeight = 41; // Altura estimada de una fila
@@ -61,9 +54,9 @@ export const ProductList = () => {
 
   const lastItemIndex = currentPage * itemsPerPage;
   const firstItemIndex = lastItemIndex - itemsPerPage;
-  const currentProducts = products.slice(firstItemIndex, lastItemIndex);
+  const currentProducts = productsFromApi.slice(firstItemIndex, lastItemIndex);
 
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const totalPages = Math.ceil(productsFromApi.length / itemsPerPage);
 
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -89,10 +82,10 @@ export const ProductList = () => {
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Description</th>
               <th className="px-4 py-2">Brand</th>
-              <th className="px-4 py-2">Price</th>
-              <th className="px-4 py-2">Stock</th>
+              <th className="px-4 py-2">Quantity</th>
               <th className="px-4 py-2">Category</th>
-              <th className="px-4 py-2">Vendor Price</th>
+              <th className="px-4 py-2">Cost Price</th>
+              <th className="px-4 py-2">Reseller Price</th>
               <th className="px-4 py-2">Public Price</th>
             </tr>
           </thead>
@@ -103,10 +96,10 @@ export const ProductList = () => {
                 <td className="px-4 py-2">{product.name}</td>
                 <td className="px-4 py-2">{product.description}</td>
                 <td className="px-4 py-2">{product.brand}</td>
-                <td className="px-4 py-2">{product.price}</td>
-                <td className="px-4 py-2">{product.stock}</td>
-                <td className="px-4 py-2">{product.category}</td>
-                <td className="px-4 py-2">{product.vendorPrice}</td>
+                <td className="px-4 py-2">{product.quantity}</td>
+                <td className="px-4 py-2">{product.categories || '-'}</td>
+                <td className="px-4 py-2">{product.costPrice}</td>
+                <td className="px-4 py-2">{product.resellerPrice}</td>
                 <td className="px-4 py-2">{product.publicPrice}</td>
               </tr>
             ))}
@@ -125,11 +118,11 @@ export const ProductList = () => {
             <p><strong>Name:</strong> {product.name}</p>
             <p><strong>Description:</strong> {product.description}</p>
             <p><strong>Brand:</strong> {product.brand}</p>
-            <p><strong>Price:</strong> {product.price}</p>
-            <p><strong>Stock:</strong> {product.stock}</p>
-            <p><strong>Category:</strong> {product.category}</p>
-            <p><strong>Vendor Price:</strong> {product.vendorPrice}</p>
-            <p><strong>Public Price:</strong> {product.publicPrice}</p>
+            <p><strong>Quantity:</strong> {product.quantity}</p>
+            <p><strong>Category:</strong> {product.categories}</p>
+            <p><strong>Cost Price:</strong> {product.costPrice}</p>
+            <p><strong>Reseller Price:</strong> {product.resellerPrice}</p>
+            <p><strong>Public Price:</strong> {product.publicPrice || '-'}</p>
           </div>
         ))}
       </div>
