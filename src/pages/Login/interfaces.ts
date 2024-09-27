@@ -1,8 +1,12 @@
 export interface LoginController {
   /* State */
-  example: string;
+  email: string;
+  password: string;
+  isLoading: boolean
   /* Events */
-  onExamplePressed: () => void;
+  setEmail: (email: string) => void;
+  setPassword: (password: string) => void;
+  handleSubmit: (e: React.FormEvent) => void;
 }
 
 export interface LoginProps {

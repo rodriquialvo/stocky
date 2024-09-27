@@ -1,39 +1,40 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import './App.css';
-import About from './pages/About/About';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import { LoginPage } from './pages/Login/Login.page';
 import { ProductList } from './pages/ProductList/ProductList';
-import React from 'react';
-import { Box } from '@chakra-ui/react';
-import { Sidebar } from './components/Sidebar/Sidebar';
-
+import { useSessionStore } from './store/session/slice';
+import {ROUTES} from './constants/Routes';
+import AddProduct from './components/AddProduct/AddProduct';
 function App() {
-  const [isSidebarExpanded, setIsSidebarExpanded] = React.useState(true);
-
+  const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
+  console.log({ userIsAuthenticated });
   return (
     <BrowserRouter>
-      <Box display="flex">
-        {/* Sidebar, pasamos la función para manejar el estado de expansión */}
-        {/* <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} /> */}
+      {/* <Box display="flex"> */}
+      {/* Contenido principal */}
 
-        {/* Contenido principal */}
-        <Box
-          as="main"
-          flex="1"
-          ml={isSidebarExpanded ? "250px" : "70px"} // Ajustamos el margen izquierdo dinámicamente
-          p={4}
-          transition="margin-left 0.3s ease"
-          padding={0}
-        >
-          <Routes>
-            <Route path="/stock/list" Component={ProductList} />
-            <Route path="/stock/add" element={<h1>Ingreso de Stock</h1>} />
-            <Route path="/resellers/list" element={<h1>Lista de Revendedores</h1>} />
-            <Route path="/resellers/new" element={<h1>Nuevo Revendedor</h1>} />
-            <Route path="/resellers/metrics" element={<h1>Métricas de Revendedores</h1>} />
-          </Routes>
-        </Box>
-      </Box>
-    </BrowserRouter>
+      <Routes>
+        <Route path={ROUTES.LOGIN} element={userIsAuthenticated ? <Navigate to={ROUTES.STOCK_LIST} /> : <LoginPage />} />
+
+        <Route path={ROUTES.STOCK_LIST} element={
+          <ProtectedRoute >
+            <ProductList />
+          </ProtectedRoute>
+        } />
+        <Route path={ROUTES.ADD_STOCK} element={
+          <ProtectedRoute >
+            <AddProduct />
+          </ProtectedRoute>
+        } />
+        {/* <Route path="/stock/add" element={<h1>Ingreso de Stock</h1>} />
+          <Route path="/resellers/list" element={<h1>Lista de Revendedores</h1>} />
+          <Route path="/resellers/new" element={<h1>Nuevo Revendedor</h1>} />
+          <Route path="/resellers/metrics" element={<h1>Métricas de Revendedores</h1>} /> */}
+      </Routes>
+
+      {/* </Box> */}
+    </BrowserRouter >
   );
 }
 

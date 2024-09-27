@@ -1,7 +1,7 @@
 import servers from '../../constants/servers';
 import isTokenExpired from '../../utils/isTokenExpired';
 // remember: if local, to do requests, run adb reverse tcp:3300 tcp:3300
-export const DOMAIN = servers.qa;
+export const DOMAIN = servers.dev;
 const JSON_MIME_TYPE = 'application/json';
 
 class Http {
