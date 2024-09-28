@@ -18,21 +18,21 @@ interface Product {
 export const ProductList = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Ajustado dinámicamente
+  const [itemsPerPage, setItemsPerPage] = useState(0); // Ajustado dinámicamente
   const [isMobile, setIsMobile] = useState(false);
   const { getProducts } = ProductAction();
-  const productsFromApi: Product[] = useProductStore(state => state.products);
+  const products: any = useProductStore(state => state.products);
+  const total: any = useProductStore(state => state.total);
 
-  console.log(productsFromApi);
+  console.log(products);
+  console.log(itemsPerPage);
 
   useEffect(() => {
-    getProducts();
     // Ajustar dinámicamente los items por página
     const updateItemsPerPage = () => {
       const rowHeight = 41; // Altura estimada de una fila
       const availableHeight = window.innerHeight - 120; // Espacio restante entre el header y paginado
       const visibleRows = Math.floor(availableHeight / rowHeight);
-      console.log(visibleRows)
       setItemsPerPage(visibleRows);
     };
 
@@ -52,11 +52,12 @@ export const ProductList = () => {
     };
   }, []);
 
-  const lastItemIndex = currentPage * itemsPerPage;
-  const firstItemIndex = lastItemIndex - itemsPerPage;
-  const currentProducts = productsFromApi.slice(firstItemIndex, lastItemIndex);
+  useEffect(() => {
+    if (!itemsPerPage) return;
+    getProducts(currentPage, itemsPerPage);
+  }, [currentPage]);
 
-  const totalPages = Math.ceil(productsFromApi.length / itemsPerPage);
+  const totalPages = Math.ceil(total / itemsPerPage);
 
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
@@ -90,7 +91,7 @@ export const ProductList = () => {
             </tr>
           </thead>
           <tbody>
-            {currentProducts.map((product) => (
+            {products &&  products.map((product) => (
               <tr key={product.id} className="border-t">
                 <td className="px-4 py-2">{product.id}</td>
                 <td className="px-4 py-2">{product.name}</td>
@@ -109,7 +110,7 @@ export const ProductList = () => {
 
       {/* Formato en tarjetas para pantallas pequeñas */}
       <div className="block lg:hidden mb-20">
-        {currentProducts.map((product) => (
+        {products && products.map((product) => (
           <div
             key={product.id}
             className="border border-gray-300 rounded-lg mb-4 p-4 shadow-sm bg-white"

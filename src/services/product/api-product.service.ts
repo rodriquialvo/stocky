@@ -7,12 +7,13 @@ export class ApiProductService implements ProductService {
     this.http = new Http('', 'products');
   }
 
-  getProducts = async (params: {}): Promise<any | undefined> => {
+  getProducts = async (params: { page: number; limit: number }): Promise<any | undefined> => {
+    console.log('limit', params)
     const response = await this.http.get<any, any>('', params);
     if (!response.products) {
       return null;
     }
-    return response.products;
+    return response;
   };
 
 }

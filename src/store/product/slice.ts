@@ -5,11 +5,13 @@ import { Status, getDefaultStatus } from '../helper/statusStateFactory';
 type State = {
   status: Status;
   products: any[];
+  total: number;
 };
 
 const initialState: State = {
   status: getDefaultStatus(),
   products: [],
+  total: 0,
 };
 
 type Action = {
@@ -25,7 +27,7 @@ export const useProductStore = create<State & Action>()(
       ...initialState,
       setStatus: (status: Status) => set({ status }),
       getProducts: () => get().products,
-      setProducts: (products: any[]) => set({ products }),
+      setProducts: (data: any) => set({ products: data.products, total: data.total }),
     }),
     {
       name: 'products-store', // nombre del key en localStorage

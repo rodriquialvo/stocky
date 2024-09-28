@@ -11,16 +11,16 @@ export const ProductAction = () => {
   const setStatus = useProductStore(state => state.setStatus);
   const setProducts = useProductStore(state => state.setProducts);
 
-  const getProducts = async () => {
+  const getProducts = async (page: number, limit: number) => {
     setStatus(getStartStatus());
     try {
-      const products = await productService.getProducts({});
-      if (!products) {
+      const data = await productService.getProducts({ page, limit });
+      if (!data.products) {
         setStatus(getErrorStatus('No response'));
         return;
       }
       setStatus(getSuccessStatus());
-      setProducts(products);
+      setProducts(data);
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
     }
