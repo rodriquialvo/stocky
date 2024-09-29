@@ -14,6 +14,7 @@
     "@types/node": "^16.18.108",
     "@types/react": "^18.3.8",
     "@types/react-dom": "^18.3.0",
+    "chakra-react-select": "^4.9.2",
     "class-transformer": "^0.5.1",
     "dayjs": "^1.11.13",
     "framer-motion": "^11.5.6",

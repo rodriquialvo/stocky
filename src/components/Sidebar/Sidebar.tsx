@@ -39,6 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) =
           size="lg"
           m={2}
           alignSelf="flex-end"
+          color={"white" }
         />
         <VStack align="stretch" flex={1} mt={4}>
           <SidebarContent isExpanded={isExpanded} />
@@ -76,7 +77,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, isExpanded, subI
         <>
           <AccordionButton
             py={3}
-            _hover={{ bg: "gray.700" }}
+            _hover={{ bg: "red.700" }}
             _expanded={{ bg: "gray.700" }}
           >
             <Flex align="center" w="100%">
