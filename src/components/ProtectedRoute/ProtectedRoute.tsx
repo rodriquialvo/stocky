@@ -30,7 +30,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
     >
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       {children}
-      <Button onClick={logout}>Logout</Button>
+      {/* <Button onClick={logout}>Logout</Button> */}
     </Box>
 
   </>;

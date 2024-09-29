@@ -17,7 +17,7 @@ interface Product {
 
 export const ProductList = () => {
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(0); // Ajustado dinámicamente
   const [isMobile, setIsMobile] = useState(false);
   const { getProducts } = ProductAction();
@@ -42,6 +42,7 @@ export const ProductList = () => {
 
     updateItemsPerPage();
     handleResize();
+    setCurrentPage(1);
 
     window.addEventListener('resize', updateItemsPerPage);
     window.addEventListener('resize', handleResize);
