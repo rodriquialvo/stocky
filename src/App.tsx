@@ -5,7 +5,7 @@ import { LoginPage } from './pages/Login/Login.page';
 import { ProductList } from './pages/ProductList/ProductList';
 import { useSessionStore } from './store/session/slice';
 import {ROUTES} from './constants/Routes';
-import AddProduct from './components/AddProduct/AddProduct';
+import CreateNewProduct from './pages/CreateNewProduct/CreateNewProduct.page';
 function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
   console.log({ userIsAuthenticated });
@@ -22,9 +22,9 @@ function App() {
             <ProductList />
           </ProtectedRoute>
         } />
-        <Route path={ROUTES.ADD_STOCK} element={
+        <Route path={ROUTES.NEW_PRODUCT} element={
           <ProtectedRoute >
-            <AddProduct />
+            <CreateNewProduct />
           </ProtectedRoute>
         } />
         {/* <Route path="/stock/add" element={<h1>Ingreso de Stock</h1>} />

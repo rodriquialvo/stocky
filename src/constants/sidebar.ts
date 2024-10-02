@@ -5,7 +5,7 @@ export const SIDEBAR_ITEMS = {
         label: 'Stock',
         subItems: [
             { label: 'Lista', route: ROUTES.STOCK_LIST },
-            { label: 'Ingreso', route: ROUTES.ADD_STOCK },
+            { label: 'Nuevo producto', route: ROUTES.NEW_PRODUCT },
         ]
     },
     Resellers: {
