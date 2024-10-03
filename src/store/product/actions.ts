@@ -5,6 +5,8 @@ import {
   getSuccessStatus,
 } from '../helper/statusStateFactory';
 import { useAPIProductService } from '../../services/product/product.service';
+import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
+import { Toast } from '@chakra-ui/react';
 
 export const ProductAction = () => {
   const productService = useAPIProductService();
@@ -26,7 +28,28 @@ export const ProductAction = () => {
     }
   };
 
+ const createNewProduct =  async (body: ProductFormData) => {
+  setStatus(getStartStatus());
+  try {
+    const response = await productService.postCreateNewProduct(body);
+    if (!response.succes) {
+      setStatus(getErrorStatus('No response'));
+      return;
+    }
+    setStatus(getSuccessStatus());
+    Toast({
+      title: 'Product added successfully',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  } catch (e) {
+    setStatus(getErrorStatus(e as Error));
+  }
+};
+
   return {
-    getProducts
+    getProducts,
+    createNewProduct
   };
 };

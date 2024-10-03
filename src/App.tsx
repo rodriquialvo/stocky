@@ -15,7 +15,7 @@ function App() {
       {/* Contenido principal */}
 
       <Routes>
-        <Route path={ROUTES.LOGIN} element={userIsAuthenticated ? <Navigate to={ROUTES.STOCK_LIST} /> : <LoginPage />} />
+        <Route path={ROUTES.HOME} element={userIsAuthenticated ? <Navigate to={ROUTES.STOCK_LIST} /> : <LoginPage />} />
 
         <Route path={ROUTES.STOCK_LIST} element={
           <ProtectedRoute >

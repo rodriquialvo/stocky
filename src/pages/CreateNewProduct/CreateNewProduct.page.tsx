@@ -5,6 +5,9 @@ import {
   FormLabel,
   Input,
   Textarea,
+  VStack,
+  Heading,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
 import { FC } from 'react';
@@ -12,163 +15,178 @@ import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
 import Modal from '../../components/Modal/Modal';
 
-
-
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
+
+  // Responsive padding and font sizes
+  const padding = useBreakpointValue({ base: '4', md: '6' });
+  const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
+
   return (
     <Box
-      // maxW="sm"
+      width={{ base: '100%', md: '80%' }}
+      maxWidth="900px"
       mx="auto"
-      p={6}
-      bg="gray.50"
+      p={padding}
+      bg="gray.100"
       borderRadius="lg"
       boxShadow="lg"
       as="form"
       onSubmit={controller.handleSubmit}
     >
-      <Box fontSize="2xl" fontWeight="bold" mb={6} textAlign="center">
-        Add New Product
-      </Box>
+      {/* Heading */}
+      <Heading fontSize={headingSize} fontWeight="bold" mb={6} textAlign="center">
+        Nuevo Producto
+      </Heading>
 
-      {/* Article Field */}
-      <FormControl mb={4}>
-        <FormLabel htmlFor="article">Article</FormLabel>
-        <Input
-          id="article"
-          name="article"
-          value={controller.formData.article}
-          onChange={controller.handleChange}
-          required
-        />
-      </FormControl>
+      <VStack spacing={4}>
+        {/* Article Field */}
+        <FormControl isRequired>
+          <FormLabel htmlFor="article">Artículo</FormLabel>
+          <Input
+            id="article"
+            name="article"
+            value={controller.formData.article}
+            onChange={controller.handleChange}
+            placeholder="Introduce el artículo"
+          />
+        </FormControl>
 
-      <FormControl mb={4}>
-        <FormLabel htmlFor="name">Name</FormLabel>
-        <Input
-          id="name"
-          name="name"
-          value={controller.formData.name}
-          onChange={controller.handleChange}
-          required
-        />
-      </FormControl>
+        {/* Name Field */}
+        <FormControl isRequired>
+          <FormLabel htmlFor="name">Nombre</FormLabel>
+          <Input
+            id="name"
+            name="name"
+            value={controller.formData.name}
+            onChange={controller.handleChange}
+            placeholder="Introduce el nombre"
+          />
+        </FormControl>
 
-      <FormControl mb={4}>
-        <FormLabel htmlFor="brand">Brand</FormLabel>
-        <Select
-          options={controller.brands}
-          onChange={(option) => controller.handleSelectChange(option, 'brand')}
-          placeholder="Select a brand"
-          isSearchable
-        />
-        <Button mt={2} size="sm" onClick={controller.onBrandOpen}>
-          Add New Brand
+        {/* Brand Select */}
+        <FormControl>
+          <FormLabel htmlFor="brand">Marca</FormLabel>
+          <Select
+            options={controller.brands}
+            onChange={(option) => controller.handleSelectChange(option, 'brand')}
+            placeholder="Selecciona una marca"
+            isSearchable
+          />
+          <Button mt={2} size="sm" onClick={controller.onBrandOpen} colorScheme="blue">
+            Añadir Marca
+          </Button>
+        </FormControl>
+
+        {/* Description Field */}
+        <FormControl isRequired>
+          <FormLabel htmlFor="description">Descripción</FormLabel>
+          <Textarea
+            id="description"
+            name="description"
+            value={controller.formData.description}
+            onChange={controller.handleChange}
+            placeholder="Escribe la descripción del producto"
+          />
+        </FormControl>
+
+        {/* Size Select */}
+        <FormControl>
+          <FormLabel htmlFor="size">Tipos de Talle</FormLabel>
+          <Select
+            options={controller.sizes}
+            onChange={(option) => controller.handleSelectChange(option, 'size')}
+            placeholder="Selecciona un tipo de talle"
+            isSearchable
+          />
+          <Button mt={2} size="sm" onClick={controller.onSizeOpen} colorScheme="blue">
+            Añadir Talle
+          </Button>
+        </FormControl>
+
+        {/* Color Select */}
+        <FormControl>
+          <FormLabel htmlFor="colors">Colores</FormLabel>
+          <Select
+            isMulti
+            options={controller.colors}
+            onChange={controller.handleColorsChange}
+            placeholder="Selecciona colores"
+            isSearchable
+          />
+          <Button mt={2} size="sm" onClick={controller.onColorOpen} colorScheme="blue">
+            Añadir Color
+          </Button>
+        </FormControl>
+
+        {/* Cost Price Field */}
+        <FormControl isRequired>
+          <FormLabel htmlFor="costPrice">Precio de Costo</FormLabel>
+          <Input
+            type="number"
+            id="costPrice"
+            name="costPrice"
+            value={controller.formData.costPrice}
+            onChange={controller.handleNumberChange}
+            placeholder="Introduce el precio de costo"
+            min={0}
+            step="0.01"
+          />
+        </FormControl>
+
+        {/* Final Price Field */}
+        <FormControl isRequired>
+          <FormLabel htmlFor="finalPrice">Precio Final</FormLabel>
+          <Input
+            type="number"
+            id="finalPrice"
+            name="finalPrice"
+            value={controller.formData.finalPrice}
+            onChange={controller.handleNumberChange}
+            placeholder="Introduce el precio final"
+            min={0}
+            step="0.01"
+          />
+        </FormControl>
+
+        {/* Upload Photos */}
+        <FormControl>
+          <FormLabel htmlFor="photos">Subir Fotos</FormLabel>
+          <Input
+            type="file"
+            id="photos"
+            accept="image/*"
+            multiple
+            onChange={controller.handleFileChange}
+          />
+        </FormControl>
+
+        {/* Submit Button */}
+        <Button type="submit" colorScheme="blue" width="full" mt={4}>
+          Añadir Producto
         </Button>
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel htmlFor="description">Description</FormLabel>
-        <Textarea
-          id="description"
-          name="description"
-          value={controller.formData.description}
-          onChange={controller.handleChange}
-          required
-        />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel htmlFor="size">Size Type</FormLabel>
-        <Select
-          options={controller.sizes}
-          onChange={(option) => controller.handleSelectChange(option, 'size')}
-          placeholder="Select a size"
-          isSearchable
-        />
-        <Button mt={2} size="sm" onClick={controller.onSizeOpen}>
-          Add New Size Type
-        </Button>
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel htmlFor="colors">Colors</FormLabel>
-        <Select
-          isMulti
-          options={controller.colors}
-          onChange={controller.handleColorsChange}
-          placeholder="Select colors"
-          isSearchable
-        />
-        <Button mt={2} size="sm" onClick={controller.onColorOpen}>
-          Add New Color
-        </Button>
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel htmlFor="costPrice">Cost Price</FormLabel>
-        <Input
-          type="number"
-          id="costPrice"
-          name="costPrice"
-          value={controller.formData.costPrice}
-          onChange={controller.handleNumberChange}
-          required
-          min={0}
-          step="0.01"
-        />
-      </FormControl>
-
-      <FormControl mb={4}>
-        <FormLabel htmlFor="finalPrice">Final Price</FormLabel>
-        <Input
-          type="number"
-          id="finalPrice"
-          name="finalPrice"
-          value={controller.formData.finalPrice}
-          onChange={controller.handleNumberChange}
-          required
-          min={0}
-          step="0.01"
-        />
-      </FormControl>
-
-      {/* Upload Photos Field */}
-      <FormControl mb={4}>
-        <FormLabel htmlFor="photos">Upload Photos</FormLabel>
-        <Input
-          type="file"
-          id="photos"
-          accept="image/*"
-          multiple
-          onChange={controller.handleFileChange}
-        />
-      </FormControl>
-
-      <Button type="submit" colorScheme="blue" width="full" mt={4}>
-        Add Product
-      </Button>
+      </VStack>
 
       {/* Modals */}
-      <Modal title='New Brand' onSubmit={controller.addBrand} isOpen={controller.isBrandOpen} onClose={controller.onBrandClose}>
+      <Modal title="Nueva Marca" onSubmit={controller.addBrand} isOpen={controller.isBrandOpen} onClose={controller.onBrandClose}>
         <Input
-          placeholder="New Brand"
+          placeholder="Nueva Marca"
           value={controller.newBrand}
           onChange={(e) => controller.setNewBrand(e.target.value)}
         />
       </Modal>
 
-      <Modal title='Add New Size' onSubmit={controller.addSize} isOpen={controller.isSizeOpen} onClose={controller.onSizeClose}>
+      <Modal title="Añadir Talle" onSubmit={controller.addSize} isOpen={controller.isSizeOpen} onClose={controller.onSizeClose}>
         <Input
-          placeholder="New Size"
+          placeholder="Nuevo Talle"
           value={controller.newSize}
           onChange={(e) => controller.setNewSize(e.target.value)}
         />
       </Modal>
 
-      <Modal title='Add New Color' onSubmit={controller.addColor} isOpen={controller.isColorOpen} onClose={controller.onColorClose}>
+      <Modal title="Añadir Color" onSubmit={controller.addColor} isOpen={controller.isColorOpen} onClose={controller.onColorClose}>
         <Input
-          placeholder="New Color"
+          placeholder="Nuevo Color"
           value={controller.newColor}
           onChange={(e) => controller.setNewColor(e.target.value)}
         />

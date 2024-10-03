@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import {CreateNewProductController, ProductFormData} from './interfaces';
 import { useDisclosure, useToast } from '@chakra-ui/react';
+import { ProductAction } from '../../store/product/actions';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
   CreateNewProductController => {
+
+    const {createNewProduct} = ProductAction()
+
     const [formData, setFormData] = useState<ProductFormData>({
       article: '',
       name: '',
@@ -100,13 +104,8 @@ export const useCreateNewProductController =
   
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      console.log(formData);
-      toast({
-        title: 'Product added successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      createNewProduct(formData)
+      
     };
 
     // Return state and events
