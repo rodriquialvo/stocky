@@ -5,5 +5,6 @@ export const  ROUTES = {
     ADD_STOCK: '/stock/add',
     RESSELLERS_LIST: '/resellers/list',
     NEW_RESELLER: 'resellers/new',
-    RESSELLERS_METRICS: 'resellers/metrics'
+    RESSELLERS_METRICS: 'resellers/metrics',
+    NEW_PRODUCT: '/product/new'
 }
