@@ -27,6 +27,8 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
       p={4}
       transition="margin-left 0.3s ease"
       padding={0}
+      minHeight="100vh"  // Ocupa todo el alto de la ventana
+
     >
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       {children}
