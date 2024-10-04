@@ -10,6 +10,7 @@ export interface CreateNewProductController {
   newBrand: string;
   newSize: string;
   newColor: string;
+  categories: { label: string; value: string }[];
   
   /* Events */
   setNewBrand: (value: string) => void;
@@ -30,6 +31,7 @@ export interface CreateNewProductController {
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   addSize: () => void;
   addColor: () => void;
+  handleCategoriesChange: (selectedOptions: any) => void
 }
 
 export interface CreateNewProductProps {
@@ -47,4 +49,5 @@ export interface ProductFormData {
   costPrice: number;
   finalPrice: number;
   photos: FileList | null; // Added for photos
+  categories
 }

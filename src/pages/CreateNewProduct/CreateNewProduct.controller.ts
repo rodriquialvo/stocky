@@ -20,6 +20,7 @@ export const useCreateNewProductController =
       costPrice: 0,
       finalPrice: 0,
       photos: null, // Initially empty
+      categories: '',
     });
 
     const [brands, setBrands] = useState([
@@ -42,8 +43,15 @@ export const useCreateNewProductController =
       { label: 'Blue', value: 'Blue' },
       { label: 'Black', value: 'Black' },
     ]);
+
+    const [categories, setCategories] = useState([
+      { label: 'Shoes', value: 'Shoes' },
+      { label: 'Clothes', value: 'Clothes' },
+      { label: 'Accessories', value: 'Accessories' },
+    ])
+
     const [newColor, setNewColor] = useState('');
-  
+    const [newCategory, setNewCategory] = useState('');
     const toast = useToast();
   
     const { isOpen: isBrandOpen, onOpen: onBrandOpen, onClose: onBrandClose } = useDisclosure();
@@ -74,6 +82,13 @@ export const useCreateNewProductController =
         colors: selectedOptions ? selectedOptions.map((option: any) => option.value) : [],
       }));
     };
+
+    const handleCategoriesChange = (selectedOptions: any) => {
+      setFormData((prev) => ({
+        ...prev,
+        categories: selectedOptions ? selectedOptions.map((option: any) => option.value) : [],
+      }));
+    };
   
     const addBrand = () => {
       if (newBrand && !brands.find((brand) => brand.value === newBrand)) {
@@ -101,12 +116,24 @@ export const useCreateNewProductController =
         toast({ title: 'Color added successfully', status: 'success', duration: 3000, isClosable: true });
       }
     };
+
+    const addCategory = () => {
+      if (newCategory && !categories.find((category) => category.value === newCategory)) {
+        setCategories([...categories, { label: newCategory, value: newCategory }]);
+        setNewColor('');
+        onColorClose();
+        toast({ title: 'category added successfully', status: 'success', duration: 3000, isClosable: true });
+      }
+    };
   
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       createNewProduct(formData)
       
     };
+
+    console.log({
+      formData,})
 
     // Return state and events
     return {
@@ -138,5 +165,7 @@ export const useCreateNewProductController =
       setNewColor,
       addColor,
       addSize,
+      categories,
+      handleCategoriesChange
     };
   };

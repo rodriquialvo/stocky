@@ -10,18 +10,31 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
 import Modal from '../../components/Modal/Modal';
+import { FilePond } from 'react-filepond';
+import ReactImageUploading from 'react-images-uploading';
+import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
+  const [images, setImages] = useState([]);
+
 
   // Responsive padding and font sizes
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
 
+
+  const onChange = (imageList, addUpdateIndex) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList);
+  };
+
+  console.log({ images });
   return (
     <Box
       width={{ base: '100%', md: '80%' }}
@@ -75,6 +88,19 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           />
           <Button mt={2} size="sm" onClick={controller.onBrandOpen} colorScheme="blue">
             Añadir Marca
+          </Button>
+        </FormControl>
+        <FormControl>
+          <FormLabel htmlFor="categorie">Categoria</FormLabel>
+          <Select
+            options={controller.categories}
+            onChange={(option) => controller.handleSelectChange(option, 'categorie')}
+            placeholder="Selecciona una Categoria"
+            isSearchable
+            isMulti
+          />
+          <Button mt={2} size="sm" onClick={controller.onBrandOpen} colorScheme="blue">
+            Añadir Categoria
           </Button>
         </FormControl>
 
@@ -150,7 +176,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
         </FormControl>
 
         {/* Upload Photos */}
-        <FormControl>
+        {/* <FormControl>
           <FormLabel htmlFor="photos">Subir Fotos</FormLabel>
           <Input
             type="file"
@@ -159,7 +185,61 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             multiple
             onChange={controller.handleFileChange}
           />
-        </FormControl>
+        </FormControl> */}
+
+        {/* <FilePond
+          files={files}
+          onupdatefiles={setFiles}
+          allowMultiple={true}
+          maxFiles={3}
+          server="/api"
+          name="files"
+          labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+        /> */}
+
+        {/* <div className="App">
+          <ReactImageUploading
+            multiple
+            value={images}
+            onChange={onChange}
+            maxNumber={15}
+            dataURLKey="data_url"
+          >
+            {({
+              imageList,
+              onImageUpload,
+              onImageRemoveAll,
+              onImageUpdate,
+              onImageRemove,
+              isDragging,
+              dragProps,
+            }) => (
+              // write your building UI
+              <div className="upload__image-wrapper">
+                <button
+                  style={isDragging ? { color: 'red' } : undefined}
+                  onClick={onImageUpload}
+                  {...dragProps}
+                >
+                  Click or Drop here
+                </button>
+                &nbsp;
+                <button onClick={onImageRemoveAll}>Remove all images</button>
+                {imageList.map((image, index) => (
+                  <div key={index} className="image-item">
+                    <img src={image['data_url']} alt="" width="100" />
+                    <div className="image-item__btn-wrapper">
+                      <button onClick={() => onImageUpdate(index)}>Update</button>
+                      <button onClick={() => onImageRemove(index)}>Remove</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ReactImageUploading>
+        </div> */}
+
+        <ImageUploadGallery/>
 
         {/* Submit Button */}
         <Button type="submit" colorScheme="blue" width="full" mt={4}>
