@@ -22,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) =
       top="0"
       left="0"
       h="100vh"
-      w={isExpanded ? (isMobile ? "100%" : "250px") : "60px"}
+      w={isExpanded ? (isMobile ? "100%" : "250px") : "70px"}
       bg="gray.800"
       color="white"
       transition="all 0.3s"
@@ -58,6 +58,12 @@ const SidebarContent: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
           label={SIDEBAR_ITEMS.Stock.label}
           isExpanded={isExpanded}
           subItems={SIDEBAR_ITEMS.Stock.subItems}
+        />
+        <SidebarItem
+          icon={FaUsers}
+          label={SIDEBAR_ITEMS.Resellers.label}
+          isExpanded={isExpanded}
+          subItems={SIDEBAR_ITEMS.Resellers.subItems}
         />
         <SidebarItem
           icon={FaUsers}

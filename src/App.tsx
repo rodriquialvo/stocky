@@ -7,6 +7,7 @@ import { useSessionStore } from './store/session/slice';
 import {ROUTES} from './constants/Routes';
 import CreateNewProduct from './pages/CreateNewProduct/CreateNewProduct.page';
 import { CreateNewResellerPage } from './pages/CreateNewReseller/CreateNewReseller.page';
+import GalleryPage from './pages/Galery/Galery.page';
 function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
   return (
@@ -30,6 +31,11 @@ function App() {
         <Route path={ROUTES.NEW_RESELLER} element={
           <ProtectedRoute >
             <CreateNewResellerPage />
+          </ProtectedRoute>
+        } />
+        <Route path={ROUTES.Gallery} element={
+          <ProtectedRoute >
+            <GalleryPage />
           </ProtectedRoute>
         } />
         {/* <Route path="/stock/add" element={<h1>Ingreso de Stock</h1>} />
