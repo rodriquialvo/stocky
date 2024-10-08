@@ -10,18 +10,31 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
 import Modal from '../../components/Modal/Modal';
+import { FilePond } from 'react-filepond';
+import ReactImageUploading from 'react-images-uploading';
+import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
+  const [images, setImages] = useState([]);
+
 
   // Responsive padding and font sizes
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
 
+
+  const onChange = (imageList, addUpdateIndex) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    setImages(imageList);
+  };
+
+  console.log({ images });
   return (
     <Box
       width={{ base: '100%', md: '80%' }}
@@ -75,6 +88,19 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           />
           <Button mt={2} size="sm" onClick={controller.onBrandOpen} colorScheme="blue">
             Añadir Marca
+          </Button>
+        </FormControl>
+        <FormControl>
+          <FormLabel htmlFor="categorie">Categoria</FormLabel>
+          <Select
+            options={controller.categories}
+            onChange={(option) => controller.handleSelectChange(option, 'categorie')}
+            placeholder="Selecciona una Categoria"
+            isSearchable
+            isMulti
+          />
+          <Button mt={2} size="sm" onClick={controller.onBrandOpen} colorScheme="blue">
+            Añadir Categoria
           </Button>
         </FormControl>
 
@@ -149,17 +175,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           />
         </FormControl>
 
-        {/* Upload Photos */}
-        <FormControl>
-          <FormLabel htmlFor="photos">Subir Fotos</FormLabel>
-          <Input
-            type="file"
-            id="photos"
-            accept="image/*"
-            multiple
-            onChange={controller.handleFileChange}
-          />
-        </FormControl>
+        <ImageUploadGallery/>
 
         {/* Submit Button */}
         <Button type="submit" colorScheme="blue" width="full" mt={4}>
