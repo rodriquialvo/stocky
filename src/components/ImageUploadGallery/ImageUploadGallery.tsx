@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import { Box, Image, VStack, HStack, IconButton, Button, Text, Stack } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon, CloseIcon } from '@chakra-ui/icons';
 import ImageUploading from 'react-images-uploading';
+import { images } from '../../constants/images';
 
-const ImageUploadGallery = () => {
+export interface ImageUploadGalleryProps {
+  images?: any[];
+  setImages?: any;
+  maxNumber?: number;
+}
+const ImageUploadGallery = ({
+  maxNumber = 5,
+}: ImageUploadGalleryProps) => {
   const [images, setImages] = useState([]);
-  const maxNumber = 5; // Número máximo de imágenes que se pueden subir
   const scrollRef = React.useRef(null);
 
   // Manejo de scroll
