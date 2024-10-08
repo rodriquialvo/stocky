@@ -27,7 +27,7 @@ export const useProductStore = create<State & Action>()(
       ...initialState,
       setStatus: (status: Status) => set({ status }),
       getProducts: () => get().products,
-      setProducts: (data: any) => set({ products: data.products, total: data.total }),
+      setProducts: (data: any) => set({ products: data.stocks, total: data.total }),
     }),
     {
       name: 'products-store', // nombre del key en localStorage

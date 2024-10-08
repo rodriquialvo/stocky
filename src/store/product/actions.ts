@@ -17,7 +17,7 @@ export const ProductAction = () => {
     setStatus(getStartStatus());
     try {
       const data = await productService.getProducts({ page, limit });
-      if (!data.products) {
+      if (!data.stocks) {
         setStatus(getErrorStatus('No response'));
         return;
       }

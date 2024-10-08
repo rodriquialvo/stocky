@@ -5,13 +5,12 @@ import { ProductService } from './product.service';
 export class ApiProductService implements ProductService {
   private http: Http;
   constructor() {
-    this.http = new Http('', 'products');
+    this.http = new Http('', 'stock');
   }
 
   getProducts = async (params: { page: number; limit: number }): Promise<any | undefined> => {
-    console.log('limit', params)
     const response = await this.http.get<any, any>('', params);
-    if (!response.products) {
+    if (!response.stocks) {
       return null;
     }
     return response;
