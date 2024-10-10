@@ -2,7 +2,7 @@ export interface ProductResponse {
   products: Product[];
 }
 
-interface Product {
+export interface Product {
   id: number;
   name: string;
   description: string;

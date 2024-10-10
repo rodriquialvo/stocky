@@ -1,72 +1,14 @@
 import { Box, Button, Stack, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
-import { ProductAction } from '../../store/product/actions';
-import { useProductStore } from '../../store/product/slice';
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  brand: string;
-  quantity: number;
-  categories: string;
-  costPrice: number;
-  resellerPrice: number;
-  publicPrice: number;
-}
+import { useProductController } from './Product.controller'
 
-export const ProductList = () => {
+export const ProductList = (props) => {
+  const { useController = useProductController } = props;
+  const controller = useController();
 
-  const [currentPage, setCurrentPage] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(0); // Ajustado dinámicamente
-  const [isMobile, setIsMobile] = useState(false);
-  const { getProducts } = ProductAction();
-  const products: any = useProductStore(state => state.products);
-  const total: any = useProductStore(state => state.total);
+  const { products: stocks, currentPage, handleNextPage, handlePrevPage, totalPages } = controller;
+  console.log(stocks);
 
-  console.log(products);
-  console.log(itemsPerPage);
-
-  useEffect(() => {
-    // Ajustar dinámicamente los items por página
-    const updateItemsPerPage = () => {
-      const rowHeight = 41; // Altura estimada de una fila
-      const availableHeight = window.innerHeight - 120; // Espacio restante entre el header y paginado
-      const visibleRows = Math.floor(availableHeight / rowHeight);
-      setItemsPerPage(visibleRows);
-    };
-
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Determinar si la pantalla es mobile
-    };
-
-    updateItemsPerPage();
-    handleResize();
-    setCurrentPage(1);
-
-    window.addEventListener('resize', updateItemsPerPage);
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', updateItemsPerPage);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!itemsPerPage) return;
-    getProducts(currentPage, itemsPerPage);
-  }, [currentPage]);
-
-  const totalPages = Math.ceil(total / itemsPerPage);
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
 
   // if (isSidebarExpanded && isMobile) {
   //   return null;
@@ -84,6 +26,8 @@ export const ProductList = () => {
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Description</th>
               <th className="px-4 py-2">Brand</th>
+              <th className="px-4 py-2">Talle</th>
+              <th className="px-4 py-2">Color</th>
               <th className="px-4 py-2">Quantity</th>
               <th className="px-4 py-2">Category</th>
               <th className="px-4 py-2">Cost Price</th>
@@ -92,17 +36,19 @@ export const ProductList = () => {
             </tr>
           </thead>
           <tbody>
-            {products &&  products.map((product) => (
-              <tr key={product.id} className="border-t">
-                <td className="px-4 py-2">{product.id}</td>
-                <td className="px-4 py-2">{product.name}</td>
-                <td className="px-4 py-2">{product.description}</td>
-                <td className="px-4 py-2">{product.brand}</td>
-                <td className="px-4 py-2">{product.quantity}</td>
-                <td className="px-4 py-2">{product.categories || '-'}</td>
-                <td className="px-4 py-2">{product.costPrice}</td>
-                <td className="px-4 py-2">{product.resellerPrice}</td>
-                <td className="px-4 py-2">{product.publicPrice}</td>
+            {stocks &&  stocks.map((stock) => (
+              <tr key={stock.id} className="border-t">
+                <td className="px-4 py-2">{stock.id}</td>
+                <td className="px-4 py-2">{stock.product.name}</td>
+                <td className="px-4 py-2">{stock.product.description}</td>
+                <td className="px-4 py-2">{stock.product.attributes?.brand || '-'}</td>
+                <td className="px-4 py-2">{stock.variant.size || '-'}</td>
+                <td className="px-4 py-2">{stock.variant.color || '-'}</td>
+                <td className="px-4 py-2">{stock.quantity}</td>
+                <td className="px-4 py-2">{stock.product.categories || '-'}</td>
+                <td className="px-4 py-2">{stock.costPrice}</td>
+                <td className="px-4 py-2">{stock.product.prices.reseller}</td>
+                <td className="px-4 py-2">{stock.product.prices.retail}</td>
               </tr>
             ))}
           </tbody>
@@ -111,20 +57,20 @@ export const ProductList = () => {
 
       {/* Formato en tarjetas para pantallas pequeñas */}
       <div className="block lg:hidden mb-20">
-        {products && products.map((product) => (
+        {stocks && stocks.map((stock) => (
           <div
-            key={product.id}
+            key={stock.id}
             className="border border-gray-300 rounded-lg mb-4 p-4 shadow-sm bg-white"
           >
-            <p><strong>ID:</strong> {product.id}</p>
-            <p><strong>Name:</strong> {product.name}</p>
-            <p><strong>Description:</strong> {product.description}</p>
-            <p><strong>Brand:</strong> {product.brand}</p>
-            <p><strong>Quantity:</strong> {product.quantity}</p>
-            <p><strong>Category:</strong> {product.categories}</p>
-            <p><strong>Cost Price:</strong> {product.costPrice}</p>
-            <p><strong>Reseller Price:</strong> {product.resellerPrice}</p>
-            <p><strong>Public Price:</strong> {product.publicPrice || '-'}</p>
+            <p><strong>ID:</strong> {stock.id}</p>
+            <p><strong>Name:</strong> {stock.product.name}</p>
+            <p><strong>Description:</strong> {stock.product.description}</p>
+            <p><strong>Brand:</strong> {stock.product.attributes?.brand}</p>
+            <p><strong>Quantity:</strong> {stock.quantity}</p>
+            <p><strong>Category:</strong> {stock.product.categories}</p>
+            <p><strong>Cost Price:</strong> {stock.costPrice}</p>
+            <p><strong>Reseller Price:</strong> {stock.product.prices.reseller}</p>
+            <p><strong>Public Price:</strong> {stock.product.prices.retail || '-'}</p>
           </div>
         ))}
       </div>

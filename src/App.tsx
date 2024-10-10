@@ -10,7 +10,6 @@ import { CreateNewResellerPage } from './pages/CreateNewReseller/CreateNewResell
 import GalleryPage from './pages/Galery/Galery.page';
 function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
-  console.log({ userIsAuthenticated });
   return (
     <BrowserRouter>
       {/* <Box display="flex"> */}
