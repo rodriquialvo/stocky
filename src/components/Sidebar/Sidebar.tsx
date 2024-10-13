@@ -83,7 +83,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, isExpanded, subI
         <>
           <AccordionButton
             py={3}
-            _hover={{ bg: "red.700" }}
+            _hover={{ bg: "pink.500" }}
             _expanded={{ bg: "gray.700" }}
           >
             <Flex align="center" w="100%">
