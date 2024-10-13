@@ -8,7 +8,32 @@ import {ROUTES} from './constants/Routes';
 import CreateNewProduct from './pages/CreateNewProduct/CreateNewProduct.page';
 import { CreateNewResellerPage } from './pages/CreateNewReseller/CreateNewReseller.page';
 import GalleryPage from './pages/Galery/Galery.page';
-function App() {
+import ProductDetailPage from './pages/ProductDetail/ProductDetail.page';
+
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * Componente principal de la aplicación
+ * 
+ * Este componente se encarga de renderizar
+ * las rutas de la aplicación y de autenticar
+ * al usuario.
+ * 
+ * Se utiliza el hook useSessionStore para 
+ * obtener el estado de autenticación del usuario
+ * y mostrar el login o el contenido principal
+ * según sea el caso.
+ * 
+ * El contenido principal se renderiza en un
+ * componente Box con un display flex.
+ * 
+ * Se utiliza el componente ProtectedRoute para
+ * proteger las rutas que requieren autenticación
+ * y mostrar el login en caso de no estar autenticado.
+ * 
+ * @returns Un JSX Element con el contenido principal
+ *          de la aplicación y las rutas configuradas.
+ */
+/******  71592864-ffe3-4f6c-8318-8a7efa937a71  *******/function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
   return (
     <BrowserRouter>
@@ -16,7 +41,7 @@ function App() {
       {/* Contenido principal */}
 
       <Routes>
-        <Route path={ROUTES.HOME} element={userIsAuthenticated ? <Navigate to={ROUTES.STOCK_LIST} /> : <LoginPage />} />
+        <Route path={ROUTES.HOME} element={userIsAuthenticated ? <Navigate to={ROUTES.GALLERY} /> : <LoginPage />} />
 
         <Route path={ROUTES.STOCK_LIST} element={
           <ProtectedRoute >
@@ -33,9 +58,14 @@ function App() {
             <CreateNewResellerPage />
           </ProtectedRoute>
         } />
-        <Route path={ROUTES.Gallery} element={
+        <Route path={ROUTES.GALLERY} element={
           <ProtectedRoute >
             <GalleryPage />
+          </ProtectedRoute>
+        } />
+        <Route path={ROUTES.PRODUCT_DETAILS} element={
+          <ProtectedRoute >
+            <ProductDetailPage />
           </ProtectedRoute>
         } />
         {/* <Route path="/stock/add" element={<h1>Ingreso de Stock</h1>} />

@@ -1,3 +1,3 @@
 export interface TabNavProps {
-    onClickFilterButton: () => void;
+    onClickFilterButton?: () => void;
 }

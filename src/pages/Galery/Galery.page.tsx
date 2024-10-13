@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, SimpleGrid, Text, useDisclosure } from '@chakra-ui/react';
+import NavigationBar from '../../components/TabNav/NavigationBar';
 import GalleryItem from '../../components/GalleryItem/GaleryItem';
 import Hero from '../../components/Hero/Hero';
 import FilterPanel from '../../components/FilterPanel/FilterPanel';
-import TabNav from '../../components/TabNav/TabNav';
 
 const galleryData = [
   {
@@ -117,7 +117,7 @@ const GalleryPage: React.FC = () => {
       <Hero
         images={galleryData[0].images}
       />
-      <TabNav
+      <NavigationBar
         onClickFilterButton={onOpen}
       />
       <Box

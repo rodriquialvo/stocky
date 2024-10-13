@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Flex,
@@ -22,6 +22,32 @@ import { TabNavProps } from './interfaces';
 const NavigationBar: React.FC<TabNavProps> = ({
   onClickFilterButton,
 }) => {
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  // Función para manejar el scroll y determinar la dirección
+  const handleScroll = () => {
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY > lastScrollY) {
+      // Scroll hacia abajo - ocultar navbar
+      setShowNavbar(false);
+    } else {
+      // Scroll hacia arriba - mostrar navbar
+      setShowNavbar(true);
+    }
+
+    setLastScrollY(currentScrollY);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
+
   return (
     <Box
       as="nav"
@@ -30,7 +56,8 @@ const NavigationBar: React.FC<TabNavProps> = ({
       boxShadow="md"
       p={4}
       position="sticky"
-      top={0}
+      top={showNavbar ? 0 : {base: "-150px", lg:0}} // Desaparece al hacer scroll hacia abajo
+      transition="top 0.3s ease-in-out"
       zIndex={10}
     >
       <Flex

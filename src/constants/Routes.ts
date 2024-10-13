@@ -7,5 +7,6 @@ export const  ROUTES = {
     NEW_RESELLER: '/resellers/new',
     RESSELLERS_METRICS: 'resellers/metrics',
     NEW_PRODUCT: '/product/new',
-    Gallery: '/gallery'
+    GALLERY: '/gallery',
+    PRODUCT_DETAILS: '/product/:id'
 }
