@@ -29,10 +29,11 @@ export const ProductAction = () => {
   };
 
  const createNewProduct =  async (body: ProductFormData) => {
+  console.log("BODY", body)
   setStatus(getStartStatus());
   try {
     const response = await productService.postCreateNewProduct(body);
-    if (!response.succes) {
+    if (!response.product) {
       setStatus(getErrorStatus('No response'));
       return;
     }
@@ -44,6 +45,7 @@ export const ProductAction = () => {
       isClosable: true,
     });
   } catch (e) {
+    console.log("ERRORRR ===>", e)
     setStatus(getErrorStatus(e as Error));
   }
 };

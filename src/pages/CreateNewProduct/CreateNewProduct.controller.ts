@@ -2,25 +2,38 @@ import { useState } from 'react';
 import {CreateNewProductController, ProductFormData} from './interfaces';
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { ProductAction } from '../../store/product/actions';
+import { useProductStore } from '../../store/product/slice';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
   CreateNewProductController => {
 
     const {createNewProduct} = ProductAction()
-
+    const status = useProductStore(state => state.status)
     const [formData, setFormData] = useState<ProductFormData>({
-      article: '',
-      name: '',
-      brand: '',
-      description: '',
-      size: '',
-      colors: [],
-      quantity: 0,
-      costPrice: 0,
-      finalPrice: 0,
-      photos: null, // Initially empty
-      categories: '',
+        name: "Vedetina",
+        code: "vedetina",
+        description: "Vedetina",
+        categories: [
+          "670604ef220d19482c921bd0"
+        ],
+        attributes: {
+          brand: "Adidas"
+        },
+        pictures: [
+          {
+            url: "https://mi-tienda.com/images/remera-nike-negra-01.jpg",
+            alt_text: "Reemra Nike negra"
+          },
+          {
+            url: "https://mi-tienda.com/images/remera-nike-negra-02.jpg",
+            alt_text: "Otra vista de la remera Nike negra"
+          }
+        ],
+        prices: {
+          retail: 3500,
+          reseller: 2700
+        }
     });
 
     const [brands, setBrands] = useState([
@@ -166,6 +179,7 @@ export const useCreateNewProductController =
       addColor,
       addSize,
       categories,
-      handleCategoriesChange
+      handleCategoriesChange,
+      isLoading: status.isFetching
     };
   };

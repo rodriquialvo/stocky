@@ -42,7 +42,7 @@ import ProductDetailPage from './pages/ProductDetail/ProductDetail.page';
 
       <Routes>
         <Route path={ROUTES.HOME} element={userIsAuthenticated ? <Navigate to={ROUTES.GALLERY} /> : <LoginPage />} />
-
+        {/* <Route path='login' element={<LoginPage/>}/> */}
         <Route path={ROUTES.STOCK_LIST} element={
           <ProtectedRoute >
             <ProductList />

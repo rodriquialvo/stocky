@@ -17,7 +17,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
 
 
   if (!userIsAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
   return <>
     <Box
@@ -30,6 +30,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
       minHeight="100vh"  // Ocupa todo el alto de la ventana
 
     >
+      <Button onClick={logout}> LOGOUT</Button>
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       {children}
       {/* <Button onClick={logout}>Logout</Button> */}
