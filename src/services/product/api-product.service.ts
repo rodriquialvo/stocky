@@ -1,6 +1,8 @@
 import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
 import Http from '../http';
-import { PostProductResponse } from './dtos/product.dto';
+import { GetProductDetailResponse } from './dtos/getProductDetail';
+import { GetProductsResponse } from './dtos/getProducts';
+import { PostProductResponse } from './dtos/postCreateNewProduct';
 import { ProductService } from './product.service';
 
 export class ApiProductService implements ProductService {
@@ -9,12 +11,9 @@ export class ApiProductService implements ProductService {
     this.http = new Http('', 'products');
   }
 
-  getProducts = async (params: { page: number; limit: number }): Promise<any | undefined> => {
-    const response = await this.http.get<any, any>('', params);
-    if (!response.stocks) {
-      return null;
-    }
-    return response;
-  };
+  getProducts = (params?) => this.http.get<GetProductsResponse>('', params);
+
   postCreateNewProduct = (body: ProductFormData) => this.http.post<PostProductResponse>('', body);
+
+  getProductDetail = (id: string) => this.http.get<GetProductDetailResponse>(id);
 }

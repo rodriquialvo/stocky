@@ -8,5 +8,5 @@ export const  ROUTES = {
     RESSELLERS_METRICS: 'resellers/metrics',
     NEW_PRODUCT: '/product/new',
     GALLERY: '/gallery',
-    PRODUCT_DETAILS: '/product/:id'
+    PRODUCT_DETAILS: (id: string) =>  `/product/${id}`
 }

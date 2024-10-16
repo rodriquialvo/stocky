@@ -144,11 +144,7 @@ export const useCreateNewProductController =
       createNewProduct(formData)
       
     };
-
-    console.log({
-      formData,})
-
-    // Return state and events
+   // Return state and events
     return {
       handleSubmit,
       formData,

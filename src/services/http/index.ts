@@ -76,10 +76,10 @@ class Http {
     throw {message, status: response.status, response: result};
   };
 
-  get = async <T, U>(url: string, params?: U): Promise<T> => {
+  get = async <T>(url: string, params?: any): Promise<T> => {
     console.info(
       'GET',
-      `${this.getUrl(url)}${this.getSearchParams<U>(params)}`,
+      `${this.getUrl(url)}${this.getSearchParams<T>(params)}`,
     );
     const response = await fetch(
       `${this.getUrl(url)}${this.getSearchParams(params)}`,

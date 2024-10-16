@@ -1,23 +1,23 @@
 import { Box, Flex, Image, Text, Button, VStack, HStack, useBreakpointValue, Divider, FormControl, FormLabel, Heading, Stack } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavigationBar from "../../components/TabNav/NavigationBar";
 import { Select } from "chakra-react-select";
 import QuantityPicker from "../../components/QuantityPicker/QuantityPicker";
+import { useProductDetailController } from "./ProductDetail.controller";
+import { ProductDetailProps } from "./interfaces";
+import { formattedNumberToMoney } from "../../utils/functions";
 
-const ProductDetail = () => {
-  const isMobile = useBreakpointValue({ base: true, md: false });
+const ProductDetail: React.FC<ProductDetailProps> = props => {
   const [isHovered, setIsHovered] = useState(false);
-  const [imageSelected, setImageSelected] = useState("https://tiendanap.vtexassets.com/arquivos/ids/167019-1200-1440?v=638594072730230000&width=1200&height=1440&aspect=true")
-  const product = {
-    name: 'Body less taza soft tul y puntilla',
-    price: '$18.400',
-    availability: 'Disponible',
-    images: [
-      'https://tiendanap.vtexassets.com/arquivos/ids/167019-1200-1440?v=638594072730230000&width=1200&height=1440&aspect=true',
-      'https://tiendanap.vtexassets.com/arquivos/ids/167020-1200-1440?v=638594072839500000&width=1200&height=1440&aspect=true',
-      'https://tiendanap.vtexassets.com/arquivos/ids/167021-1200-1440?v=638594073003570000&width=1200&height=1440&aspect=true',
-    ],
-  }
+  const [imageSelected, setImageSelected] = useState("")
+  const { useController = useProductDetailController } = props;
+  const controller = useController();
+
+  useEffect(() => {
+    if (controller.productDetail?.pictures.length > 0) {
+      setImageSelected(controller.productDetail.pictures[0].url)
+    }
+  }, [controller.productDetail])
 
   const sizes = [
     { label: "1", value: "1" },
@@ -99,22 +99,23 @@ const ProductDetail = () => {
             // bg="yellow"
             >
               {
-                product.images.map(image => {
+                controller.productDetail?.pictures.map(image => {
                   return (
                     <Box
-                      borderWidth={imageSelected === image ? 2 : 0}
+                      borderWidth={imageSelected === image.url ? 2 : 0}
                       borderColor={"black"}
                       borderRadius={7}
                     >
                       <Image
                         height={60}
                         width={"auto"}
-                        src={image}
+                        src={image.url}
                         className="object-cover"
                         objectFit='cover'
                         px={0}
-                        onClick={() => setImageSelected(image)}
+                        onClick={() => setImageSelected(image.url)}
                         borderRadius={5}
+                        alt={image.alt_text}
                       />
                     </Box>)
                 })
@@ -157,17 +158,13 @@ const ProductDetail = () => {
             flexDirection={"column"}
             width={"100%"}
           >
-            <Text>Detalles del producto</Text>
-            <Text>Body con aro de tul y terciopelo. Ideal para usarlo como prenda exterior ya que cuenta con doble tul en el busto.
-              Se abrocha con snap en la entrepierna.
-            </Text>
-            <Text>-Marca Andressa</Text>
-            <Text>--Línea exclusive</Text>
-            <Text>-Talles: 85 - 90 - 95 - 100</Text>
-            <Text>-Colores: negro - nude</Text>
-            <Text>-Articulo 2057</Text>
+            <Text>Detalles del producto:</Text>
+            <Text>{controller.productDetail?.description}</Text>
+            <Text>-Marca {controller.productDetail?.attributes.brand}</Text>
+            <Text>-Talles: "FALTA ESTE CAMPO"</Text>
+            <Text>-Colores: "FALTA ESTE CAMPO"</Text>
+            <Text>-Articulo: {controller.productDetail?.code}</Text>
           </Box>
-
         </Box>
         <Box
           width={{
@@ -193,11 +190,9 @@ const ProductDetail = () => {
           >
             <Text
               color={"GrayText"}
-            >Andressa - Articulo 2057</Text>
-            <Heading
-            >Body con aro de tul y terciopelo</Heading >
-            <Heading
-            >$ 37.408</Heading>
+            >{controller.productDetail?.attributes.brand} - Articulo {controller.productDetail?.code}</Text>
+            <Heading>{controller.productDetail?.name}</Heading >
+            <Heading>{formattedNumberToMoney(controller.productDetail?.prices.retail)}</Heading>
             <Divider
               my={5}
               display={{
@@ -220,15 +215,12 @@ const ProductDetail = () => {
               flexDirection={"column"}
               width={"100%"}
             >
-              <Text>Detalles del producto</Text>
-              <Text>Body con aro de tul y terciopelo. Ideal para usarlo como prenda exterior ya que cuenta con doble tul en el busto.
-                Se abrocha con snap en la entrepierna.
-              </Text>
-              <Text>-Marca Andressa</Text>
-              <Text>--Línea exclusive</Text>
-              <Text>-Talles: 85 - 90 - 95 - 100</Text>
-              <Text>-Colores: negro - nude</Text>
-              <Text>-Articulo 2057</Text>
+              <Text>Detalles del producto:</Text>
+              <Text>{controller.productDetail?.description}</Text>
+              <Text>-Marca {controller.productDetail?.attributes.brand}</Text>
+              <Text>-Talles: "FALTA ESTE CAMPO"</Text>
+              <Text>-Colores: "FALTA ESTE CAMPO"</Text>
+              <Text>-Articulo: {controller.productDetail?.code}</Text>
             </Box>
             <Flex
               gap={8}

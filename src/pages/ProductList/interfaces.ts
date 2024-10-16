@@ -1,4 +1,4 @@
-import { Product } from "../../services/product/dtos/product.dto";
+import { Product } from "../../services/product/dtos/postCreateNewProduct";
 
 export interface ProductController {
   /* State */

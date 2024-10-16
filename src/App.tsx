@@ -63,7 +63,7 @@ import ProductDetailPage from './pages/ProductDetail/ProductDetail.page';
             <GalleryPage />
           </ProtectedRoute>
         } />
-        <Route path={ROUTES.PRODUCT_DETAILS} element={
+        <Route path={ROUTES.PRODUCT_DETAILS(':id')} element={
           <ProtectedRoute >
             <ProductDetailPage />
           </ProtectedRoute>

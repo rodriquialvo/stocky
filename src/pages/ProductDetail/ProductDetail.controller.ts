@@ -1,14 +1,23 @@
+import { useParams } from 'react-router-dom';
 import {ProductDetailController} from './interfaces';
+import { useEffect } from 'react';
+import { ProductAction } from '../../store/product/actions';
+import { useProductStore } from '../../store/product/slice';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
   ProductDetailController => {
     /* State */
-    // Ex. const [count, setCount] = useState(0);
+    const { id } = useParams<{ id: string, }>();
+    const {getProductDetail} = ProductAction()
+    const productDetail = useProductStore(state => state.product)
 
     /* Listeners */
-    // Ex. useEffect(() => { onSessionUpdate(); }, [session]);
 
+    useEffect(() => {
+      getProductDetail(id)
+    }, [id])
+    
     /* View Events */
     const onExamplePressed = () => {};
 
@@ -16,5 +25,7 @@ export const useProductDetailController =
     //Ex. const increaseCount = () => {}
 
     // Return state and events
-    return {example: 'example', onExamplePressed};
+    return {
+      productDetail
+    };
   };

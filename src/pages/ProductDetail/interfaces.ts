@@ -1,8 +1,9 @@
+import { ProductDetail } from "../../services/product/dtos/getProductDetail";
+
 export interface ProductDetailController {
   /* State */
-  example: string;
-  /* Events */
-  onExamplePressed: () => void;
+  productDetail: ProductDetail | null
+    /* Events */
 }
 
 export interface ProductDetailProps {

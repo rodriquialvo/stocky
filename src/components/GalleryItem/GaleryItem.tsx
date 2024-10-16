@@ -1,15 +1,19 @@
 import { Box, Image, Text, Badge, Stack, Button } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../constants/Routes';
 
-interface GalleryItemProps {
+export interface GalleryItemProps {
   name: string;
   price: string;
   availability: string;
-  images: string[]; // Cambiado a un array de imágenes
+  images: string[];
+  onClick?: () => void; // Cambiado a un array de imágenes
 }
 
-const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, images }) => {
+const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, images, onClick, ...props }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
@@ -31,12 +35,14 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, im
       alignItems="center"
       transition="transform 0.3s" // Transición suave
       _hover={{ transform: { base: 'none', md: 'scale(1.05)' } }} // Efecto hover solo en pantallas medianas y grandes
+      
     >
       <Box position="relative" width="full" height="96">
         <Image
           src={images[currentIndex]}
           alt={name}
           className="w-full h-full object-cover"
+          onClick={onClick}
         />
         
         {/* Botones para navegar entre imágenes */}

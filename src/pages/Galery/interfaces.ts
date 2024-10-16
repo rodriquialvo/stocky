@@ -1,8 +1,9 @@
+import { GalleryItemProps } from "../../components/GalleryItem/GaleryItem";
+
 export interface GaleryController {
   /* State */
-  example: string;
+  productsViewModel: GalleryItemProps[];
   /* Events */
-  onExamplePressed: () => void;
 }
 
 export interface GaleryProps {
