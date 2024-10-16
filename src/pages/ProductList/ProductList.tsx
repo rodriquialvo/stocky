@@ -7,7 +7,6 @@ export const ProductList = (props) => {
   const controller = useController();
 
   const { products: stocks, currentPage, handleNextPage, handlePrevPage, totalPages } = controller;
-  console.log(stocks);
 
 
   // if (isSidebarExpanded && isMobile) {

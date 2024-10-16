@@ -22,7 +22,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) =
       top="0"
       left="0"
       h="100vh"
-      w={isExpanded ? (isMobile ? "100%" : "250px") : "70px"}
+      w={isExpanded ? (isMobile ? "100%" : "250px") : (isMobile ? 0 : "70px")}
       bg="gray.800"
       color="white"
       transition="all 0.3s"
@@ -31,16 +31,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) =
       overflowY="auto"
     >
       <Flex direction="column" h="100%">
-        <IconButton
-          aria-label="Toggle expand sidebar"
-          icon={<HamburgerIcon />}
-          onClick={() => setIsExpanded(!isExpanded)}
-          variant="outline"
-          size="lg"
-          m={2}
-          alignSelf="flex-end"
-          color={"white" }
-        />
+        {
+          !isMobile &&
+          <IconButton
+            aria-label="Toggle expand sidebar"
+            icon={<HamburgerIcon />}
+            onClick={() => setIsExpanded(!isExpanded)}
+            variant="outline"
+            size="lg"
+            m={2}
+            alignSelf="flex-end"
+            color={"white"}
+          />
+        }
         <VStack align="stretch" flex={1} mt={4}>
           <SidebarContent isExpanded={isExpanded} />
         </VStack>

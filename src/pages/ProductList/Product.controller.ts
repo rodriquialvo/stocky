@@ -39,10 +39,10 @@ export const useProductController =
       };
     }, []);
 
-    useEffect(() => {
-      if (!itemsPerPage) return;
-      getProducts(currentPage, itemsPerPage);
-    }, [currentPage]);
+    // useEffect(() => {
+    //   if (!itemsPerPage) return;
+    //   getProducts(currentPage, itemsPerPage);
+    // }, [currentPage]);
 
     useEffect(() => {
       if (!total && !itemsPerPage) return;

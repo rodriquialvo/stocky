@@ -11,6 +11,7 @@ export interface CreateNewProductController {
   newSize: string;
   newColor: string;
   categories: { label: string; value: string }[];
+  isLoading: boolean
   
   /* Events */
   setNewBrand: (value: string) => void;
@@ -39,15 +40,25 @@ export interface CreateNewProductProps {
 }
 
 export interface ProductFormData {
-  article: string;
-  name: string;
-  brand: string;
+  name:        string;
+  code:        string;
   description: string;
-  size: string;
-  colors: string[];
-  quantity: number;
-  costPrice: number;
-  finalPrice: number;
-  photos: FileList | null; // Added for photos
-  categories
+  categories:  string[];
+  attributes:  Attributes;
+  pictures:    Picture[];
+  prices:      Prices;
+}
+
+export interface Attributes {
+  brand: string;
+}
+
+export interface Picture {
+  url:      string;
+  alt_text: string;
+}
+
+export interface Prices {
+  retail:   number;
+  reseller: number;
 }

@@ -59,7 +59,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           <Input
             id="article"
             name="article"
-            value={controller.formData.article}
+            value={controller.formData.code}
             onChange={controller.handleChange}
             placeholder="Introduce el artículo"
           />
@@ -146,19 +146,19 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
         </FormControl>
 
         {/* Cost Price Field */}
-        <FormControl isRequired>
+        {/* <FormControl isRequired>
           <FormLabel htmlFor="costPrice">Precio de Costo</FormLabel>
           <Input
             type="number"
             id="costPrice"
             name="costPrice"
-            value={controller.formData.costPrice}
+            value={controller.formData.prices.retail}
             onChange={controller.handleNumberChange}
             placeholder="Introduce el precio de costo"
             min={0}
             step="0.01"
           />
-        </FormControl>
+        </FormControl> */}
 
         {/* Final Price Field */}
         <FormControl isRequired>
@@ -167,7 +167,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             type="number"
             id="finalPrice"
             name="finalPrice"
-            value={controller.formData.finalPrice}
+            value={controller.formData.prices.reseller}
             onChange={controller.handleNumberChange}
             placeholder="Introduce el precio final"
             min={0}
@@ -178,7 +178,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
         <ImageUploadGallery/>
 
         {/* Submit Button */}
-        <Button type="submit" colorScheme="blue" width="full" mt={4}>
+        <Button type="submit" isLoading={controller.isLoading} colorScheme="blue" width="full" mt={4}>
           Añadir Producto
         </Button>
       </VStack>
