@@ -18,7 +18,6 @@ export const useProductController =
     },[])
 
     const mapProductsViewModel = (product: Product): ItemListProductProps => {
-      // console.log("product", product)
       return {
         name: product?.name,
         brand: product?.attributes?.brand,
@@ -28,7 +27,6 @@ export const useProductController =
         onClick: () => getProductDetailWhitStockInDropDown(product?.id)
       }
     } 
-    console.log("products", products)
     return {
       productsViewModel: products.map(mapProductsViewModel)
     };

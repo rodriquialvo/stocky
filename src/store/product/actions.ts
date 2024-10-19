@@ -23,7 +23,6 @@ export const ProductAction = () => {
         setStatus(getErrorStatus('No response'));
         return;
       }
-      console.log("response", data)
       setStatus(getSuccessStatus());
       setProducts(data.products);
     } catch (e) {
@@ -47,7 +46,6 @@ export const ProductAction = () => {
         isClosable: true,
       });
     } catch (e) {
-      console.log("ERRORRR ===>", e)
       setStatus(getErrorStatus(e as Error));
     }
   };
