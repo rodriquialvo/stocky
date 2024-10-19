@@ -21,7 +21,6 @@ const galleryData = [
 ];
 
 const GalleryPage: React.FC<GaleryProps> = props => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { useController = useGaleryController } = props;
   const controller = useController();
   
@@ -33,7 +32,6 @@ const GalleryPage: React.FC<GaleryProps> = props => {
         images={galleryData[0].images}
       />
       <NavigationBar
-        onClickFilterButton={onOpen}
       />
       <Box
         width={"100%"}
@@ -42,11 +40,7 @@ const GalleryPage: React.FC<GaleryProps> = props => {
         background="gray.100"
 
       >
-        <FilterPanel
-          onApplyFilters={(filters) => console.log(filters)}
-          isOpen={isOpen}
-          onClose={onClose}
-        />
+        
       </Box>
       <SimpleGrid
         columns={{ base: 1, lg: 4 }} // Número de columnas según el tamaño de pantalla

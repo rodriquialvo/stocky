@@ -7,13 +7,14 @@ import {
 import { useAPIProductService } from '../../services/product/product.service';
 import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
 import { Toast } from '@chakra-ui/react';
-import { Product } from '../../services/product/dtos/getProducts';
 
 export const ProductAction = () => {
   const productService = useAPIProductService();
   const setStatus = useProductStore(state => state.setStatus);
   const setProducts = useProductStore(state => state.setProducts);
   const setProduct = useProductStore(state => state.setProduct);
+  const setProductsWhitStocks = useProductStore(state => state.setProductsWhitStocks);
+  const productsWhitStocks = useProductStore(state => state.productsWhitStocks);
   const getProducts = async () => {
     setStatus(getStartStatus());
     try {
@@ -24,7 +25,6 @@ export const ProductAction = () => {
       }
       setStatus(getSuccessStatus());
       setProducts(data.products);
-      console.log("DATA ===>", data);
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
     }
@@ -46,7 +46,6 @@ export const ProductAction = () => {
         isClosable: true,
       });
     } catch (e) {
-      console.log("ERRORRR ===>", e)
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -66,9 +65,40 @@ export const ProductAction = () => {
     }
   };
 
+  const getProductDetailWhitStockInDropDown = async (id: string) => {
+    setStatus(getStartStatus());
+    try {
+      setStatus(getSuccessStatus());
+      if (productsWhitStocks[id]) {
+        if (productsWhitStocks[id].lastRequest) {
+          const fiveMinutesInMs = 5 * 60 * 1000;
+          const now = new Date();
+          if ((now as any) - (productsWhitStocks[id].lastRequest as any) > fiveMinutesInMs) {
+            const response = await productService.getProductDetailWithStocks(id);
+            if (!response.product) {
+              setStatus(getErrorStatus('No response'));
+              return;
+            }
+            setProductsWhitStocks({ ...productsWhitStocks, [id]: { ...response.product, lastRequest: new Date() } });
+          }
+        }
+      } else {
+        const response = await productService.getProductDetailWithStocks(id);
+        if (!response.product) {
+          setStatus(getErrorStatus('No response'));
+          return;
+        }
+        setProductsWhitStocks({ ...productsWhitStocks, [id]: { ...response.product, lastRequest: new Date() } });
+      }
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  }
+
   return {
     getProducts,
     createNewProduct,
-    getProductDetail
+    getProductDetail,
+    getProductDetailWhitStockInDropDown
   };
 };

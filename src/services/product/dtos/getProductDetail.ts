@@ -27,3 +27,26 @@ export interface Prices {
     retail:   number;
     reseller: number;
 }
+
+export interface GetProductDetailWhitStocksResponse {
+    product: ProductDetailWithStocks;
+}
+
+export interface ProductDetailWithStocks extends ProductDetail {
+    stocks: Stock[];
+    lastRequest: Date;
+}
+
+export interface Stock {
+    id:        string;
+    quantity:  number;
+    variant:   Variant;
+    costPrice: number;
+    date:      Date;
+}
+
+export interface Variant {
+    id:    string;
+    color: string;
+    size:  string;
+}
