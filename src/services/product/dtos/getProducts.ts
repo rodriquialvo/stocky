@@ -3,14 +3,15 @@ export interface GetProductsResponse {
 }
 
 export interface Product {
-    id:          string;
-    name:        string;
+    id: string;
+    name: string;
     description: string;
-    code:        string;
-    categories:  Category[];
-    attributes:  Attributes;
-    pictures:    Picture[];
-    prices:      Prices;
+    code: string;
+    categories: Category[];
+    attributes: Attributes;
+    pictures: Picture[];
+    prices: Prices;
+    hasStock: boolean;
 }
 
 export interface Attributes {
@@ -18,17 +19,17 @@ export interface Attributes {
 }
 
 export interface Category {
-    id:   string;
+    id: string;
     name: string;
     slug: string;
 }
 
 export interface Picture {
-    url:      string;
+    url: string;
     alt_text: string;
 }
 
 export interface Prices {
-    retail:   number;
+    retail: number;
     reseller: number;
 }

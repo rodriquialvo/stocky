@@ -1,17 +1,13 @@
+import { ItemListProductProps } from "../../components/ItemListProduct/interfaces";
 import { Product } from "../../services/product/dtos/postCreateNewProduct";
 
 export interface ProductController {
   /* State */
-  currentPage: number;
-  itemsPerPage: number;
-  isMobile: boolean;
-  products: Product[];
-  total: number
-  totalPages: number
+  productsViewModel: ItemListProductProps[]
 
   /* Events */
-  handlePrevPage: () => void;
-  handleNextPage: () => void;
+  // handlePrevPage: () => void;
+  // handleNextPage: () => void;
 }
 
 export interface ProductProps {

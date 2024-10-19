@@ -20,6 +20,7 @@ const ImageUploadGallery = ({
     scrollRef.current.scrollLeft += scrollOffset;
   };
 
+  console.log("IMAGES",images)
   return (
     <VStack spacing={4} align="center" w="100%">
       <ImageUploading

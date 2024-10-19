@@ -16,7 +16,7 @@ export const toStringLeadZero = (
 };
 
 export const formattedNumberToMoney = (number: number | string) => {
-  return number.toLocaleString('es-AR', {
+  return number?.toLocaleString('es-AR', {
     style: 'currency',
     currency: 'ARS',
     minimumFractionDigits: 2,

@@ -34,7 +34,6 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
     setImages(imageList);
   };
 
-  console.log({ images });
   return (
     <Box
       width={{ base: '100%', md: '80%' }}

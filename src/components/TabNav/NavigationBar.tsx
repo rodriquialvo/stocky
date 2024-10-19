@@ -18,12 +18,14 @@ import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons';
 import { FiShoppingCart } from 'react-icons/fi';
 import SearchBarwithSuggestion from '../SearchBarwithSuggestion/SearchBarwithSuggestion';
 import { TabNavProps } from './interfaces';
+import FilterPanel from '../FilterPanel/FilterPanel';
 
 const NavigationBar: React.FC<TabNavProps> = ({
   onClickFilterButton,
 }) => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Función para manejar el scroll y determinar la dirección
   const handleScroll = () => {
@@ -92,6 +94,11 @@ const NavigationBar: React.FC<TabNavProps> = ({
 
 
       </Flex>
+      <FilterPanel
+          onApplyFilters={(filters) => console.log(filters)}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
     </Box>
   );
 };
