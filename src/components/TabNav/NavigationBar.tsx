@@ -77,7 +77,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
           leftIcon={<HamburgerIcon />}
           colorScheme="pink"
           variant="solid"
-          onClick={onClickFilterButton}
+          onClick={onOpen}
           ml={4}
         >
           Filters
