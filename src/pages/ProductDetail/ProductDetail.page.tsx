@@ -1,17 +1,40 @@
-import { Box, Flex, Image, Text, Button, VStack, HStack, useBreakpointValue, Divider, FormControl, FormLabel, Heading, Stack } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import NavigationBar from "../../components/TabNav/NavigationBar";
+import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Stack, Text } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
+import { useEffect, useState } from "react";
 import QuantityPicker from "../../components/QuantityPicker/QuantityPicker";
+import NavigationBar from "../../components/TabNav/NavigationBar";
+import { formattedNumberToMoney } from "../../utils/functions";
 import { useProductDetailController } from "./ProductDetail.controller";
 import { ProductDetailProps } from "./interfaces";
-import { formattedNumberToMoney } from "../../utils/functions";
 
 const ProductDetail: React.FC<ProductDetailProps> = props => {
   const [isHovered, setIsHovered] = useState(false);
-  const [imageSelected, setImageSelected] = useState("")
+  const [imageSelected, setImageSelected] = useState("");
+
   const { useController = useProductDetailController } = props;
   const controller = useController();
+
+  const [size, setSize] = useState("");
+  const [color, setColor] = useState("");
+  const [quantity, setQuantity] = useState(1);
+
+  const handleSelectColor = (event) => {
+    setColor(event.value);
+  };
+
+  const handleSelectSize = (event) => {
+    setSize(event.value);
+  };
+
+  const onIncrease = () => {
+    setQuantity(quantity + 1);
+  };
+
+  const onDecrease = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
+    }
+  };
 
   useEffect(() => {
     if (controller.productDetail?.pictures.length > 0) {
@@ -19,22 +42,14 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
     }
   }, [controller.productDetail])
 
-  const sizes = [
-    { label: "1", value: "1" },
-    { label: "2", value: "2" },
-    { label: "3", value: "3" },
-    { label: "4", value: "4" },
-    { label: "5", value: "5" },
+  // todo: cambiar esto que esta horrible
+  // set sizes and colors based on stocks
+  const sizes = controller.productDetail.stocks.map(stock => stock.variant.size)
+    .filter((value, index, self) => self.indexOf(value) === index).map(size => ({ label: size, value: size }));
 
-  ]
+  const colors = controller.productDetail.stocks.map(stock => stock.variant.color)
+    .filter((value, index, self) => self.indexOf(value) === index).map(color => ({ label: controller.mapColors[color], value: color }));
 
-  const colors = [
-    { label: "Rojo", value: "Rojo" },
-    { label: "Azul", value: "Azul" },
-    { label: "Amarillo", value: "Amarillo" },
-    { label: "Naranja", value: "Naranja" },
-
-  ]
   return (
     <Box
       w="100%"
@@ -246,6 +261,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                       base: "sm",
                       lg: "md"
                     }}
+                    onChange={handleSelectColor}
                   />
                 </FormControl>
                 <FormControl
@@ -259,7 +275,9 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                     size={{
                       base: "sm",
                       lg: "md"
-                    }} />
+                    }}
+                    onChange={handleSelectSize}
+                  />
                 </FormControl>
               </Box>
               <Flex
@@ -271,10 +289,14 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
               >
                 <QuantityPicker
                   stock={10}
+                  quantity={quantity}
+                  onIncrease={onIncrease}
+                  onDecrease={onDecrease}
                 />
                 <Button
                   w={"full"}
                   colorScheme={'pink'}
+                  onClick={() => controller.onAddToCartPressed({ size, color, quantity })}
                 >Agregar al carrito</Button>
               </Flex>
             </Flex>

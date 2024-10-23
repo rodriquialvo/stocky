@@ -4,6 +4,7 @@ export const SIDEBAR_ITEMS = {
     Stock: {
         label: 'Stock',
         subItems: [
+            { label: 'Carrito', route: ROUTES.SHOPPING_CART },
             { label: 'Lista', route: ROUTES.STOCK_LIST },
             { label: 'Nuevo producto', route: ROUTES.NEW_PRODUCT },
             { label: 'Ingresar Stock', route: ROUTES.ADD_STOCK },

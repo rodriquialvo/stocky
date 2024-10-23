@@ -48,7 +48,7 @@ class Http {
    * @returns {any} An authorization header.
    */
   getAuthHeader = () =>
-    this.hasSession() ? {Authorization: `Bearer ${this.idToken}`} : undefined;
+    this.hasSession() ? {Authorization: `Basic ${this.idToken}`} : undefined;
 
   getSearchParams = <T>(params?: T) => {
     if (!params) {
@@ -95,6 +95,7 @@ class Http {
   };
 
   post = async <T>(url: string, data: any, params?: any) => {
+    console.log('olen', this.idToken);
     const body = JSON.stringify(data);
     console.info('POST', `${this.getUrl(url)}${this.getSearchParams(params)}`);
     const response = await fetch(
@@ -107,6 +108,36 @@ class Http {
           Accept: 'application/json',
         },
         body,
+      },
+    );
+    return this.processResponse<T>(response);
+  };
+
+  put = async <T>(url: string, data: any, params?: any) => {
+    const body = JSON.stringify(data);
+    console.info('PUT', `${this.getUrl(url)}${this.getSearchParams(params)}`);
+    const response = await fetch(
+      `${this.getUrl(url)}${this.getSearchParams(params)}`,
+      {
+        method: 'PUT',
+        headers: {
+          ...this.getAuthHeader(),
+          'Content-Type': JSON_MIME_TYPE,
+          Accept: 'application/json',
+        },
+        body,
+      },
+    );
+    return this.processResponse<T>(response);
+  };
+
+  delete = async <T>(url: string, params?: any) => {
+    console.info('DELETE', `${this.getUrl(url)}${this.getSearchParams(params)}`);
+    const response = await fetch(
+      `${this.getUrl(url)}${this.getSearchParams(params)}`,
+      {
+        method: 'DELETE',
+        headers: this.getAuthHeader(),
       },
     );
     return this.processResponse<T>(response);
