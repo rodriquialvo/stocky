@@ -12,6 +12,7 @@ export interface ProductDetail {
     pictures:    Picture[];
     prices:      Prices;
     hasStock:    boolean;
+    stocks?:      Stock[];
 }
 
 export interface Attributes {

@@ -12,6 +12,7 @@ type State = {
 const initialState: State = {
   status: getDefaultStatus(),
   userLogged: {
+    id: '',
     userId: '',
     userStateId: 0,
     phoneNumber: '',

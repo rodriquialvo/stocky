@@ -7,6 +7,7 @@ export interface SessionResponse {
 }
 
 export interface User {
+  id: string,
   userId: string;
   userStateId: number;
   phoneNumber: string;
