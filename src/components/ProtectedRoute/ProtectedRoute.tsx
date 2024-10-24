@@ -33,7 +33,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
       display={"flex"}
       flexDirection={"column"}
     >
-      {/* <Button onClick={logout}> LOGOUT</Button> */}
+      <Button onClick={logout}> LOGOUT</Button>
 
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       {children}

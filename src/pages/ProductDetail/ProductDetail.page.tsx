@@ -44,10 +44,10 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
 
   // todo: cambiar esto que esta horrible
   // set sizes and colors based on stocks
-  const sizes = controller.productDetail.stocks.map(stock => stock.variant.size)
+  const sizes = controller.productDetail?.stocks?.map(stock => stock.variant.size)
     .filter((value, index, self) => self.indexOf(value) === index).map(size => ({ label: size, value: size }));
 
-  const colors = controller.productDetail.stocks.map(stock => stock.variant.color)
+  const colors = controller.productDetail?.stocks?.map(stock => stock.variant.color)
     .filter((value, index, self) => self.indexOf(value) === index).map(color => ({ label: controller.mapColors[color], value: color }));
 
   return (

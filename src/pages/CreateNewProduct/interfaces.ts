@@ -1,3 +1,5 @@
+import { ImageListType } from "react-images-uploading";
+
 export interface CreateNewProductController {
   /* State */
   formData: ProductFormData;
@@ -12,8 +14,10 @@ export interface CreateNewProductController {
   newColor: string;
   categories: { label: string; value: string }[];
   isLoading: boolean
+  images: ImageListType,
   
   /* Events */
+  setImages: (imageList: ImageListType) => void
   setNewBrand: (value: string) => void;
   setNewSize: (value: string) => void;
   setNewColor: (value: string) => void;
@@ -45,7 +49,7 @@ export interface ProductFormData {
   description: string;
   categories:  string[];
   attributes:  Attributes;
-  pictures:    Picture[];
+  pictures:    ImageListType | Picture[];
   prices:      Prices;
 }
 

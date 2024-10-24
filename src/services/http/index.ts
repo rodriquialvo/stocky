@@ -95,7 +95,6 @@ class Http {
   };
 
   post = async <T>(url: string, data: any, params?: any) => {
-    console.log('olen', this.idToken);
     const body = JSON.stringify(data);
     console.info('POST', `${this.getUrl(url)}${this.getSearchParams(params)}`);
     const response = await fetch(
@@ -108,6 +107,22 @@ class Http {
           Accept: 'application/json',
         },
         body,
+      },
+    );
+    return this.processResponse<T>(response);
+  };
+
+  postFormData = async <T>(url: string, data: any, params?: any) => {
+    console.info('POST', `${this.getUrl(url)}${this.getSearchParams(params)}`);
+    const response = await fetch(
+      `${this.getUrl(url)}${this.getSearchParams(params)}`,
+      {
+        method: 'POST',
+        headers: {
+          ...this.getAuthHeader(),
+          Accept: 'application/json',
+        },
+        body: data,
       },
     );
     return this.processResponse<T>(response);
