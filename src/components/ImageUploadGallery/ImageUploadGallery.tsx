@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Image, VStack, HStack, IconButton, Button, Text, Stack } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon, CloseIcon } from '@chakra-ui/icons';
-import ImageUploading from 'react-images-uploading';
+import ImageUploading, { ImageListType } from 'react-images-uploading';
 import { images } from '../../constants/images';
+import { ImageAction } from '../../store/image/actions';
 
 export interface ImageUploadGalleryProps {
-  images?: any[];
-  setImages?: any;
+  images?: ImageListType;
+  setImages?: (images: ImageListType) => void;
   maxNumber?: number;
 }
 const ImageUploadGallery = ({
   maxNumber = 5,
+  images,
+  setImages
 }: ImageUploadGalleryProps) => {
-  const [images, setImages] = useState([]);
   const scrollRef = React.useRef(null);
 
   // Manejo de scroll
@@ -132,7 +134,6 @@ const ImageUploadGallery = ({
                         zIndex={2}
                         aria-label="Eliminar imagen"
                       />
-
                       <Image
                         src={image.data_url}
                         alt={`imagen-${index}`}

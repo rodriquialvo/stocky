@@ -1,17 +1,31 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {CreateNewProductController, ProductFormData} from './interfaces';
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
+import { ImageListType } from 'react-images-uploading';
+import { ImageAction } from '../../store/image/actions';
+import { useLocation } from 'react-router-dom';
+import { ROUTES } from '../../constants/Routes';
+import { useImageStore } from '../../store/image/slice';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
   CreateNewProductController => {
 
+    const [images, setImages] = useState<ImageListType>([]);
     const {createNewProduct} = ProductAction()
     const status = useProductStore(state => state.status)
+    const location = useLocation();
+    const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
+
+    useEffect(() => {
+      !!isCurrentPage && setImages([])
+    },[isCurrentPage])
+
+
     const [formData, setFormData] = useState<ProductFormData>({
-        name: "Vedetina",
+        name: "rodri",
         code: "vedetina",
         description: "Vedetina",
         categories: [
@@ -20,16 +34,7 @@ export const useCreateNewProductController =
         attributes: {
           brand: "Adidas"
         },
-        pictures: [
-          {
-            url: "https://mi-tienda.com/images/remera-nike-negra-01.jpg",
-            alt_text: "Reemra Nike negra"
-          },
-          {
-            url: "https://mi-tienda.com/images/remera-nike-negra-02.jpg",
-            alt_text: "Otra vista de la remera Nike negra"
-          }
-        ],
+        pictures: [],
         prices: {
           retail: 3500,
           reseller: 2700
@@ -141,9 +146,10 @@ export const useCreateNewProductController =
   
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      createNewProduct(formData)
+      createNewProduct({...formData, pictures: images.map(image => image.file)})
       
     };
+
    // Return state and events
     return {
       handleSubmit,
@@ -176,6 +182,8 @@ export const useCreateNewProductController =
       addSize,
       categories,
       handleCategoriesChange,
-      isLoading: status.isFetching
+      isLoading: status.isFetching,
+      images,
+      setImages
     };
   };

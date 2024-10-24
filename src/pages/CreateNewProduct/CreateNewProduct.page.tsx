@@ -10,29 +10,23 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
 import Modal from '../../components/Modal/Modal';
 import { FilePond } from 'react-filepond';
-import ReactImageUploading from 'react-images-uploading';
+import ReactImageUploading, { ImageListType } from 'react-images-uploading';
 import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
+import { ImageAction } from '../../store/image/actions';
+import { images } from '../../constants/images';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
-  const [images, setImages] = useState([]);
-
 
   // Responsive padding and font sizes
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
 
-
-  const onChange = (imageList, addUpdateIndex) => {
-    // data for submit
-    console.log(imageList, addUpdateIndex);
-    setImages(imageList);
-  };
 
   return (
     <Box
@@ -174,7 +168,10 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           />
         </FormControl>
 
-        <ImageUploadGallery/>
+        <ImageUploadGallery
+          setImages={controller.setImages}
+          images={controller.images}
+        />
 
         {/* Submit Button */}
         <Button type="submit" isLoading={controller.isLoading} colorScheme="blue" width="full" mt={4}>

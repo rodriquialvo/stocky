@@ -7,6 +7,7 @@ import {
 import { useAPIProductService } from '../../services/product/product.service';
 import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
 import { Toast } from '@chakra-ui/react';
+import { ImageAction } from '../image/actions';
 
 export const ProductAction = () => {
   const productService = useAPIProductService();
@@ -15,6 +16,7 @@ export const ProductAction = () => {
   const setProduct = useProductStore(state => state.setProduct);
   const setProductsWhitStocks = useProductStore(state => state.setProductsWhitStocks);
   const productsWhitStocks = useProductStore(state => state.productsWhitStocks);
+  const { createNewImageUrl } = ImageAction()
   const getProducts = async () => {
     setStatus(getStartStatus());
     try {
@@ -33,7 +35,12 @@ export const ProductAction = () => {
   const createNewProduct = async (body: ProductFormData) => {
     setStatus(getStartStatus());
     try {
-      const response = await productService.postCreateNewProduct(body);
+
+      const uploadedUrls = await Promise.all(
+        body.pictures.map(element => createNewImageUrl(element))
+    );
+
+      const response = await productService.postCreateNewProduct({ ...body, pictures: uploadedUrls.map(url => ({ url, alt_text: body.name + " " + body.code })) });
       if (!response.product) {
         setStatus(getErrorStatus('No response'));
         return;
