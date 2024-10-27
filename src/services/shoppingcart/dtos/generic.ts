@@ -6,13 +6,56 @@ export interface CartItem {
     quantity: number,
     variant: any
     product: any
+    pictures: Picture[]
 }
 
 export interface Cart {
-    id: string,
-    total: number,
-    items: CartItem[]
-    _id?: string,
+    _id:       string;
+    userId:    string;
+    items:     Item[];
+    total:     number;
+    active:    boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    __v:       number;
+}
+
+export interface Item {
+    product:  Product;
+    variant:  Variant;
+    quantity: number;
+    _id:      string;
+}
+
+export interface Product {
+    categories_filter: any[];
+    categories:        any[];
+    name:              string;
+    code:              string;
+    pictures:          Picture[];
+    prices:            Prices;
+    has_stock:         boolean;
+    _id:               string;
+    createdAt:         Date;
+    updatedAt:         Date;
+}
+
+export interface Picture {
+    url:      string;
+    alt_text: string;
+}
+
+export interface Prices {
+    retail:   number;
+    reseller: number;
+}
+
+export interface Variant {
+    size:      string;
+    color:     string;
+    _id:       string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface VariantsQuantityDto {

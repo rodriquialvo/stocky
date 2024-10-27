@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Image, VStack, HStack, IconButton, Button, Text, Stack } from '@chakra-ui/react';
+import React, {  } from 'react';
+import { Box, Image, VStack, HStack, IconButton, Button, Text } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon, CloseIcon } from '@chakra-ui/icons';
 import ImageUploading, { ImageListType } from 'react-images-uploading';
-import { images } from '../../constants/images';
-import { ImageAction } from '../../store/image/actions';
 
 export interface ImageUploadGalleryProps {
   images?: ImageListType;

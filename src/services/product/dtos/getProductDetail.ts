@@ -34,8 +34,8 @@ export interface GetProductDetailWhitStocksResponse {
 }
 
 export interface ProductDetailWithStocks extends ProductDetail {
-    stocks: Stock[];
-    lastRequest: Date;
+    stocks?: Stock[];
+    lastRequest?: Date;
 }
 
 export interface Stock {

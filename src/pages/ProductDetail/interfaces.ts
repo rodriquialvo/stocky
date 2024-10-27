@@ -14,8 +14,19 @@ export interface ProductDetailController {
   /* State */
   productDetail: ProductDetail | null
   mapColors: MapColors
+  isDisabledButton: boolean,
+  sizes: {label: string, value: string}[];
+  colors: {label: string, value: string}[];
+  imageSelected: string,
+  quantity: number,
+  size: string, color: string
   /* Events */
-  onAddToCartPressed: (data: ParamsOnAddToCartPressed) => void
+  onAddToCartPressed: (data: ParamsOnAddToCartPressed) => void,
+  setImageSelected: (image: string) => void,
+  handleSelectColor: (event) => void,
+  handleSelectSize: (event) => void,
+  onIncrease: () => void,
+  onDecrease: () => void
 }
 
 export interface ProductDetailProps {

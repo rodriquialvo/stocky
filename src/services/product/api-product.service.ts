@@ -1,6 +1,6 @@
 import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
 import Http from '../http';
-import { GetProductDetailResponse, GetProductDetailWhitStocksResponse } from './dtos/getProductDetail';
+import { GetProductDetailWhitStocksResponse } from './dtos/getProductDetail';
 import { GetProductsResponse } from './dtos/getProducts';
 import { PostProductResponse } from './dtos/postCreateNewProduct';
 import { ProductService } from './product.service';
@@ -15,7 +15,5 @@ export class ApiProductService implements ProductService {
 
   postCreateNewProduct = (body: ProductFormData) => this.http.post<PostProductResponse>('', body);
 
-  getProductDetail = (id: string,) => this.http.get<GetProductDetailResponse>(`admin/${id}`);
-
-  getProductDetailWithStocks = (id: string) => this.http.get<GetProductDetailWhitStocksResponse>(`admin/${id}`);
+  getProductDetail = (id: string, param?: {by?:string} ) => this.http.get<GetProductDetailWhitStocksResponse>(`admin/${id}`, {by:'variant'});
 }
