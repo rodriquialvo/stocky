@@ -1,16 +1,18 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import {ParamsOnAddToCartPressed, ProductDetailController} from './interfaces';
-import { useEffect } from 'react';
+import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
+import { useEffect, useState } from 'react';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { CartAction } from '../../store/shoppingcart/actions';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { ROUTES } from '../../constants/Routes';
 import { getStartStatus } from '../../store/helper/statusStateFactory';
+import { useToast } from '@chakra-ui/react';
+import toast from 'react-hot-toast';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
-  ProductDetailController => {
+    ProductDetailController => {
     /* State */
 
     const mapColors = {
@@ -28,21 +30,52 @@ export const useProductDetailController =
     };
 
     const { id } = useParams<{ id: string, }>();
-  
-    const {getProductDetail} = ProductAction()
+
+    const { getProductDetail } = ProductAction()
     // todo: ver si esto esta bien, estoy importand cartAction dentro del product controller
     const { addToCart } = CartAction();
     const addToCartstatus = useCartStore(state => state.addToCartStatus);
     const setAddToCartStatus = useCartStore(state => state.setAddToCartStatus);
     const productDetail = useProductStore(state => state.product);
-
+    const [isDisabledButton, setIsDisabledButton] = useState(false)
     const navigate = useNavigate();
+    const [sizes, setSizes] = useState<{ label: string, value: string }[]>([]);
+    const [colors, setColors] = useState<{ label: string, value: string }[]>([]);
+    const [size, setSize] = useState("");
+    const [color, setColor] = useState("");
+    const [quantity, setQuantity] = useState(1);
+    const [imageSelected, setImageSelected] = useState("");
+
+    useEffect(() => {
+      setColors(
+        productDetail?.stocks?.map(stock => stock.variant.color)
+          .filter((value, index, self) => self.indexOf(value) === index).map(color => ({ label: mapColors[color], value: color }))
+      )
+
+    }, [productDetail]);
+
+    useEffect(() => {
+      setSizes(
+        productDetail.stocks?.filter(stock => stock.variant.color === color).map(stock => ({ label: stock.variant.size, value: stock.variant.size }))
+      );
+      
+      setSize("");
+    }, [color, productDetail])
 
     /* Listeners */
 
     useEffect(() => {
       getProductDetail(id)
-    }, [id])
+    }, [id]);
+
+    useEffect(() => {
+      setIsDisabledButton(
+        !productDetail?.hasStock ||
+        !color.length ||
+        !size.length ||
+        !quantity
+      )
+    }, [productDetail, color, size, quantity])
 
     useEffect(() => {
       if (addToCartstatus.success) {
@@ -50,12 +83,20 @@ export const useProductDetailController =
         setAddToCartStatus(getStartStatus());
       }
     }, [addToCartstatus, navigate])
-    
+
+    useEffect(() => {
+      if (productDetail?.pictures.length > 0) {
+        setImageSelected(productDetail.pictures[0].url)
+      }
+    }, [productDetail])
+
     /* View Events */
     const onAddToCartPressed = ({ size, color, quantity }: ParamsOnAddToCartPressed) => {
+      if (quantity > productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color)?.quantity) {
+        return toast("No hay suficiente stock. Intenta con una cantidad menor")
+      }
       // find stock with size and color
       const stock = productDetail.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
-      console.log('stock', stock);
       addToCart({
         productId: productDetail.id,
         variantId: stock.variant.id,
@@ -63,13 +104,44 @@ export const useProductDetailController =
       })
     };
 
+    const handleSelectColor = (event) => {
+      setColor(event.value);
+    };
+
+    const handleSelectSize = (event) => {
+      setSize(event.value);
+    };
+
+    const onIncrease = () => {
+      setQuantity(quantity + 1);
+    };
+
+    const onDecrease = () => {
+      if (quantity > 1) {
+        setQuantity(quantity - 1);
+      }
+    };
+
     /* Private Methods */
     //Ex. const increaseCount = () => {}
 
     // Return state and events
+
     return {
       productDetail,
       onAddToCartPressed,
-      mapColors
+      mapColors,
+      isDisabledButton,
+      sizes,
+      colors,
+      imageSelected,
+      setImageSelected,
+      handleSelectColor,
+      handleSelectSize,
+      onIncrease,
+      onDecrease,
+      quantity,
+      size,
+      color
     };
   };

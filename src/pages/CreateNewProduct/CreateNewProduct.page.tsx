@@ -10,15 +10,11 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
 import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
 import Modal from '../../components/Modal/Modal';
-import { FilePond } from 'react-filepond';
-import ReactImageUploading, { ImageListType } from 'react-images-uploading';
 import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
-import { ImageAction } from '../../store/image/actions';
-import { images } from '../../constants/images';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();

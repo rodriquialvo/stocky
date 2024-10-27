@@ -20,7 +20,7 @@ import {
 } from '@chakra-ui/react';
 
 interface FilterPanelProps {
-  onApplyFilters: (filters: any) => void;
+  onApplyFilters?: (filters: any) => void;
   isOpen: boolean;
   onClose: () => void
 }

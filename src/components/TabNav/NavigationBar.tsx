@@ -2,31 +2,25 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Flex,
-  Input,
   IconButton,
   Button,
-  Drawer,
-  DrawerBody,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  useDisclosure,
-  InputGroup,
-  InputRightElement,
 } from '@chakra-ui/react';
-import { SearchIcon, HamburgerIcon } from '@chakra-ui/icons';
+import { HamburgerIcon } from '@chakra-ui/icons';
 import { FiShoppingCart } from 'react-icons/fi';
 import SearchBarwithSuggestion from '../SearchBarwithSuggestion/SearchBarwithSuggestion';
 import { TabNavProps } from './interfaces';
 import FilterPanel from '../FilterPanel/FilterPanel';
+import CartPanel from '../CartPanel/CartPanel';
+import { useCartStore } from '../../store/shoppingcart/slice';
 
 const NavigationBar: React.FC<TabNavProps> = ({
-  onClickFilterButton,
 }) => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [islopenFilterPanel, setIsOpenFilterPanel] = useState(false);
+  // const [isOpenCartPanel, setIsOpenCartPanel] = useState(false);
+  const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
+  const isOpenCartPanel = useCartStore(state => state.isOpenCartPanel);
   // Función para manejar el scroll y determinar la dirección
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
@@ -58,7 +52,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
       boxShadow="md"
       p={4}
       position="sticky"
-      top={showNavbar ? 0 : {base: "-150px", lg:0}} // Desaparece al hacer scroll hacia abajo
+      top={showNavbar ? 0 : { base: "-150px", lg: 0 }} // Desaparece al hacer scroll hacia abajo
       transition="top 0.3s ease-in-out"
       zIndex={10}
     >
@@ -77,9 +71,8 @@ const NavigationBar: React.FC<TabNavProps> = ({
           leftIcon={<HamburgerIcon />}
           colorScheme="pink"
           variant="solid"
-          onClick={onOpen}
+          onClick={() => setIsOpenFilterPanel(true)}
           ml={4}
-          
         >
           Filters
         </Button>
@@ -91,15 +84,20 @@ const NavigationBar: React.FC<TabNavProps> = ({
           colorScheme="pink"
           fontSize="1.5rem"
           ml={4}
+          onClick={() => setIsOpenCartPanel(true)}
         />
 
 
       </Flex>
       <FilterPanel
-          onApplyFilters={(filters) => console.log(filters)}
-          isOpen={isOpen}
-          onClose={onClose}
-        />
+        isOpen={islopenFilterPanel}
+        onClose={() => setIsOpenFilterPanel(false)}
+
+      />
+      <CartPanel
+        isOpen={isOpenCartPanel}
+        onClose={() => setIsOpenCartPanel(false)}
+      />
     </Box>
   );
 };

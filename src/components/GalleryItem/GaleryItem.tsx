@@ -1,14 +1,16 @@
-import { Box, Image, Text, Badge, Stack, Button } from '@chakra-ui/react';
+import { Box, Image, Text, Badge, Stack, Button, Heading } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
+import { capitalizeFirstLetter } from '../../utils/functions';
 
 export interface GalleryItemProps {
   name: string;
   price: string;
-  availability: string;
+  availability: boolean;
   images: string[];
-  onClick?: () => void; // Cambiado a un array de imágenes
+  onClick?: () => void;
+  brand: string;
 }
 
 const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, images, onClick, ...props }) => {
@@ -32,7 +34,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, im
       borderRadius="lg"
       display="flex"
       flexDirection="column"
-      alignItems="center"
+      alignItems="start"
       transition="transform 0.3s" // Transición suave
       _hover={{ transform: { base: 'none', md: 'scale(1.05)' } }} // Efecto hover solo en pantallas medianas y grandes
       
@@ -69,23 +71,24 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, im
         </Button>
       </Box>
 
-      <Box p="6" className="text-center">
-        <Box className="font-bold text-lg mb-2" as="h4">
-          {name}
-        </Box>
+      <Box p="6" pb={2} className="text-left">
+        <Heading
+          fontSize={"md"}
+        >{capitalizeFirstLetter(name)}</Heading>
 
-        <Text fontSize="lg" color="gray.600" className="mb-2">
+        <Text fontSize="lg" color="gray.600">
+          {capitalizeFirstLetter(props?.brand)}
+        </Text>
+        <Text fontSize="lg" color="gray.600">
+         Articulo: {props?.brand}
+        </Text>
+        <Text fontSize="lg" color="pink.500">
           {price}
         </Text>
-
-        <Stack direction="row" align="center" justify="center">
-          <Badge
-            className={`py-1 px-3 rounded-full ${
-              availability === 'In Stock' ? 'bg-green-500' : availability === 'Limited Stock' ? 'bg-yellow-500' : 'bg-red-500'
-            } text-white`}
-          >
-            {availability}
-          </Badge>
+        <Stack direction="row" align="left" justify="left">
+          <Text
+            color={availability ? 'green.500' : 'red.500'}
+          >{availability ? 'Disponible' : 'No disponible'}</Text>
         </Stack>
       </Box>
     </Box>
