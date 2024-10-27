@@ -10,6 +10,7 @@ import { CreateNewResellerPage } from './pages/CreateNewReseller/CreateNewResell
 import GalleryPage from './pages/Galery/Galery.page';
 import ProductDetailPage from './pages/ProductDetail/ProductDetail.page';
 import ShoppingCart from './pages/ShoppingCart/ShoppingCart';
+import SalesList from './pages/SalesList/SalesList';
 
 /*************  ✨ Codeium Command ⭐  *************/
 /**
@@ -71,6 +72,11 @@ import ShoppingCart from './pages/ShoppingCart/ShoppingCart';
         <Route path={ROUTES.PRODUCT_DETAILS(':id')} element={
           <ProtectedRoute >
             <ProductDetailPage />
+          </ProtectedRoute>
+        } />
+        <Route path={ROUTES.SALES_LIST} element={
+          <ProtectedRoute >
+            <SalesList />
           </ProtectedRoute>
         } />
         {/* <Route path="/stock/add" element={<h1>Ingreso de Stock</h1>} />

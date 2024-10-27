@@ -1,11 +1,10 @@
-import React from 'react';
-import { Box, IconButton, VStack, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Flex, Text, useMediaQuery } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Flex, IconButton, Text, useMediaQuery, VStack } from '@chakra-ui/react';
+import React from 'react';
 import { FaBox, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { ROUTES } from '../../constants/Routes';
-import { SidebarItemProps } from './interfaces';
 import { SIDEBAR_ITEMS } from '../../constants/sidebar';
+import { SidebarItemProps } from './interfaces';
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -70,9 +69,9 @@ const SidebarContent: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
         />
         <SidebarItem
           icon={FaUsers}
-          label={SIDEBAR_ITEMS.Resellers.label}
+          label={SIDEBAR_ITEMS.Sales.label}
           isExpanded={isExpanded}
-          subItems={SIDEBAR_ITEMS.Resellers.subItems}
+          subItems={SIDEBAR_ITEMS.Sales.subItems}
         />
       </Accordion>
     </VStack>

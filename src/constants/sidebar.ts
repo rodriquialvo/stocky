@@ -18,5 +18,11 @@ export const SIDEBAR_ITEMS = {
             { label: 'Nuevo', route: ROUTES.NEW_RESELLER },
             { label: 'Métricas', route: ROUTES.RESSELLERS_METRICS },
         ]
+    },
+    Sales: {
+        label: 'Sales',
+        subItems: [
+            { label: 'Lista', route: ROUTES.SALES_LIST },
+        ]
     }
 }
