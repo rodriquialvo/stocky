@@ -3,52 +3,15 @@ import { Select } from "chakra-react-select";
 import { useEffect, useState } from "react";
 import QuantityPicker from "../../components/QuantityPicker/QuantityPicker";
 import NavigationBar from "../../components/TabNav/NavigationBar";
-import { formattedNumberToMoney } from "../../utils/functions";
+import { capitalizeFirstLetter, formattedNumberToMoney } from "../../utils/functions";
 import { useProductDetailController } from "./ProductDetail.controller";
 import { ProductDetailProps } from "./interfaces";
 
 const ProductDetail: React.FC<ProductDetailProps> = props => {
   const [isHovered, setIsHovered] = useState(false);
-  const [imageSelected, setImageSelected] = useState("");
 
   const { useController = useProductDetailController } = props;
   const controller = useController();
-
-  const [size, setSize] = useState("");
-  const [color, setColor] = useState("");
-  const [quantity, setQuantity] = useState(1);
-
-  const handleSelectColor = (event) => {
-    setColor(event.value);
-  };
-
-  const handleSelectSize = (event) => {
-    setSize(event.value);
-  };
-
-  const onIncrease = () => {
-    setQuantity(quantity + 1);
-  };
-
-  const onDecrease = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-
-  useEffect(() => {
-    if (controller.productDetail?.pictures.length > 0) {
-      setImageSelected(controller.productDetail.pictures[0].url)
-    }
-  }, [controller.productDetail])
-
-  // todo: cambiar esto que esta horrible
-  // set sizes and colors based on stocks
-  const sizes = controller.productDetail?.stocks?.map(stock => stock.variant.size)
-    .filter((value, index, self) => self.indexOf(value) === index).map(size => ({ label: size, value: size }));
-
-  const colors = controller.productDetail?.stocks?.map(stock => stock.variant.color)
-    .filter((value, index, self) => self.indexOf(value) === index).map(color => ({ label: controller.mapColors[color], value: color }));
 
   return (
     <Box
@@ -64,6 +27,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
       <NavigationBar
       // onClickFilterButton={onOpen}
       />
+
       <Box
         display={"flex"}
         flexDirection={{
@@ -117,7 +81,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 controller.productDetail?.pictures.map(image => {
                   return (
                     <Box
-                      borderWidth={imageSelected === image.url ? 2 : 0}
+                      borderWidth={controller.imageSelected === image.url ? 2 : 0}
                       borderColor={"black"}
                       borderRadius={7}
                     >
@@ -128,7 +92,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                         className="object-cover"
                         objectFit='cover'
                         px={0}
-                        onClick={() => setImageSelected(image.url)}
+                        onClick={() => controller.setImageSelected(image.url)}
                         borderRadius={5}
                         alt={image.alt_text}
                       />
@@ -149,7 +113,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
               <Image
                 height={"100%"}
                 width={"auto"}
-                src={imageSelected}
+                src={controller.imageSelected}
                 objectFit='cover'
                 px={0}
                 transform={isHovered ? 'scale(1.1)' : 'scale(1)'} // Aumentar tamaño cuando está en hover
@@ -206,7 +170,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             <Text
               color={"GrayText"}
             >{controller.productDetail?.attributes.brand} - Articulo {controller.productDetail?.code}</Text>
-            <Heading>{controller.productDetail?.name}</Heading >
+            <Heading>{capitalizeFirstLetter(controller.productDetail?.name)}</Heading >
             <Heading>{formattedNumberToMoney(controller.productDetail?.prices.retail)}</Heading>
             <Divider
               my={5}
@@ -255,28 +219,31 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   <FormLabel htmlFor="brand">Color</FormLabel>
                   <Select
                     isSearchable={false}
-                    options={colors}
+                    options={controller.colors}
                     placeholder="Selecciona un color"
                     size={{
                       base: "sm",
                       lg: "md"
                     }}
-                    onChange={handleSelectColor}
+                    onChange={controller.handleSelectColor}
+                    isDisabled={!controller.productDetail?.hasStock}
                   />
                 </FormControl>
                 <FormControl
-                // width={"50%"}
                 >
                   <FormLabel htmlFor="brand">Talle</FormLabel>
                   <Select
                     isSearchable={false}
-                    options={sizes}
+                    options={controller.sizes}
                     placeholder="Selecciona un talle"
                     size={{
                       base: "sm",
                       lg: "md"
                     }}
-                    onChange={handleSelectSize}
+                    onChange={controller.handleSelectSize}
+                    isDisabled={!controller.productDetail?.hasStock}
+                    value={controller.sizes.find((size) => size.value === controller.size) || null}
+
                   />
                 </FormControl>
               </Box>
@@ -288,15 +255,17 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 }}
               >
                 <QuantityPicker
-                  stock={10}
-                  quantity={quantity}
-                  onIncrease={onIncrease}
-                  onDecrease={onDecrease}
+                  stock={100}
+                  quantity={controller.quantity}
+                  onIncrease={controller.onIncrease}
+                  onDecrease={controller.onDecrease}
+                  isDisabled={controller.isDisabledButton}
                 />
                 <Button
+                  isDisabled={controller.isDisabledButton}
                   w={"full"}
                   colorScheme={'pink'}
-                  onClick={() => controller.onAddToCartPressed({ size, color, quantity })}
+                  onClick={() => controller.onAddToCartPressed({ size: controller.size, color: controller.color, quantity: controller.quantity })}
                 >Agregar al carrito</Button>
               </Flex>
             </Flex>

@@ -60,7 +60,7 @@ export const ProductAction = () => {
   const getProductDetail = async (id: string) => {
     setStatus(getStartStatus());
     try {
-      const response = await productService.getProductDetail(id);
+      const response = await productService.getProductDetail(id,{ by: "variant"} );
       if (!response.product) {
         setStatus(getErrorStatus('No response'));
         return;
@@ -81,7 +81,7 @@ export const ProductAction = () => {
           const fiveMinutesInMs = 5 * 60 * 1000;
           const now = new Date();
           if ((now as any) - (productsWhitStocks[id].lastRequest as any) > fiveMinutesInMs) {
-            const response = await productService.getProductDetailWithStocks(id);
+            const response = await productService.getProductDetail(id);
             if (!response.product) {
               setStatus(getErrorStatus('No response'));
               return;
@@ -90,7 +90,7 @@ export const ProductAction = () => {
           }
         }
       } else {
-        const response = await productService.getProductDetailWithStocks(id);
+        const response = await productService.getProductDetail(id);
         if (!response.product) {
           setStatus(getErrorStatus('No response'));
           return;

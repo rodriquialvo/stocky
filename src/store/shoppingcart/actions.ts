@@ -39,14 +39,12 @@ export const CartAction = () => {
   const addToCart = async (item: AddToCartRequestDto) => {
     setStatus(getStartStatus());
     try {
-      console.log('cart', cart);
       if (cart._id) {
         item.cartId = cart._id;
       } else {
         const respCart = await cartService.postCreateNewCart({});
         item.cartId = respCart.cart._id;
       }
-      console.log('item', item);
       const response = await cartService.postAddToCart(item);
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));
@@ -98,10 +96,11 @@ export const CartAction = () => {
         setStatus(getErrorStatus('No response'));
         return;
       }
-      console.log(response.cart);
+      console.log("response.cart", response.cart);
       setStatus(getSuccessStatus());
       setCart(response.cart);
     } catch (e) {
+      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };

@@ -7,6 +7,7 @@ type State = {
   status: Status;
   addToCartStatus: Status;
   cart: Cart;
+  isOpenCartPanel: boolean;
 };
 
 const initialState: State = {
@@ -15,12 +16,14 @@ const initialState: State = {
   cart: {
     items: []
   } as Cart,
+  isOpenCartPanel: false
 };
 
 type Action = {
   setStatus: (status: Status) => void;
   setCart: (cart: Cart) => void;
   setAddToCartStatus: (status: Status) => void;
+  setIsOpenCartPanel: (isOpenCartPanel: boolean) => void;
 };
 
 export const useCartStore = create<State & Action>()(
@@ -29,10 +32,10 @@ export const useCartStore = create<State & Action>()(
       ...initialState,
       setStatus: (status: Status) => set({ status }),
       setCart: (cart: Cart) => {
-        console.log('cartZustand', cart);
         set({ cart })
       },
       setAddToCartStatus: (addToCartStatus: Status) => set({ addToCartStatus }),
+      setIsOpenCartPanel:(bool: boolean) => set({isOpenCartPanel: bool})
     }),
     {
       name: 'cart-store',

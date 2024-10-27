@@ -4,10 +4,8 @@ import { useDisclosure, useToast } from '@chakra-ui/react';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { ImageListType } from 'react-images-uploading';
-import { ImageAction } from '../../store/image/actions';
 import { useLocation } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
-import { useImageStore } from '../../store/image/slice';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */

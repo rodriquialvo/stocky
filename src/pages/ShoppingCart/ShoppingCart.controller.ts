@@ -42,7 +42,6 @@ export const useCartController =
     };
 
     useEffect(() => {
-      console.log('user logged', userLogged)
       if (userLogged?.id) {
         getCart(userLogged.id);
       }

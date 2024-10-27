@@ -29,11 +29,12 @@ export const useGaleryController =
     /* Private Methods */
     const mapProductsViewModel = (product: Product): GalleryItemProps => {
       return {
-        availability: "Si",
+        availability: product.hasStock,
         images: product.pictures.map(picture => picture.url),
         name: product.name,
         price: formattedNumberToMoney(product?.prices?.retail),
         onClick: () => onPressProduct(product),
+        brand: product.attributes.brand
       }
     }
 
