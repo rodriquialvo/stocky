@@ -36,8 +36,8 @@ const ShoppingCartPage: React.FC = () => {
               <Text fontWeight="bold">{item.product.name}</Text>
               <Text>Color: {item.variant.color}</Text>
               <Text>Talle: {item.variant.size}</Text>
-              <Text>PU ${item.product.prices.retail}</Text>
-              <Text>PT ${item.product.prices.retail * controller.variantsQuantity[item.variant._id]}</Text>
+              <Text>PU ${item.product.prices.reseller}</Text>
+              <Text>PT ${item.product.prices.reseller * controller.variantsQuantity[item.variant._id]}</Text>
               <Flex>
                 <Button
                   onClick={() => controller.handleQuantityChange(item.variant._id, controller.variantsQuantity[item.variant._id] - 1)}

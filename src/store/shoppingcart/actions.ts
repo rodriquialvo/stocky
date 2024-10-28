@@ -12,6 +12,7 @@ export const CartAction = () => {
   const cartService = useAPICartService();
   const setStatus = useCartStore(state => state.setStatus);
   const setCart = useCartStore(state => state.setCart);
+  const clearCart = useCartStore(state => state.clearCart);
   const setAddToCartStatus = useCartStore(state => state.setAddToCartStatus);
   const cart = useCartStore(state => state.cart);
 
@@ -94,9 +95,9 @@ export const CartAction = () => {
       const response = await cartService.getCart(userId);
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));
+        clearCart();
         return;
       }
-      console.log("response.cart", response.cart);
       setStatus(getSuccessStatus());
       setCart(response.cart);
     } catch (e) {

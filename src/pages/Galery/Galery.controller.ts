@@ -32,7 +32,7 @@ export const useGaleryController =
         availability: product.hasStock,
         images: product.pictures.map(picture => picture.url),
         name: product.name,
-        price: formattedNumberToMoney(product?.prices?.retail),
+        price: formattedNumberToMoney(product?.prices?.reseller),
         onClick: () => onPressProduct(product),
         brand: product.attributes.brand
       }

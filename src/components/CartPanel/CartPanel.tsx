@@ -111,7 +111,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                             <Heading color={"pink.400"} textAlign={"left"} fontSize="md">{item.product.name}</Heading>
                             <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {item.variant.size}</Text>
                             <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Color: {capitalizeFirstLetter(item.variant.color)}</Text>
-                            <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Precio x unidad: {formattedNumberToMoney(item.product.prices.retail)}</Text>
+                            <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Precio x unidad: {formattedNumberToMoney(item.product.prices.reseller)}</Text>
                             <QuantityPicker
                               stock={10}
                               quantity={variantsQuantity[item.variant._id]}
@@ -127,7 +127,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                           alignItems={"center"}
                         >
                           <Heading fontSize={"md"} >
-                            {formattedNumberToMoney(item.product.prices.retail * variantsQuantity[item.variant._id])}
+                            {formattedNumberToMoney(item.product.prices.reseller * variantsQuantity[item.variant._id])}
                           </Heading>
                           <IconButton
                             aria-label='Delete'

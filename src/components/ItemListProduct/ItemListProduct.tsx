@@ -62,7 +62,7 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
               color={"pink.600"}
               fontSize="md"
             >Precio Minorista:</Heading>
-            <Text fontSize="md" color="gray.600" as='span' >{formattedNumberToMoney(productsWhitStocks[props.id]?.prices.retail)}</Text>
+            <Text fontSize="md" color="gray.600" as='span' >{formattedNumberToMoney(productsWhitStocks[props.id]?.prices.reseller)}</Text>
           </Box>
           <Box
             gap={4}
