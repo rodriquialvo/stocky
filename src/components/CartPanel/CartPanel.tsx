@@ -1,13 +1,12 @@
-import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Heading, Icon, IconButton, Image, Text } from '@chakra-ui/react';
-import React, { FC, useEffect, useState } from 'react';
-import styles from './CartPanel.module.css';
-import { CartPanelProps } from './interfaces';
-import { useCartStore } from '../../store/shoppingcart/slice';
-import QuantityPicker from '../QuantityPicker/QuantityPicker';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
+import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Heading, IconButton, Image, Text } from '@chakra-ui/react';
+import { FC, useEffect, useState } from 'react';
 import { useSessionStore } from '../../store/session/slice';
 import { CartAction } from '../../store/shoppingcart/actions';
+import { useCartStore } from '../../store/shoppingcart/slice';
+import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
+import QuantityPicker from '../QuantityPicker/QuantityPicker';
+import { CartPanelProps } from './interfaces';
 
 //REMOVE
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,6 +14,9 @@ const CartPanel: FC<CartPanelProps> = props => {
 
   const cart = useCartStore(state => state.cart);
   const userLogged = useSessionStore(state => state.userLogged);
+  const basicToken = useSessionStore(state => state.basicToken);
+
+  console.log('basic', basicToken);
 
   const [variantsQuantity, setVariantsQuantity] = useState({});
 

@@ -1,14 +1,13 @@
-import { useNavigate, useParams } from 'react-router-dom';
-import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ROUTES } from '../../constants/Routes';
+import { getStartStatus } from '../../store/helper/statusStateFactory';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { CartAction } from '../../store/shoppingcart/actions';
 import { useCartStore } from '../../store/shoppingcart/slice';
-import { ROUTES } from '../../constants/Routes';
-import { getStartStatus } from '../../store/helper/statusStateFactory';
-import { useToast } from '@chakra-ui/react';
-import toast from 'react-hot-toast';
+import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
@@ -56,7 +55,7 @@ export const useProductDetailController =
 
     useEffect(() => {
       setSizes(
-        productDetail.stocks?.filter(stock => stock.variant.color === color).map(stock => ({ label: stock.variant.size, value: stock.variant.size }))
+        productDetail?.stocks?.filter(stock => stock.variant.color === color).map(stock => ({ label: stock.variant.size, value: stock.variant.size }))
       );
       
       setSize("");

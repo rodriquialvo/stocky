@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Stack, Text } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import QuantityPicker from "../../components/QuantityPicker/QuantityPicker";
 import NavigationBar from "../../components/TabNav/NavigationBar";
 import { capitalizeFirstLetter, formattedNumberToMoney } from "../../utils/functions";
@@ -242,8 +242,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                     }}
                     onChange={controller.handleSelectSize}
                     isDisabled={!controller.productDetail?.hasStock}
-                    value={controller.sizes.find((size) => size.value === controller.size) || null}
-
+                    value={controller.sizes?.find((size) => size.value === controller.size) || null}
                   />
                 </FormControl>
               </Box>

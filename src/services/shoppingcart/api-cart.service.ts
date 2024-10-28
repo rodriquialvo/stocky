@@ -1,13 +1,15 @@
+import { useSessionStore } from '../../store/session/slice';
 import Http from '../http';
 import { CartService } from './cart.service';
 import { AddToCartRequestDto, CartReponseDto, CreateNewCartRequestDto, RemoveFromCartRequestDto, UpdateQuantityRequestDto } from './dtos/generic';
 
 export class ApiCartService implements CartService {
   private http: Http;
+  private basicToken = useSessionStore(state => state.basicToken);
 
   // todo encode token dinamically
   constructor() {
-    this.http = new Http('YWd1c3RpbkBnbWFpbC5jb206M3hhMGtyd2ZmbXYxZmtqc3dvcHdjZWwz', 'carts');
+    this.http = new Http(this.basicToken, 'carts');
   }
 
   postCreateNewCart = (body: CreateNewCartRequestDto) => this.http.post<CartReponseDto>('', body);

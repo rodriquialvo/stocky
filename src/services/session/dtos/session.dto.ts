@@ -6,15 +6,39 @@ export interface SessionResponse {
   message: string;
 }
 
+// export interface User {
+//   id: string,
+//   userId: string;
+//   userStateId: number;
+//   phoneNumber: string;
+//   email: string;
+//   identificationNumber: string;
+//   identificationTypeId: number;
+//   name: string;
+//   lastName: string;
+//   profileImageURL?: string;
+// }
+
+export interface ResponseLoginDto {
+  accessToken: string;
+  basicToken: string;
+  user: User;
+}
 export interface User {
-  id: string,
-  userId: string;
-  userStateId: number;
-  phoneNumber: string;
-  email: string;
-  identificationNumber: string;
-  identificationTypeId: number;
+  id: string;
   name: string;
-  lastName: string;
-  profileImageURL?: string;
+  lastname: string;
+  email: string;
+  roles: Role[];
+}
+export interface Role {
+  name: string;
+  description: string;
+  permissions: Permissions;
+}
+export interface Permissions {
+  allowedFields: AllowedFields;
+}
+export interface AllowedFields {
+  products: string[];
 }

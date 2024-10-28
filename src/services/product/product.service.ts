@@ -1,6 +1,6 @@
 import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
 import { ApiProductService } from './api-product.service';
-import { GetProductDetailResponse, GetProductDetailWhitStocksResponse } from './dtos/getProductDetail';
+import { GetProductDetailResponse } from './dtos/getProductDetail';
 import { GetProductsResponse } from './dtos/getProducts';
 import { PostProductResponse } from './dtos/postCreateNewProduct';
 

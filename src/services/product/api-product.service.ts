@@ -11,7 +11,7 @@ export class ApiProductService implements ProductService {
     this.http = new Http('', 'products');
   }
 
-  getProducts = (params?) => this.http.get<GetProductsResponse>('', params);
+  getProducts = (params?) => this.http.get<GetProductsResponse>('filter', params);
 
   postCreateNewProduct = (body: ProductFormData) => this.http.post<PostProductResponse>('', body);
 
