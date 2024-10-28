@@ -32,6 +32,7 @@ export interface User {
   roles: Role[];
 }
 export interface Role {
+  id: string,
   name: string;
   description: string;
   permissions: Permissions;

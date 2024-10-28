@@ -1,18 +1,73 @@
-import React, { FC } from 'react';
+import { Box, Button, FormControl, FormLabel, Heading, Input, Select, useBreakpointValue, VStack, useToast } from '@chakra-ui/react';
+import { FC, useEffect, useState } from 'react';
+import { RoleAction } from '../../store/roles/actions';
+import { useRoleStore } from '../../store/roles/slice';
+import { UserAction } from '../../store/users/actions';
 import { useCreateNewResellerController } from './CreateNewReseller.controller';
-import styles from './CreateNewReseller.module.css'; // Importar el archivo CSS module
 import { CreateNewResellerProps } from './interfaces';
-import { Box, Button, FormControl, FormLabel, Heading, Input, Textarea, useBreakpointValue, VStack } from '@chakra-ui/react';
-import { Select } from 'chakra-react-select';
-import Modal from '../../components/Modal/Modal';
 
 export const CreateNewResellerPage: FC<
   CreateNewResellerProps
 > = props => {
+  const toast = useToast();
+
+  const { getRoles } = RoleAction();
+  const { createUser } = UserAction();
+  const roles = useRoleStore(state => state.roles);
+
   const { useController = useCreateNewResellerController } = props;
   const controller = useController();
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
+
+  useEffect(() => {
+    // TODO: limitar estos gets al ingresar a las paginas, mucho consumo
+    getRoles();
+  }, []);
+
+  const [formValues, setFormValues] = useState({
+    name: '',
+    lastname: '',
+    email: '',
+    phone: '',
+    roles: [],
+    address: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value, type, checked }: any = e.target;
+
+    let newValue = value;
+    if (type === 'select-one') {
+      newValue = [value];
+    }
+
+    setFormValues({
+      ...formValues,
+      [name]: type === 'checkbox' ? checked : newValue,
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const { name, lastname, email, phone, roles } = formValues;
+    if (!name || !lastname || !email || !phone || roles.length === 0) {
+      toast({
+        title: "Error",
+        description: "Por favor, completa todos los campos requeridos.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top-right"
+      });
+      return;
+    }
+    console.log('Datos del formulario:', formValues);
+    createUser(formValues);
+    // Aquí puedes añadir lógica para enviar los datos a la API o manejar los datos
+  };
+
+
   // Render
   return (
     <Box
@@ -23,114 +78,70 @@ export const CreateNewResellerPage: FC<
       bg="gray.100"
       borderRadius="lg"
       boxShadow="lg"
+      height="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
       as="form"
-    // onSubmit={controller.handleSubmit}
+      onSubmit={(e) => {
+        e.preventDefault();
+        // manejar el envío del formulario aquí
+      }}
     >
-      {/* Heading */}
-      <Heading fontSize={headingSize} fontWeight="bold" mb={6} textAlign="center">
-        Nuevo Vendedor/a
-      </Heading>
+      <VStack spacing={4} width="100%">
+        <Heading fontSize={headingSize} fontWeight="bold" mb={6} textAlign="center">
+          Nuevo Revendedor/a
+        </Heading>
 
-      <VStack spacing={4}>
         <FormControl isRequired>
           <FormLabel htmlFor="name">Nombre</FormLabel>
-          <Input
-            id="name"
-            name="name"
-            // value={controller.formData.name}
-            // onChange={controller.handleChange}
-            placeholder="Introduce el nombre"
-          />
+          <Input id="name" name="name" placeholder="Introduce el nombre" onChange={handleChange} value={formValues.name} />
         </FormControl>
+
         <FormControl isRequired>
           <FormLabel htmlFor="lastname">Apellido</FormLabel>
-          <Input
-            id="lastname"
-            name="lastname"
-            // value={controller.formData.name}
-            // onChange={controller.handleChange}
-            placeholder="Introduce el apellido"
-          />
+          <Input id="lastname" name="lastname" placeholder="Introduce el apellido" onChange={handleChange} value={formValues.lastname} />
         </FormControl>
-        <FormControl mb={4} isRequired>
-          <FormLabel htmlFor="phoneNumber">Número de Teléfono</FormLabel>
+
+        <FormControl isRequired>
+          <FormLabel htmlFor="email">Correo electrónico</FormLabel>
+          <Input type="email" id="email" name="email" placeholder="Introduce el correo electrónico" onChange={handleChange} value={formValues.email} />
+        </FormControl>
+
+        <FormControl isRequired>
+          <FormLabel htmlFor="phone">Número de Teléfono</FormLabel>
           <Input
             type="tel"
-            id="phoneNumber"
-            name="phoneNumber"
-            // value={controller.formData.phoneNumber}
-            // onChange={controller.handleChange}
-            placeholder="Introduce tu número de teléfono"
-            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" // Patrón para formato 123-456-7890
+            id="phone"
+            name="phone"
+            placeholder="Introduce el número de teléfono"
+            // pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
             maxLength={12}
-          />
-        </FormControl>
-        <FormControl mb={4} isRequired>
-          <FormLabel htmlFor="phoneNumber">Correo electronico</FormLabel>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            // value={controller.formData.phoneNumber}
-            // onChange={controller.handleChange}
-            placeholder="Introduce la direccion de correo electronico"
-            maxLength={12}
-          />
-        </FormControl>
-        <FormControl mb={4} isRequired>
-          <FormLabel htmlFor="birthDate">Fecha de Nacimiento</FormLabel>
-          <Input
-            type="date"
-            id="birthDate"
-            name="birthDate"
-            // value={controller.formData.birthDate}
-            // onChange={controller.handleChange}
-            placeholder="Selecciona tu fecha de nacimiento"
-            max={new Date().toISOString().split("T")[0]} // Evita seleccionar una fecha futura
-          />
-        </FormControl>
-        <FormControl mb={4} isRequired>
-          <FormLabel htmlFor="address">Domicilio</FormLabel>
-          <Input
-            id="address"
-            name="address"
-            placeholder="Introduce tu dirección"
-          // value={controller.formData.address} // Si estás usando controladores
-          // onChange={controller.handleChange}  // Si estás manejando eventos
+            onChange={handleChange}
+            value={formValues.phone}
           />
         </FormControl>
 
+        <FormControl isRequired>
+          <FormLabel htmlFor="address">Dirección</FormLabel>
+          <Input id="address" name="address" placeholder="Introduce el apellido" onChange={handleChange} value={formValues.address} />
+        </FormControl>
 
-        {/* Submit Button */}
-        <Button type="submit" colorScheme="blue" width="full" mt={4}>
-          Añadir Producto
+        <FormControl isRequired>
+          <FormLabel htmlFor="roles">Rol</FormLabel>
+          <Select id="roles" name="roles" placeholder="Selecciona un rol" onChange={handleChange} value={formValues.roles}>
+            {roles.map(role => (
+              <option key={role.name} value={role.id}>
+                {role.name}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+
+        <Button type="submit" colorScheme="blue" width="full" mt={4} onClick={handleSubmit}>
+          Añadir Revendedor/a
         </Button>
       </VStack>
-
-      {/* Modals */}
-      {/* <Modal title="Nueva Marca" onSubmit={controller.addBrand} isOpen={controller.isBrandOpen} onClose={controller.onBrandClose}>
-        <Input
-          placeholder="Nueva Marca"
-          value={controller.newBrand}
-          onChange={(e) => controller.setNewBrand(e.target.value)}
-        />
-      </Modal>
-
-      <Modal title="Añadir Talle" onSubmit={controller.addSize} isOpen={controller.isSizeOpen} onClose={controller.onSizeClose}>
-        <Input
-          placeholder="Nuevo Talle"
-          value={controller.newSize}
-          onChange={(e) => controller.setNewSize(e.target.value)}
-        />
-      </Modal>
-
-      <Modal title="Añadir Color" onSubmit={controller.addColor} isOpen={controller.isColorOpen} onClose={controller.onColorClose}>
-        <Input
-          placeholder="Nuevo Color"
-          value={controller.newColor}
-          onChange={(e) => controller.setNewColor(e.target.value)}
-        />
-      </Modal> */}
     </Box>
   );
 };
