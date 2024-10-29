@@ -1,13 +1,13 @@
-import { useProductStore } from './slice';
+import { Toast } from '@chakra-ui/react';
+import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
+import { useAPIProductService } from '../../services/product/product.service';
 import {
   getErrorStatus,
   getStartStatus,
   getSuccessStatus,
 } from '../helper/statusStateFactory';
-import { useAPIProductService } from '../../services/product/product.service';
-import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
-import { Toast } from '@chakra-ui/react';
 import { ImageAction } from '../image/actions';
+import { useProductStore } from './slice';
 
 export const ProductAction = () => {
   const productService = useAPIProductService();
@@ -15,6 +15,7 @@ export const ProductAction = () => {
   const setProducts = useProductStore(state => state.setProducts);
   const setProduct = useProductStore(state => state.setProduct);
   const setProductsWhitStocks = useProductStore(state => state.setProductsWhitStocks);
+  const setProductsByCodeOrName = useProductStore(state => state.setProductsByCodeOrName);
   const productsWhitStocks = useProductStore(state => state.productsWhitStocks);
   const { createNewImageUrl } = ImageAction()
   const getProducts = async () => {
@@ -102,10 +103,28 @@ export const ProductAction = () => {
     }
   }
 
+  const getProductsByCodeOrName = async (q: string) => {
+    setStatus(getStartStatus());
+    try {
+      console.log('q', q);
+      const response = await productService.getProductsByCodeOrName(q);
+      if (!response.products) {
+        setStatus(getErrorStatus('No response'));
+        return;
+      }
+      setStatus(getSuccessStatus());
+      setProductsByCodeOrName(response.products);
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  };
+
+
   return {
     getProducts,
     createNewProduct,
     getProductDetail,
-    getProductDetailWhitStockInDropDown
+    getProductDetailWhitStockInDropDown,
+    getProductsByCodeOrName,
   };
 };

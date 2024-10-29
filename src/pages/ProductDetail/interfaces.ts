@@ -6,14 +6,9 @@ export interface ParamsOnAddToCartPressed {
   quantity: number
 }
 
-interface MapColors {
-  [key: string]: string
-}
-
 export interface ProductDetailController {
   /* State */
   productDetail: ProductDetail | null
-  mapColors: MapColors
   isDisabledButton: boolean,
   sizes: {label: string, value: string}[];
   colors: {label: string, value: string}[];

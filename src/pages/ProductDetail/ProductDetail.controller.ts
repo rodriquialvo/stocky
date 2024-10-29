@@ -8,25 +8,12 @@ import { useProductStore } from '../../store/product/slice';
 import { CartAction } from '../../store/shoppingcart/actions';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
+import { mapColors } from '../../constants/maps';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
     ProductDetailController => {
     /* State */
-
-    const mapColors = {
-      'orange': 'Naranja',
-      'red': 'Rojo',
-      'blue': 'Azul',
-      'yellow': 'Amarillo',
-      'green': 'Verde',
-      'black': 'Negro',
-      'white': 'Blanco',
-      'brown': 'Marrón',
-      'pink': 'Rosado',
-      'purple': 'Morado',
-      'gray': 'Gris',
-    };
 
     const { id } = useParams<{ id: string, }>();
 
@@ -129,7 +116,6 @@ export const useProductDetailController =
     return {
       productDetail,
       onAddToCartPressed,
-      mapColors,
       isDisabledButton,
       sizes,
       colors,

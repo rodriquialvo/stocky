@@ -10,5 +10,6 @@ export const  ROUTES = {
     NEW_PRODUCT: '/product/new',
     GALLERY: '/gallery',
     SALES_LIST: '/sales/list',
+    STOCK_ENTRY: '/stock/entry',
     PRODUCT_DETAILS: (id: string) =>  `/product/${id}`
 }

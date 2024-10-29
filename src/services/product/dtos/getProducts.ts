@@ -1,5 +1,6 @@
 export interface GetProductsResponse {
     products: Product[];
+    total: number;
 }
 
 export interface Product {

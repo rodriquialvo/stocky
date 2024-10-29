@@ -7,7 +7,8 @@ import { PostProductResponse } from './dtos/postCreateNewProduct';
 export interface ProductService {
   getProducts: () => Promise<GetProductsResponse>;
   postCreateNewProduct: (body: ProductFormData) => Promise<PostProductResponse>
-  getProductDetail: (id: string, param?: { by?: string }) => Promise<GetProductDetailResponse>
+  getProductDetail: (id: string, param?: { by?: string }) => Promise<GetProductDetailResponse>,
+  getProductsByCodeOrName: (q: string) => Promise<GetProductsResponse>;
 }
 
 export const useAPIProductService = (): ProductService => {

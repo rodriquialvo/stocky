@@ -8,7 +8,8 @@ export const SIDEBAR_ITEMS = {
             { label: 'Lista', route: ROUTES.STOCK_LIST },
             { label: 'Nuevo producto', route: ROUTES.NEW_PRODUCT },
             { label: 'Ingresar Stock', route: ROUTES.ADD_STOCK },
-            { label: 'Galeria', route: ROUTES.GALLERY }
+            { label: 'Galeria', route: ROUTES.GALLERY },
+            { label: 'Ingreso', route: ROUTES.STOCK_ENTRY }
         ]
     },
     Resellers: {
