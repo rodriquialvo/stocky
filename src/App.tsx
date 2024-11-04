@@ -13,6 +13,7 @@ import ShoppingCart from './pages/ShoppingCart/ShoppingCart';
 import SalesList from './pages/SalesList/SalesList';
 import ResellerList from './pages/ResellersList/ResellersList';
 import StockEntry from './pages/StockEntry/StockEntry';
+import SalesWeek from './pages/SalesWeek/SalesWeek.page';
 
 /*************  ✨ Codeium Command ⭐  *************/
 /**
@@ -89,6 +90,11 @@ import StockEntry from './pages/StockEntry/StockEntry';
         <Route path={ROUTES.SALES_LIST} element={
           <ProtectedRoute >
             <SalesList />
+          </ProtectedRoute>
+        } />
+        <Route path={ROUTES.SALES_WEEK} element={
+          <ProtectedRoute >
+            <SalesWeek />
           </ProtectedRoute>
         } />
         {/* <Route path="/stock/add" element={<h1>Ingreso de Stock</h1>} />

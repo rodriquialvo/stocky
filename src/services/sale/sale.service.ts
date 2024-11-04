@@ -5,6 +5,9 @@ export interface SaleService {
   postSale: (body: CreateSaleRequestDto) => Promise<SalesReponseDto>,
   updateStatusSale: (saleId: string, item: UpdateStatusRequestDto) => Promise<SaleReponseDto>,
   getSales: (filter: GetSalesFilter) => Promise<SalesReponseDto>,
+  findSellersWithSalesInCurrentWeek: () => Promise<any>,
+  findProductsInSalesByUser: (user) => Promise<any>,
+  findGroupedProductsInCurrentWeek: () => Promise<any>
 }
 
 export const useAPISaleService = (): SaleService => {
