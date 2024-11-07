@@ -101,7 +101,6 @@ export default function StockEntry() {
     if (!isRowComplete(stockEntries.length - 1)) {
       handleRemoveEntry(stockEntries.length - 1);
     }
-    console.log('Enviando registros de stock:', stockEntries);
     const stockEntriesToPost = stockEntries.map(entry => ({
       product: entry.product.id,
       variant: {

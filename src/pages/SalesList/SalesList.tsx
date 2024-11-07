@@ -29,7 +29,6 @@ const SalesList = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedNewStatus, setSelectedNewStatus] = useState(null);
     const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
-    console.log(sales);
 
     useEffect(() => {
         getSales({
@@ -39,7 +38,6 @@ const SalesList = () => {
     }, [currentPage]);
 
     const totalPages = Math.ceil(totalSales / salesPerPage);
-    console.log(totalPages)
 
     const nextPage = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);

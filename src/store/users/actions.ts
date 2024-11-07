@@ -23,7 +23,6 @@ export const UserAction = () => {
       setStatus(getSuccessStatus());
       setResellersList(response);
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -38,7 +37,6 @@ export const UserAction = () => {
       }
       setStatus(getSuccessStatus());
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };

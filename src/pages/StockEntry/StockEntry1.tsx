@@ -78,14 +78,13 @@ export default function StockEntry() {
 
   // set key id product and value the entire product
   const findProductById = (id: string) => {
-    console.log(id, productsByCodeOrName)
-    const product = productsByCodeOrName.find(product => product.id === id);
+    const product = productsByCodeOrName.find(product => product?.id === id);
     setSelectedProduct(product);
   }
 
   const onSubmit = () => {
     const formValues: PostStockDto = {
-      product: selectedProduct.id,
+      product: selectedProduct?.id,
       variant: {
         color: selectedColor,
         size: selectedSize,
@@ -94,7 +93,6 @@ export default function StockEntry() {
       quantity: Number(quantity),
     };
 
-    console.log(formValues);
     postStock(formValues);
   }
 
@@ -151,7 +149,7 @@ export default function StockEntry() {
                       cursor="pointer"
                       _hover={{ bg: 'teal.100' }}
                       onClick={() => {
-                        findProductById(product.id);
+                        findProductById(product?.id);
                         setSearchTerm(`${product.name} (${product.code})`);
                         setShowDropdown(false);
                       }}

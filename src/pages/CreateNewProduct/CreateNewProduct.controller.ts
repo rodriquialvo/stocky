@@ -1,97 +1,168 @@
 import { useEffect, useState } from 'react';
-import {CreateNewProductController, ProductFormData} from './interfaces';
+import { CreateNewProductController, ProductFormData } from './interfaces';
 import { useDisclosure, useToast } from '@chakra-ui/react';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { ImageListType } from 'react-images-uploading';
 import { useLocation } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
+import { CategoryAction } from '../../store/category/actions';
+import { useCategorytore } from '../../store/category/slice';
+import { Category } from '../../services/categories/dtos/getCategories';
+import { ProductAtributesAction } from '../../store/product-atributes/actions';
+import { mapColors } from '../../constants/maps';
+import { useProductAtributesStore } from '../../store/product-atributes/slice';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
-  CreateNewProductController => {
+    CreateNewProductController => {
 
     const [images, setImages] = useState<ImageListType>([]);
-    const {createNewProduct} = ProductAction()
+    const { createNewProduct } = ProductAction()
     const status = useProductStore(state => state.status)
     const location = useLocation();
     const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
-
-    useEffect(() => {
-      !!isCurrentPage && setImages([])
-    },[isCurrentPage])
-
-
+    const { getCategories } = CategoryAction();
+    const categories = useCategorytore(state => state.categories);
     const [formData, setFormData] = useState<ProductFormData>({
-        name: "rodri",
-        code: "vedetina",
-        description: "Vedetina",
-        categories: [
-          "670604ef220d19482c921bd0"
-        ],
-        attributes: {
-          brand: "Adidas"
-        },
-        pictures: [],
-        prices: {
-          retail: 3500,
-          reseller: 2700
-        }
+      name: "",
+      code: "",
+      description: "",
+      categories: [
+        ""
+      ],
+      attributes: {
+        brand: ""
+      },
+      pictures: [],
+      prices: {
+        retail: 0,
+        reseller: 0
+      },
+      colors: [],
+      sizes: []
     });
 
-    const [brands, setBrands] = useState([
-      { label: 'Nike', value: 'Nike' },
-      { label: 'Adidas', value: 'Adidas' },
-      { label: 'Puma', value: 'Puma' },
-    ]);
-    const [newBrand, setNewBrand] = useState('');
-  
-    const [sizes, setSizes] = useState([
-      { label: 'S', value: 'S' },
-      { label: 'M', value: 'M' },
-      { label: 'L', value: 'L' },
-      { label: 'XL', value: 'XL' },
-    ]);
-    const [newSize, setNewSize] = useState('');
-  
-    const [colors, setColors] = useState([
-      { label: 'Red', value: 'Red' },
-      { label: 'Blue', value: 'Blue' },
-      { label: 'Black', value: 'Black' },
-    ]);
+    const [currentCategories, setCurrentCategories] = useState<Category[]>(categories);
+    const [selectedPath, setSelectedPath] = useState<Category[]>([]);
+    const [categorySelected, setCategorySelected] = useState<string | null>(null);
+    const [selectedColors, setSelectedColors] = useState([]);
+    const [selectedSizes, setSelectedSizes] = useState([]);
+    const { getSizes } = ProductAtributesAction();
+    const sizes = useProductAtributesStore(state => state.sizes);
+    const [isDisabledButtonSubmit, setIsDisabledButtonSubmit] = useState(true);
 
-    const [categories, setCategories] = useState([
-      { label: 'Shoes', value: 'Shoes' },
-      { label: 'Clothes', value: 'Clothes' },
-      { label: 'Accessories', value: 'Accessories' },
-    ])
+    useEffect(() => {
+      if (isCurrentPage) {
+        setFormData({
+          ...formData,
+          name: "",
+          code: "",
+          description: "",
+          categories: [
+            ""
+          ],
+          attributes: {
+            brand: ""
+          },
+          pictures: [],
+          prices: {
+            retail: 0,
+            reseller: 0
+          },
+          colors: [],
+          sizes: []
+        })
+        setImages([]);
+        getCategories();
+        getSizes()
+      }
+    }, [isCurrentPage])
 
-    const [newColor, setNewColor] = useState('');
-    const [newCategory, setNewCategory] = useState('');
-    const toast = useToast();
-  
-    const { isOpen: isBrandOpen, onOpen: onBrandOpen, onClose: onBrandClose } = useDisclosure();
-    const { isOpen: isSizeOpen, onOpen: onSizeOpen, onClose: onSizeClose } = useDisclosure();
-    const { isOpen: isColorOpen, onOpen: onColorOpen, onClose: onColorClose } = useDisclosure();
-  
+    useEffect(() => {
+      setIsDisabledButtonSubmit(
+        !formData.name ||
+        !formData.code ||
+        !formData.description ||
+        !categorySelected ||
+        !selectedColors.length ||
+        !selectedSizes.length ||
+        !images.length
+
+      )
+      
+    }, [formData, categorySelected, selectedColors, selectedSizes,images]) 
+
+    const handleCategorySelect = (category: Category) => {
+      if (category.children && category.children.length > 0) {
+        setSelectedPath((prevPath) => [...prevPath, category]);
+        setCurrentCategories(category.children);
+      }
+      setCategorySelected(category.id)
+    };
+
+    const handleBreadcrumbClick = (category: Category, index: number) => {
+      const newPath = selectedPath.slice(0, index + 1);
+      setSelectedPath(newPath);
+      setCurrentCategories(newPath[index].children || []);
+      setCategorySelected(category.id)
+    };
+
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
       setFormData((prev) => ({ ...prev, [name]: value }));
     };
-  
-    const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({ ...prev, [name]: Number(value) }));
+
+    const handleChangeCode = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setFormData({
+        ...formData,
+        code: value
+      })
+    }
+
+    const handleChangeBrand = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setFormData({
+        ...formData,
+        attributes: {
+          ...formData.attributes,
+          brand: value
+        }
+      })
+    }
+
+    const handleChangePriceRetail = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setFormData({
+        ...formData,
+        prices: {
+          ...formData.prices,
+          retail: parseFloat(value)
+        }
+      });
     };
-  
+
+    const handleChangePriceResseller = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      setFormData({
+        ...formData,
+        prices: {
+          ...formData.prices,
+          reseller: parseFloat(value)
+        }
+      });
+    };
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData((prev) => ({ ...prev, photos: e.target.files }));
     };
-  
+
     const handleSelectChange = (selectedOption: any, fieldName: string) => {
       setFormData((prev) => ({ ...prev, [fieldName]: selectedOption.value }));
     };
-  
+
     const handleColorsChange = (selectedOptions: any) => {
       setFormData((prev) => ({
         ...prev,
@@ -105,83 +176,55 @@ export const useCreateNewProductController =
         categories: selectedOptions ? selectedOptions.map((option: any) => option.value) : [],
       }));
     };
-  
-    const addBrand = () => {
-      if (newBrand && !brands.find((brand) => brand.value === newBrand)) {
-        setBrands([...brands, { label: newBrand, value: newBrand }]);
-        setNewBrand('');
-        onBrandClose();
-        toast({ title: 'Brand added successfully', status: 'success', duration: 3000, isClosable: true });
-      }
-    };
-  
-    const addSize = () => {
-      if (newSize && !sizes.find((size) => size.value === newSize)) {
-        setSizes([...sizes, { label: newSize, value: newSize }]);
-        setNewSize('');
-        onSizeClose();
-        toast({ title: 'Size added successfully', status: 'success', duration: 3000, isClosable: true });
-      }
-    };
-  
-    const addColor = () => {
-      if (newColor && !colors.find((color) => color.value === newColor)) {
-        setColors([...colors, { label: newColor, value: newColor }]);
-        setNewColor('');
-        onColorClose();
-        toast({ title: 'Color added successfully', status: 'success', duration: 3000, isClosable: true });
-      }
-    };
 
-    const addCategory = () => {
-      if (newCategory && !categories.find((category) => category.value === newCategory)) {
-        setCategories([...categories, { label: newCategory, value: newCategory }]);
-        setNewColor('');
-        onColorClose();
-        toast({ title: 'category added successfully', status: 'success', duration: 3000, isClosable: true });
-      }
-    };
-  
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      createNewProduct({...formData, pictures: images.map(image => image.file)})
-      
+      createNewProduct({
+        ...formData,
+        pictures: images.map(image => image.file),
+        categories: [categorySelected],
+        colors: selectedColors,
+        sizes: selectedSizes
+      })
+
     };
 
-   // Return state and events
+    const onPressedStartCategories = () => {
+      setSelectedPath([]);
+      setCurrentCategories(categories);
+      setCategorySelected('')
+    }
+
+
+    // Return state and events
     return {
       handleSubmit,
       formData,
       handleChange,
-      brands,
       handleSelectChange,
-      onBrandOpen,
-      sizes,
-      onSizeOpen,
-      colors,
       handleColorsChange,
-      onColorOpen,
-      handleNumberChange,
       handleFileChange,
-      addBrand,
-      isBrandOpen,
-      isSizeOpen,
-      isColorOpen,
-      onColorClose,
-      onBrandClose,
-      onSizeClose,
-      newBrand,
-      setNewBrand,
-      newSize,
-      setNewSize,
-      newColor,
-      setNewColor,
-      addColor,
-      addSize,
-      categories,
       handleCategoriesChange,
       isLoading: status.isFetching,
       images,
-      setImages
+      setImages,
+      handleChangeBrand,
+      handleChangeCode,
+      categories,
+      onPressedStartCategories,
+      selectedPath,
+      categorySelected,
+      handleBreadcrumbClick,
+      currentCategories,
+      handleCategorySelect,
+      handleChangePriceRetail,
+      handleChangePriceResseller,
+      selectedColors,
+      setSelectedColors,
+      colors: Object.entries(mapColors).map(([value, label]) => ({ label, value })),
+      sizesOptions: sizes.map(size => ({ label: size.value, value: size.value })),
+      selectedSizes,
+      setSelectedSizes,
+      isDisabledButtonSubmit
     };
   };

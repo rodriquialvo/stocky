@@ -16,8 +16,6 @@ const CartPanel: FC<CartPanelProps> = props => {
   const userLogged = useSessionStore(state => state.userLogged);
   const basicToken = useSessionStore(state => state.basicToken);
 
-  console.log('basic', basicToken);
-
   const [variantsQuantity, setVariantsQuantity] = useState({});
 
   const { updateQuantity, removeFromCart, getCart } = CartAction();
