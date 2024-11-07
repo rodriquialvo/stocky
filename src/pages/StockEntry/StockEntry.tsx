@@ -107,7 +107,6 @@ export default function StockEntry() {
       stockEntriesClone = stockEntriesClone.slice(0, -1);
       handleRemoveEntry(stockEntries.length - 1);
     }
-    console.log('Enviando registros de stock:', stockEntriesClone);
     const stockEntriesToPost = stockEntriesClone.map(entry => ({
       product: entry.product.id,
       variant: {

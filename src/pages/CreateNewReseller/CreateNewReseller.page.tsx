@@ -62,7 +62,6 @@ export const CreateNewResellerPage: FC<
       });
       return;
     }
-    console.log('Datos del formulario:', formValues);
     createUser(formValues);
     // Aquí puedes añadir lógica para enviar los datos a la API o manejar los datos
   };

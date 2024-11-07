@@ -23,7 +23,6 @@ export const RoleAction = () => {
       setStatus(getSuccessStatus());
       setRoles(response);
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };
