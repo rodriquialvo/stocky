@@ -1,11 +1,12 @@
+import { Box, Button, HStack, Input, List, ListItem, Select, Text, VStack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { Box, Button, Input, VStack, HStack, Text, Select, List, ListItem } from '@chakra-ui/react';
-import { ProductAction } from '../../store/product/actions';
-import { StockAction } from '../../store/stock/actions';
-import { useProductStore } from '../../store/product/slice';
-import { useStockStore } from '../../store/stock/slice';
-import { mapColors } from '../../constants/maps';
 import toast from 'react-hot-toast';
+import { mapColors } from '../../constants/maps';
+import { ProductAction } from '../../store/product/actions';
+import { useProductStore } from '../../store/product/slice';
+import { StockAction } from '../../store/stock/actions';
+import { useStockStore } from '../../store/stock/slice';
+import { getErrorMessage } from './errors';
 
 export default function StockEntry() {
   // states
@@ -21,8 +22,9 @@ export default function StockEntry() {
   const { getProductsByCodeOrName } = ProductAction();
   const { postStockMultiple } = StockAction();
   const productsByCodeOrName = useProductStore(state => state.productsByCodeOrName);
-  const postStockStatus = useStockStore(state => state.postStockStatus);
+  const postStockStatus: any = useStockStore(state => state.postStockStatus);
   const postStockLoading = useStockStore(state => state.postStockLoading);
+  console.log(postStockLoading)
   const restoreStatusAndLoading = useStockStore(state => state.restoreStatusAndLoading);
 
   // handlers
@@ -40,7 +42,9 @@ export default function StockEntry() {
       restoreStatusAndLoading();
     }
     if (postStockStatus.error) {
-      toast.error('Error al guardar entrada de stock');
+      postStockStatus.error.response.errors.forEach(err => {
+        toast.error(getErrorMessage(err.error, err.index), { duration: 5000, position: 'top-right', });
+      });
       restoreStatusAndLoading();
     }
   }, [postStockStatus])
@@ -98,10 +102,12 @@ export default function StockEntry() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    let stockEntriesClone = [...stockEntries];
     if (!isRowComplete(stockEntries.length - 1)) {
+      stockEntriesClone = stockEntriesClone.slice(0, -1);
       handleRemoveEntry(stockEntries.length - 1);
     }
-    const stockEntriesToPost = stockEntries.map(entry => ({
+    const stockEntriesToPost = stockEntriesClone.map(entry => ({
       product: entry.product.id,
       variant: {
         color: entry.color,
@@ -120,6 +126,8 @@ export default function StockEntry() {
         <VStack spacing={6}>
           {stockEntries.map((entry, index) => (
             <HStack key={index} spacing={4} w="full">
+              <Text fontSize="md" mb={1}>{index + 1}</Text>
+
               <Box position="relative" w="100%">
                 <Input
                   size="lg"
@@ -210,7 +218,7 @@ export default function StockEntry() {
           <Button colorScheme="teal" onClick={handleAddEntry} size="lg" w="full" mt={4}>
             Añadir otro producto
           </Button>
-          <Button type="submit" colorScheme="blue" size="lg" w="full" mt={6}>
+          <Button isDisabled={postStockLoading} type="submit" colorScheme="blue" size="lg" w="full" mt={6}>
             Guardar todos los stocks
           </Button>
         </VStack>
