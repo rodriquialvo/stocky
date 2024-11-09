@@ -11,6 +11,10 @@ export const SaleAction = () => {
   const saleService = useAPISaleService();
   const setStatus = useSaleStore(state => state.setStatus);
   const setSales = useSaleStore(state => state.setSales);
+  const setUsersInSales = useSaleStore(state => state.setUsersInSales);
+  const setProductsInSalesByUser = useSaleStore(state => state.setProductsInSalesByUser);
+  const setProductsInSales = useSaleStore(state => state.setProductsInSales);
+  const clearSaleWeek = useSaleStore(state => state.clearSaleWeek);
 
   const getSales = async (filter) => {
     setStatus(getStartStatus());
@@ -42,9 +46,69 @@ export const SaleAction = () => {
     }
   };
 
+  const findSellersWithSalesInCurrentWeek = async () => {
+    setStatus(getStartStatus());
+    try {
+      const data = await saleService.findSellersWithSalesInCurrentWeek();
+      if (!data.users) {
+        setStatus(getErrorStatus('No response'));
+        return;
+      }
+      setStatus(getSuccessStatus());
+      setUsersInSales(data.users);
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  }
+
+  const findProductsInSalesByUser = async (userId: string) => {
+    setStatus(getStartStatus());
+    try {
+      const data = await saleService.findProductsInSalesByUser(userId);
+      if (!data.products) {
+        setStatus(getErrorStatus('No response'));
+        return;
+      }
+      setStatus(getSuccessStatus());
+      console.log({ userId, products: data.products });
+      setProductsInSalesByUser({ userId, products: data.products });
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  }
+
+  const findGroupedProductsInCurrentWeek = async () => {
+    setStatus(getStartStatus());
+    try {
+      const data = await saleService.findGroupedProductsInCurrentWeek();
+      if (!data.products) {
+        setStatus(getErrorStatus('No response'));
+        return;
+      }
+      setStatus(getSuccessStatus());
+      setProductsInSales(data.products);
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  }
+
+  const clearSalesWeek = () => {
+    clearSaleWeek();
+    findSellersWithSalesInCurrentWeek();
+  }
+
+  const clearProductsInSales = () => {
+    setProductsInSales({});
+    findGroupedProductsInCurrentWeek();
+  }
 
   return {
     getSales,
-    updateStatusSale
+    updateStatusSale,
+    findSellersWithSalesInCurrentWeek,
+    findProductsInSalesByUser,
+    clearSalesWeek,
+    findGroupedProductsInCurrentWeek,
+    clearProductsInSales
   };
 };

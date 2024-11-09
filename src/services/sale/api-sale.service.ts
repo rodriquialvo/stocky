@@ -15,4 +15,8 @@ export class ApiSaleService implements SaleService {
   updateStatusSale = (saleId: string, data: UpdateStatusRequestDto) => this.http.put<SaleReponseDto>(`${saleId}`, data);
 
   getSales = (filter: GetSalesFilter) => this.http.get<SalesReponseDto>('', filter);
+
+  findSellersWithSalesInCurrentWeek = () => this.http.get<any>('by/user');
+  findProductsInSalesByUser = (user) => this.http.get<any>(`by/user/${user}`);
+  findGroupedProductsInCurrentWeek = () => this.http.get<any>('by/products');
 }

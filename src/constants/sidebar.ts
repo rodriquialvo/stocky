@@ -23,6 +23,7 @@ export const SIDEBAR_ITEMS = {
         label: 'Sales',
         subItems: [
             { label: 'Lista', route: ROUTES.SALES_LIST },
+            { label: 'Semana', route: ROUTES.SALES_WEEK },
         ]
     }
 }
