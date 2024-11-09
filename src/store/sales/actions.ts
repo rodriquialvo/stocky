@@ -20,7 +20,6 @@ export const SaleAction = () => {
     setStatus(getStartStatus());
     try {
       const data = await saleService.getSales(filter);
-      console.log(data);
       if (!data.sales) {
         setStatus(getErrorStatus('No response'));
         return;

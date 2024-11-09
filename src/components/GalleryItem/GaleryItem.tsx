@@ -82,7 +82,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, im
         <Text fontSize="lg" color="gray.600">
          Articulo: {props?.brand}
         </Text>
-        <Text fontSize="lg" color="pink.500">
+        <Text fontWeight="bold" fontSize="lg" color="pink.500">
           {price}
         </Text>
         <Stack direction="row" align="left" justify="left">

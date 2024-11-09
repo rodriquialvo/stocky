@@ -8,21 +8,61 @@ import {
   VStack,
   Heading,
   useBreakpointValue,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
 } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
 import Modal from '../../components/Modal/Modal';
 import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
+import CategoryList, { Category } from '../../components/CategoryList/CategoryList';
+import ColorsSelector from '../../components/ColorsSelector/ColorsSelector';
+import ItemsSelector from '../../components/SizesSelector/SizesSelector';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
-
+  const data: { categories: Category[] } = {
+    categories: [
+      {
+        id: "67060410220d19482c921bc8",
+        name: "Lencería",
+        children: [
+          {
+            id: "670604a5220d19482c921bce",
+            name: "Bombacha",
+            children: []
+          },
+          {
+            id: "670604ef220d19482c921bd0",
+            name: "Vedetina",
+            children: [
+              {
+                id: "67076a06fbd5968aa38cda3b",
+                name: "Vedetina Clásica",
+                children: []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: "6706041f220d19482c921bca",
+        name: "Ropa Interior",
+        children: []
+      },
+      {
+        id: "6706042e220d19482c921bcc",
+        name: "Accesorios",
+        children: []
+      }
+    ]
+  };
   // Responsive padding and font sizes
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
-
 
   return (
     <Box
@@ -49,10 +89,37 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             id="article"
             name="article"
             value={controller.formData.code}
-            onChange={controller.handleChange}
+            onChange={controller.handleChangeCode}
             placeholder="Introduce el artículo"
           />
         </FormControl>
+        <FormControl isRequired>
+        <FormLabel htmlFor="category">Categoria</FormLabel>
+
+          <Breadcrumb separator=" / ">
+            <BreadcrumbItem>
+              <BreadcrumbLink onClick={controller.onPressedStartCategories}>
+                Inicio
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            {controller.selectedPath.map((category, index) => (
+              <BreadcrumbItem key={category.id}>
+                <BreadcrumbLink
+                  borderWidth={controller.categorySelected === category.id ? 2 : 0}
+                  borderColor={"pink.100"}
+                  px={2}
+                  borderRadius={"md"}
+                  onClick={() => controller.handleBreadcrumbClick(category, index)}>
+                  {category.name}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            ))}
+          </Breadcrumb>
+
+          <CategoryList categorySelected={controller.categorySelected} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
+
+        </FormControl>
+
 
         {/* Name Field */}
         <FormControl isRequired>
@@ -65,21 +132,18 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             placeholder="Introduce el nombre"
           />
         </FormControl>
-
-        {/* Brand Select */}
-        <FormControl>
-          <FormLabel htmlFor="brand">Marca</FormLabel>
-          <Select
-            options={controller.brands}
-            onChange={(option) => controller.handleSelectChange(option, 'brand')}
-            placeholder="Selecciona una marca"
-            isSearchable
+        <FormControl isRequired>
+          <FormLabel htmlFor="name">Marca</FormLabel>
+          <Input
+            id="brand"
+            name="brand"
+            value={controller.formData.attributes.brand}
+            onChange={controller.handleChangeBrand}
+            placeholder="Introduce el nombre"
           />
-          <Button mt={2} size="sm" onClick={controller.onBrandOpen} colorScheme="blue">
-            Añadir Marca
-          </Button>
         </FormControl>
-        <FormControl>
+
+        {/* <FormControl>
           <FormLabel htmlFor="categorie">Categoria</FormLabel>
           <Select
             options={controller.categories}
@@ -91,7 +155,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           <Button mt={2} size="sm" onClick={controller.onBrandOpen} colorScheme="blue">
             Añadir Categoria
           </Button>
-        </FormControl>
+        </FormControl> */}
 
         {/* Description Field */}
         <FormControl isRequired>
@@ -104,23 +168,24 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             placeholder="Escribe la descripción del producto"
           />
         </FormControl>
-
-        {/* Size Select */}
-        <FormControl>
-          <FormLabel htmlFor="size">Tipos de Talle</FormLabel>
-          <Select
-            options={controller.sizes}
-            onChange={(option) => controller.handleSelectChange(option, 'size')}
-            placeholder="Selecciona un tipo de talle"
-            isSearchable
+        <FormControl >
+          <FormLabel htmlFor="colors">Colores</FormLabel>
+          <ItemsSelector
+            items={controller.colors}
+            selectedItems={controller.selectedColors}
+            setSelectedItems={controller.setSelectedColors}
           />
-          <Button mt={2} size="sm" onClick={controller.onSizeOpen} colorScheme="blue">
-            Añadir Talle
-          </Button>
         </FormControl>
-
+        <FormControl >
+          <FormLabel htmlFor="sizes">Talles</FormLabel>
+          <ItemsSelector
+            items={controller.sizesOptions}
+            selectedItems={controller.selectedSizes}
+            setSelectedItems={controller.setSelectedSizes}
+          />
+        </FormControl>
         {/* Color Select */}
-        <FormControl>
+        {/* <FormControl>
           <FormLabel htmlFor="colors">Colores</FormLabel>
           <Select
             isMulti
@@ -132,22 +197,23 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           <Button mt={2} size="sm" onClick={controller.onColorOpen} colorScheme="blue">
             Añadir Color
           </Button>
-        </FormControl>
+        </FormControl> */}
 
         {/* Cost Price Field */}
-        {/* <FormControl isRequired>
+        <FormControl isRequired>
           <FormLabel htmlFor="costPrice">Precio de Costo</FormLabel>
           <Input
             type="number"
             id="costPrice"
             name="costPrice"
-            value={controller.formData.prices.retail}
-            onChange={controller.handleNumberChange}
+            value={controller.formData.prices.reseller}
+            onChange={controller.handleChangePriceResseller}
             placeholder="Introduce el precio de costo"
             min={0}
-            step="0.01"
+            // step="0.01"
           />
-        </FormControl> */}
+        </FormControl>
+       
 
         {/* Final Price Field */}
         <FormControl isRequired>
@@ -156,8 +222,8 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             type="number"
             id="finalPrice"
             name="finalPrice"
-            value={controller.formData.prices.reseller}
-            onChange={controller.handleNumberChange}
+            value={controller.formData.prices.retail}
+            onChange={controller.handleChangePriceRetail}
             placeholder="Introduce el precio final"
             min={0}
             step="0.01"
@@ -170,35 +236,12 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
         />
 
         {/* Submit Button */}
-        <Button type="submit" isLoading={controller.isLoading} colorScheme="blue" width="full" mt={4}>
+        <Button isDisabled={controller.isDisabledButtonSubmit} type="submit" isLoading={controller.isLoading} colorScheme="blue" width="full" mt={4}>
           Añadir Producto
         </Button>
       </VStack>
 
       {/* Modals */}
-      <Modal title="Nueva Marca" onSubmit={controller.addBrand} isOpen={controller.isBrandOpen} onClose={controller.onBrandClose}>
-        <Input
-          placeholder="Nueva Marca"
-          value={controller.newBrand}
-          onChange={(e) => controller.setNewBrand(e.target.value)}
-        />
-      </Modal>
-
-      <Modal title="Añadir Talle" onSubmit={controller.addSize} isOpen={controller.isSizeOpen} onClose={controller.onSizeClose}>
-        <Input
-          placeholder="Nuevo Talle"
-          value={controller.newSize}
-          onChange={(e) => controller.setNewSize(e.target.value)}
-        />
-      </Modal>
-
-      <Modal title="Añadir Color" onSubmit={controller.addColor} isOpen={controller.isColorOpen} onClose={controller.onColorClose}>
-        <Input
-          placeholder="Nuevo Color"
-          value={controller.newColor}
-          onChange={(e) => controller.setNewColor(e.target.value)}
-        />
-      </Modal>
     </Box>
   );
 };

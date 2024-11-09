@@ -106,7 +106,6 @@ export const ProductAction = () => {
   const getProductsByCodeOrName = async (q: string) => {
     setStatus(getStartStatus());
     try {
-      console.log('q', q);
       const response = await productService.getProductsByCodeOrName(q);
       if (!response.products) {
         setStatus(getErrorStatus('No response'));
