@@ -8,7 +8,6 @@ import {
   Button,
   Center,
   ChakraProvider,
-  Code,
   Icon,
   Tab,
   TabList,
@@ -23,10 +22,10 @@ import {
   Thead,
   Tr
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { FiRefreshCcw } from 'react-icons/fi';
 import { SaleAction } from '../../store/sales/actions';
 import { useSaleStore } from '../../store/sales/slice';
-import { FiRefreshCcw } from 'react-icons/fi';
 
 interface Product {
   id: number;
@@ -41,15 +40,7 @@ interface Seller {
   products: Product[];
 }
 
-const totalProducts: { id: number; name: string; quantity: number; price: number }[] = [
-  { id: 1, name: 'Producto A', quantity: 20, price: 100 },
-  { id: 2, name: 'Producto B', quantity: 15, price: 150 },
-  { id: 3, name: 'Producto C', quantity: 18, price: 200 },
-  { id: 4, name: 'Producto D', quantity: 10, price: 300 },
-  { id: 5, name: 'Producto E', quantity: 12, price: 250 },
-];
-
-const ITEMS_PER_PAGE_PRODUCTS = 2;
+// const ITEMS_PER_PAGE_PRODUCTS = 2;
 
 // Componente para paginación
 const Pagination = ({
@@ -124,15 +115,7 @@ const ProductsBySeller = () => {
   );
 }
 
-// Componente para cada tabla de vendedor con paginación
 const SellerTable = ({ seller, products }: { seller: Seller, products: any }) => {
-  // const [productPage, setProductPage] = useState(1);
-  // const totalProductPages = Math.ceil(seller.products.length / ITEMS_PER_PAGE_PRODUCTS);
-
-  // const currentProducts = seller.products.slice(
-  //   (productPage - 1) * ITEMS_PER_PAGE_PRODUCTS,
-  //   productPage * ITEMS_PER_PAGE_PRODUCTS
-  // );
 
   const totalAmount = products[seller.id]?.reduce(
     (acc, product) => acc + product.quantity * product.prices.reseller,
@@ -186,14 +169,6 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
 const TotalProducts = () => {
   const { findGroupedProductsInCurrentWeek } = SaleAction();
   const productsInSales = useSaleStore(state => state.productsInSales);
-  // const [productPage, setProductPage] = useState(1);
-  // const sortedTotalProducts = [...totalProducts].sort((a, b) => b.quantity - a.quantity);
-  // const totalProductPages = Math.ceil(sortedTotalProducts.length / ITEMS_PER_PAGE_PRODUCTS);
-
-  // const currentProducts = sortedTotalProducts.slice(
-  //   (productPage - 1) * ITEMS_PER_PAGE_PRODUCTS,
-  //   productPage * ITEMS_PER_PAGE_PRODUCTS
-  // );
 
   useEffect(() => {
     findGroupedProductsInCurrentWeek();
