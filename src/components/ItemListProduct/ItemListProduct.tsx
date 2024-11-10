@@ -1,4 +1,4 @@
-import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react';
+import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Checkbox, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 import React, { FC } from 'react';
 import { ItemListProductProps } from './interfaces';
 import { useProductStore } from '../../store/product/slice';
@@ -12,23 +12,43 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
   const productsWhitStocks = useProductStore(state => state.productsWhitStocks)
   const navigate = useNavigate();
   return (
-    <AccordionItem onClick={props.onClick}>
-      <h2>
-        <AccordionButton py={3}>
-          <Heading
-            fontSize="md"  flex='1' textAlign='left'>
-            {props.name}
-          </Heading>
-          <Heading fontSize="md"  flex='1' textAlign='center'>{props?.brand}</Heading>
-          <Heading fontSize="md"  flex='1' textAlign='left'>
-            Articulo {props?.code}
-          </Heading>
-          <Heading color={props?.hasStock ? "green.700" : "red.500"} fontSize="md"  flex='1' textAlign='left'>
-            {props?.hasStock ? "DISPONIBLE" : "NO DISPONIBLE"}
-          </Heading>
-          <AccordionIcon />
-        </AccordionButton>
-      </h2>
+    <AccordionItem px={0} onClick={props.onClick}>
+      <AccordionButton px={2} py={3}>
+        <Checkbox
+          onMouseDown ={props.onPressCheckbox}
+          isChecked={props.isChecked}
+          
+        />
+        <Heading
+          ml={5}
+          fontSize="md" flex='1' textAlign='left'>
+          {props.name}
+        </Heading>
+        <Heading fontSize="md" flex='1' textAlign='left'>{props?.brand}</Heading>
+        <Heading fontSize="md" flex='1' textAlign='left'>
+          {props?.code}
+        </Heading>
+        <Heading
+          display={{
+            base: "none",
+            lg: "flex"
+          }}
+          fontSize="md" flex='1' textAlign='left'>
+          {formattedNumberToMoney(props?.priceResseller)}
+        </Heading>
+        <Heading
+          display={{
+            base: "none",
+            lg: "flex"
+          }}
+          fontSize="md" flex='1' textAlign='left'>
+          {formattedNumberToMoney(props?.priceRetail)}
+        </Heading>
+        <Heading color={props?.hasStock ? "green.700" : "red.500"} fontSize="md" flex='1' textAlign='left'>
+          {props?.hasStock ? "DISPONIBLE" : "NO DISPONIBLE"}
+        </Heading>
+        <AccordionIcon />
+      </AccordionButton>
       <AccordionPanel bg={"gray.100"}
         m={5}>
         <SimpleGrid

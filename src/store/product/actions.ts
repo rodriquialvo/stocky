@@ -8,6 +8,7 @@ import {
 } from '../helper/statusStateFactory';
 import { ImageAction } from '../image/actions';
 import { useProductStore } from './slice';
+import { Product } from '../../services/product/dtos/getProducts';
 
 export const ProductAction = () => {
   const productService = useAPIProductService();
@@ -19,7 +20,10 @@ export const ProductAction = () => {
   const setProductsByCodeOrName = useProductStore(state => state.setProductsByCodeOrName);
   const setCalculatedPrices = useProductStore(state => state.setCalculatedPrices);
 
+  const setProductsSelected = useProductStore(state => state.setProductsSelected);
+  const productsSelected = useProductStore(state => state.productsSelected)
   const productsWhitStocks = useProductStore(state => state.productsWhitStocks);
+  const products = useProductStore(state => state.products);
 
   const { createNewImageUrl } = ImageAction()
   const getProducts = async () => {
@@ -142,6 +146,26 @@ export const ProductAction = () => {
   const clearCalculatePrices = () => {
     setCalculatedPrices({ costPrice: 0, reseller: 0, retail: 0 });
   }
+  const selectProduct = async (product: Product) => {
+    setStatus(getStartStatus());
+    try{
+      if(!!productsSelected.find(prod => product.id === prod.id)){
+        setProductsSelected(productsSelected.filter(prod => prod.id !== product.id ))
+      } else {
+        setProductsSelected([...productsSelected, product])
+      }
+    } catch (e) {
+    }
+  }
+
+  const cleanProductsSelected = () => {
+    setProductsSelected([]);
+  }
+
+  const selectAllProducts = () => {
+    setProductsSelected(products)
+  }
+
 
   return {
     getProducts,
@@ -150,6 +174,9 @@ export const ProductAction = () => {
     getProductDetailWhitStockInDropDown,
     getProductsByCodeOrName,
     getCalculatePrices,
-    clearCalculatePrices
+    clearCalculatePrices,
+    selectProduct,
+    cleanProductsSelected,
+    selectAllProducts
   };
 };

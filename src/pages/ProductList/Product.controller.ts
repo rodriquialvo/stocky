@@ -3,19 +3,27 @@ import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { ProductController } from './interfaces';
 import { Product } from '../../services/product/dtos/getProducts';
-import { formattedNumberToMoney } from '../../utils/functions';
 import { ItemListProductProps } from '../../components/ItemListProduct/interfaces';
 
 export const useProductController =
   (): /* <--Dependency Injections  like services hooks */
     ProductController => {
     const {getProducts, getProductDetailWhitStockInDropDown} = ProductAction()
-    const products = useProductStore(state => state.products)
+    const products = useProductStore(state => state.products);
+    const {selectProduct, cleanProductsSelected, selectAllProducts} = ProductAction();
+    const productsSelected = useProductStore(state => state.productsSelected);
+    const [isAllproductsSelected, setIsAllProductsSelected] = useState(false)
     
+    const [isOpenIncreaseAndDiscountPanel, setIsOpenIncreaseAndDiscountPanel] = useState(false)
     
     useEffect(() => {
       getProducts()
-    },[])
+    },[]);
+
+    useEffect(() => {
+      setIsAllProductsSelected(!!productsSelected.length && productsSelected.length  === products.length)
+    },[productsSelected, products])
+
 
     const mapProductsViewModel = (product: Product): ItemListProductProps => {
       return {
@@ -24,10 +32,36 @@ export const useProductController =
         code: product?.code,
         hasStock: product?.hasStock,
         id: product?.id,
-        onClick: () => getProductDetailWhitStockInDropDown(product?.id)
+        onClick: () => getProductDetailWhitStockInDropDown(product?.id),
+        priceResseller: product?.prices?.reseller,
+        priceRetail: product?.prices?.retail,
+        onPressCheckbox: () => selectProduct(product),
+        isChecked: !!productsSelected.find(prod => prod.id === product.id)
       }
-    } 
+    }
+
+    const onPressedButtonOpenPanelIncreaseAndDiscount = () => {
+      setIsOpenIncreaseAndDiscountPanel(true)
+    }
+
+    const onClosePanelIncreaseAndDiscount = () => {
+      setIsOpenIncreaseAndDiscountPanel(false)
+    }
+
+    const onSelectAllProducts = () => {
+      if(!!productsSelected.length) {
+        cleanProductsSelected();
+      } else {
+        selectAllProducts()
+      }
+    }
+
     return {
-      productsViewModel: products.map(mapProductsViewModel)
+      productsViewModel: products.map(mapProductsViewModel),
+      isOpenIncreaseAndDiscountPanel,
+      onPressedButtonOpenPanelIncreaseAndDiscount,
+      onClosePanelIncreaseAndDiscount,
+      onSelectAllProducts,
+      isAllproductsSelected
     };
   };
