@@ -4,5 +4,9 @@ export interface ItemListProductProps {
     code: string,
     brand: string,
     hasStock: boolean,
-    onClick: () => void
+    onClick: () => void,
+    priceResseller: number,
+    priceRetail: number,
+    onPressCheckbox?: () => void,
+    isChecked?: boolean
 }

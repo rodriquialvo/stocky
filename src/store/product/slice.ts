@@ -12,7 +12,8 @@ type State = {
   productsWhitStocks: {
     [key: string]: ProductDetailWithStocks
   },
-  productsByCodeOrName: Product[]
+  productsByCodeOrName: Product[],
+  productsSelected: Product[]
 };
 
 const initialState: State = {
@@ -21,7 +22,8 @@ const initialState: State = {
   total: 0,
   product: null,
   productsWhitStocks: {},
-  productsByCodeOrName: []
+  productsByCodeOrName: [],
+  productsSelected: []
 };
 
 type Action = {
@@ -31,6 +33,7 @@ type Action = {
   setProduct: (product: ProductDetail) => void;
   setProductsWhitStocks: (productsWhitStocks: { [key: string]: ProductDetailWithStocks }) => void;
   setProductsByCodeOrName: (productsByCodeOrName: Product[]) => void;
+  setProductsSelected: (products: Product[]) => void
 };
 
 // Create your store, which includes both state and (optionally) actions
@@ -44,6 +47,7 @@ export const useProductStore = create<State & Action>()(
       setProduct: (product) => set({ product}),
       setProductsWhitStocks: (productsWhitStocks) => set({ productsWhitStocks}),
       setProductsByCodeOrName: (productsByCodeOrName) => set({ productsByCodeOrName}),
+      setProductsSelected: (products) => set({productsSelected: products})
     }),
     {
       name: 'products-store', // nombre del key en localStorage
