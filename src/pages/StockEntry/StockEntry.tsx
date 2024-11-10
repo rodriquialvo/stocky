@@ -24,7 +24,6 @@ export default function StockEntry() {
   const productsByCodeOrName = useProductStore(state => state.productsByCodeOrName);
   const postStockStatus: any = useStockStore(state => state.postStockStatus);
   const postStockLoading = useStockStore(state => state.postStockLoading);
-  console.log(postStockLoading)
   const restoreStatusAndLoading = useStockStore(state => state.restoreStatusAndLoading);
 
   // handlers

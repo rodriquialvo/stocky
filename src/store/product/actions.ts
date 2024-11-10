@@ -125,8 +125,6 @@ export const ProductAction = () => {
 
   const selectProduct = async (product: Product) => {
     setStatus(getStartStatus());
-    console.log("ENTRA")
-    console.log("boolean", !!productsSelected.find(p => p.id === product.id))
     try{
       if(!!productsSelected.find(prod => product.id === prod.id)){
         setProductsSelected(productsSelected.filter(prod => prod.id !== product.id ))
@@ -134,7 +132,6 @@ export const ProductAction = () => {
         setProductsSelected([...productsSelected, product])
       }
     } catch (e) {
-      console.log("Error", e)
     }
   }
 
