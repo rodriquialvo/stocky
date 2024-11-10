@@ -1,29 +1,30 @@
 import { useEffect, useState } from 'react';
-import { CreateNewProductController, ProductFormData } from './interfaces';
-import { useDisclosure, useToast } from '@chakra-ui/react';
-import { ProductAction } from '../../store/product/actions';
-import { useProductStore } from '../../store/product/slice';
 import { ImageListType } from 'react-images-uploading';
 import { useLocation } from 'react-router-dom';
+import { mapColors } from '../../constants/maps';
 import { ROUTES } from '../../constants/Routes';
+import { Category } from '../../services/categories/dtos/getCategories';
 import { CategoryAction } from '../../store/category/actions';
 import { useCategorytore } from '../../store/category/slice';
-import { Category } from '../../services/categories/dtos/getCategories';
 import { ProductAtributesAction } from '../../store/product-atributes/actions';
-import { mapColors } from '../../constants/maps';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
+import { ProductAction } from '../../store/product/actions';
+import { useProductStore } from '../../store/product/slice';
+import { CreateNewProductController, ProductFormData } from './interfaces';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
     CreateNewProductController => {
 
     const [images, setImages] = useState<ImageListType>([]);
-    const { createNewProduct } = ProductAction()
+    const { createNewProduct, getCalculatePrices, clearCalculatePrices } = ProductAction();
+    const calculatedPrices = useProductStore(state => state.calculatedPrices);
     const status = useProductStore(state => state.status)
     const location = useLocation();
     const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
     const { getCategories } = CategoryAction();
     const categories = useCategorytore(state => state.categories);
+
     const [formData, setFormData] = useState<ProductFormData>({
       name: "",
       code: "",
@@ -36,6 +37,11 @@ export const useCreateNewProductController =
       },
       pictures: [],
       prices: {
+        cost: 0,
+        retail: 0,
+        reseller: 0
+      },
+      percentages: {
         retail: 0,
         reseller: 0
       },
@@ -53,6 +59,12 @@ export const useCreateNewProductController =
     const [isDisabledButtonSubmit, setIsDisabledButtonSubmit] = useState(true);
 
     useEffect(() => {
+      return () => {
+        clearCalculatePrices();
+      }
+    }, [])
+
+    useEffect(() => {
       if (isCurrentPage) {
         setFormData({
           ...formData,
@@ -67,6 +79,7 @@ export const useCreateNewProductController =
           },
           pictures: [],
           prices: {
+            cost: 0,
             retail: 0,
             reseller: 0
           },
@@ -144,15 +157,50 @@ export const useCreateNewProductController =
       });
     };
 
-    const handleChangePriceResseller = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeCostPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       setFormData({
         ...formData,
         prices: {
           ...formData.prices,
-          reseller: parseFloat(value)
+          cost: parseFloat(value)
         }
       });
+    };
+
+    const handleChangePercentageReseller = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      const data = {
+        ...formData,
+        percentages: {
+          ...formData.percentages,
+          reseller: parseFloat(value)
+        }
+      }
+      if (parseFloat(value) > 0 && formData.percentages.retail > 0) {
+        const { reseller, retail } = calcaulatePrices(parseFloat(value), 'reseller');
+        data.prices.reseller = reseller;
+        data.prices.retail = retail;
+      }
+      setFormData(data);
+    };
+
+    const handleChangePercentageRetail = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value } = e.target;
+      console.log(value);
+      const data = {
+        ...formData,
+        percentages: {
+          ...formData.percentages,
+          retail: parseFloat(value)
+        }
+      }
+      if (parseFloat(value) > 0 && formData.percentages.reseller > 0) {
+        const { retail, reseller } = calcaulatePrices(parseFloat(value), 'retail');
+        data.prices.retail = retail;
+        data.prices.reseller = reseller;
+      }
+      setFormData(data);
     };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,6 +243,21 @@ export const useCreateNewProductController =
       setCategorySelected('')
     }
 
+    const calcaulatePrices = (value: number, caller: string) => {
+      let reseller = 0;
+      let retail = 0;
+      if (value > 0) {
+        if (caller === 'reseller') {
+          reseller = formData.prices.cost + (formData.prices.cost * value / 100);
+          retail = formData.prices.cost + (formData.prices.cost * formData.percentages.retail / 100);
+        } else {
+          reseller = formData.prices.cost + (formData.prices.cost * formData.percentages.reseller / 100);
+          retail = formData.prices.cost + (formData.prices.cost * value / 100);
+        }
+      }
+      return { reseller, retail };
+    }
+
 
     // Return state and events
     return {
@@ -218,13 +281,16 @@ export const useCreateNewProductController =
       currentCategories,
       handleCategorySelect,
       handleChangePriceRetail,
-      handleChangePriceResseller,
+      handleChangeCostPrice,
+      handleChangePercentageReseller,
+      handleChangePercentageRetail,
       selectedColors,
       setSelectedColors,
       colors: Object.entries(mapColors).map(([value, label]) => ({ label, value })),
       sizesOptions: sizes.map(size => ({ label: size.value, value: size.value })),
       selectedSizes,
       setSelectedSizes,
-      isDisabledButtonSubmit
+      isDisabledButtonSubmit,
+      calculatedPrices
     };
   };

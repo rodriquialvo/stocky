@@ -206,25 +206,59 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             type="number"
             id="costPrice"
             name="costPrice"
-            value={controller.formData.prices.reseller}
-            onChange={controller.handleChangePriceResseller}
+            value={controller.formData.prices.cost}
+            onChange={controller.handleChangeCostPrice}
             placeholder="Introduce el precio de costo"
             min={0}
             // step="0.01"
           />
         </FormControl>
-       
 
-        {/* Final Price Field */}
         <FormControl isRequired>
-          <FormLabel htmlFor="finalPrice">Precio Final</FormLabel>
+          <FormLabel htmlFor="percentageReseller">Porcentaje Revendedor</FormLabel>
           <Input
             type="number"
-            id="finalPrice"
-            name="finalPrice"
-            value={controller.formData.prices.retail}
-            onChange={controller.handleChangePriceRetail}
-            placeholder="Introduce el precio final"
+            id="percentageReseller"
+            name="percentageReseller"
+            value={controller.formData.percentages.reseller}
+            onChange={controller.handleChangePercentageReseller}
+            min={0}
+            // step="0.01"
+          />
+        </FormControl>
+
+        <FormControl isRequired>
+          <FormLabel htmlFor="percentageRetail">Porcentaje Venta</FormLabel>
+          <Input
+            type="number"
+            id="percentageRetail"
+            name="percentageRetail"
+            value={controller.formData.percentages.retail}
+            onChange={controller.handleChangePercentageRetail}
+            min={0}
+            // step="0.01"
+          />
+        </FormControl>
+       
+       <FormControl isDisabled={true}>
+          <FormLabel htmlFor="resellerPrice">Precio Revendedor</FormLabel>
+          <Input
+            type="number"
+            id="resellerPrice"
+            name="resellerPrice"
+            value={controller.formData.prices?.reseller || 0}
+            min={0}
+          />
+        </FormControl>
+
+        {/* Final Price Field */}
+        <FormControl isDisabled={true}>
+          <FormLabel htmlFor="retailPrice">Precio Venta</FormLabel>
+          <Input
+            type="number"
+            id="retailPrice"
+            name="retailPrice"
+            value={controller.formData.prices?.retail || 0}
             min={0}
             step="0.01"
           />

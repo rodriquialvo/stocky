@@ -20,5 +20,7 @@ export class ApiProductService implements ProductService {
 
   getProductsByCodeOrName = (q: string) => this.http.get<GetProductsResponse>('filter/products-by-code-or-name', {q});
 
-  getProductAtributes = (params?: {type?: string}) => this.http.get<GetProductAtributesResponse>('', params)
+  getProductAtributes = (params?: {type?: string}) => this.http.get<GetProductAtributesResponse>('', params);
+
+  getCalculatePrices = (params: any) => this.http.get<GetProductAtributesResponse>('calculations/prices', params);
 }

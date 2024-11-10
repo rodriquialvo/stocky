@@ -30,10 +30,13 @@ export interface CreateNewProductController {
   onPressedStartCategories: () => void,
   handleBreadcrumbClick: (category: Category, index: number) => void,
   handleCategorySelect: (category: Category) => void,
-  handleChangePriceResseller: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChangeCostPrice: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChangePercentageReseller: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChangePercentageRetail: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setSelectedColors: Dispatch<SetStateAction<string[]>>;
   selectedSizes: string[],
   setSelectedSizes: Dispatch<SetStateAction<string[]>>;
+  calculatedPrices: any;
 }
 
 export interface CreateNewProductProps {
@@ -48,6 +51,7 @@ export interface ProductFormData {
   attributes: Attributes;
   pictures: ImageListType | Picture[];
   prices: Prices;
+  percentages: Percentages;
   colors: string[],
   sizes: string[]
 }
@@ -62,6 +66,12 @@ export interface Picture {
 }
 
 export interface Prices {
+  cost: number
+  retail: number;
+  reseller: number;
+}
+
+export interface Percentages {
   retail: number;
   reseller: number;
 }
