@@ -86,8 +86,6 @@ const NavigationBar: React.FC<TabNavProps> = ({
           ml={4}
           onClick={() => setIsOpenCartPanel(true)}
         />
-
-
       </Flex>
       <FilterPanel
         isOpen={islopenFilterPanel}

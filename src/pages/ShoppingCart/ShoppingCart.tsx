@@ -31,7 +31,6 @@ const ShoppingCartPage: React.FC = () => {
               objectFit="cover"
               className="rounded-lg"
             />
-
             <Stack spacing={2} flex="1" ml={4}>
               <Text fontWeight="bold">{item.product.name}</Text>
               <Text>Color: {item.variant.color}</Text>
@@ -56,7 +55,6 @@ const ShoppingCartPage: React.FC = () => {
                 </Button>
               </Flex>
             </Stack>
-
             <Button
               size="sm"
               colorScheme="red"
@@ -68,11 +66,7 @@ const ShoppingCartPage: React.FC = () => {
           </Flex>
         ))
       )}
-
-       {/* Divider visual */}
        <Divider my={4} />
-
-      {/* Mostrar el total del carrito */}
       <Flex justifyContent="space-between" mb={4}>
         <Text fontSize="lg" fontWeight="bold">
           Total:
@@ -81,7 +75,6 @@ const ShoppingCartPage: React.FC = () => {
           ${cart.items.length > 0 ? cart.total.toFixed(2) : 0}
         </Text>
       </Flex>
-
       {cart.items.length > 0 && (
         <Button colorScheme="teal" className="mt-4 w-full">
           Proceed to Checkout
