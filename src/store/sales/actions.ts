@@ -70,7 +70,6 @@ export const SaleAction = () => {
         return;
       }
       setStatus(getSuccessStatus());
-      console.log({ userId, products: data.products });
       setProductsInSalesByUser({ userId, products: data.products });
     } catch (e) {
       setStatus(getErrorStatus(e as Error));

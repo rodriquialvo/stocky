@@ -24,7 +24,6 @@ export const useProductController =
       setIsAllProductsSelected(!!productsSelected.length && productsSelected.length  === products.length)
     },[productsSelected, products])
 
-    console.log("productsSelected",productsSelected)
 
     const mapProductsViewModel = (product: Product): ItemListProductProps => {
       return {

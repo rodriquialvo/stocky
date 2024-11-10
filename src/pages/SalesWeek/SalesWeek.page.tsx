@@ -84,8 +84,6 @@ const ProductsBySeller = () => {
   const sellers = useSaleStore(state => state.usersInSales);
   const productsInSalesByUser = useSaleStore(state => state.productsInSalesByUser);
 
-  console.log(sellers);
-
   useEffect(() => {
     findSellersWithSalesInCurrentWeek();
   }, []);
@@ -121,8 +119,6 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
     (acc, product) => acc + product.quantity * product.prices.reseller,
     0
   ) || 0;
-
-  console.log(products);
 
   return (
     <Box>
