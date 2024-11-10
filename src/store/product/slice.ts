@@ -13,6 +13,8 @@ type State = {
     [key: string]: ProductDetailWithStocks
   },
   productsByCodeOrName: Product[],
+  // calculated prices in create product
+  calculatedPrices: any
   productsSelected: Product[]
 };
 
@@ -23,6 +25,7 @@ const initialState: State = {
   product: null,
   productsWhitStocks: {},
   productsByCodeOrName: [],
+  calculatedPrices: {},
   productsSelected: []
 };
 
@@ -33,6 +36,7 @@ type Action = {
   setProduct: (product: ProductDetail) => void;
   setProductsWhitStocks: (productsWhitStocks: { [key: string]: ProductDetailWithStocks }) => void;
   setProductsByCodeOrName: (productsByCodeOrName: Product[]) => void;
+  setCalculatedPrices: (calculatedPrices: any) => void
   setProductsSelected: (products: Product[]) => void
 };
 
@@ -43,10 +47,11 @@ export const useProductStore = create<State & Action>()(
       ...initialState,
       setStatus: (status: Status) => set({ status }),
       getProducts: () => get().products,
-      setProducts: (products) => set({ products}),
-      setProduct: (product) => set({ product}),
-      setProductsWhitStocks: (productsWhitStocks) => set({ productsWhitStocks}),
-      setProductsByCodeOrName: (productsByCodeOrName) => set({ productsByCodeOrName}),
+      setProducts: (products) => set({ products }),
+      setProduct: (product) => set({ product }),
+      setProductsWhitStocks: (productsWhitStocks) => set({ productsWhitStocks }),
+      setProductsByCodeOrName: (productsByCodeOrName) => set({ productsByCodeOrName }),
+      setCalculatedPrices: (calculatedPrices) => set({ calculatedPrices }),
       setProductsSelected: (products) => set({productsSelected: products})
     }),
     {

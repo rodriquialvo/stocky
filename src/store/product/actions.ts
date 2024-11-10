@@ -12,11 +12,14 @@ import { Product } from '../../services/product/dtos/getProducts';
 
 export const ProductAction = () => {
   const productService = useAPIProductService();
+
   const setStatus = useProductStore(state => state.setStatus);
   const setProducts = useProductStore(state => state.setProducts);
   const setProduct = useProductStore(state => state.setProduct);
   const setProductsWhitStocks = useProductStore(state => state.setProductsWhitStocks);
   const setProductsByCodeOrName = useProductStore(state => state.setProductsByCodeOrName);
+  const setCalculatedPrices = useProductStore(state => state.setCalculatedPrices);
+
   const setProductsSelected = useProductStore(state => state.setProductsSelected);
   const productsSelected = useProductStore(state => state.productsSelected)
   const productsWhitStocks = useProductStore(state => state.productsWhitStocks);
@@ -51,6 +54,7 @@ export const ProductAction = () => {
         setStatus(getErrorStatus('No response'));
         return;
       }
+      setCalculatedPrices({});
       setStatus(getSuccessStatus());
       Toast({
         title: 'Product added successfully',
@@ -123,6 +127,25 @@ export const ProductAction = () => {
     }
   };
 
+  const getCalculatePrices = async ({ costPrice, percentageReseller, percentageRetail }) => {
+    setStatus(getStartStatus());
+    try {
+      const response = await productService.getCalculatePrices({ costPrice, percentageReseller, percentageRetail });
+      if (!response.prices) {
+        setStatus(getErrorStatus('No response'));
+        return;
+      }
+      setCalculatedPrices(response.prices);
+      setStatus(getSuccessStatus());
+      return response;
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  }
+
+  const clearCalculatePrices = () => {
+    setCalculatedPrices({ costPrice: 0, reseller: 0, retail: 0 });
+  }
   const selectProduct = async (product: Product) => {
     setStatus(getStartStatus());
     try{
@@ -150,6 +173,8 @@ export const ProductAction = () => {
     getProductDetail,
     getProductDetailWhitStockInDropDown,
     getProductsByCodeOrName,
+    getCalculatePrices,
+    clearCalculatePrices,
     selectProduct,
     cleanProductsSelected,
     selectAllProducts
