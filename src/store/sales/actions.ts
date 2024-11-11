@@ -1,4 +1,4 @@
-import { UpdateStatusRequestDto } from '../../services/sale/dtos/generic';
+import { CreateSaleRequestDto, UpdateStatusRequestDto } from '../../services/sale/dtos/generic';
 import { useAPISaleService } from '../../services/sale/sale.service';
 import {
   getErrorStatus,
@@ -91,6 +91,22 @@ export const SaleAction = () => {
     }
   }
 
+  const postSale = async (body: CreateSaleRequestDto) => {
+    setStatus(getStartStatus());
+    try {
+      const data = await saleService.postSale(body);
+      if (!data.sales) {
+        setStatus(getErrorStatus('No response'));
+        return;
+      }
+      setStatus(getSuccessStatus());
+      getSales({});
+    } catch (e) {
+      console.log("e", e);
+      setStatus(getErrorStatus(e as Error));
+    }
+  }
+
   const clearSalesWeek = () => {
     clearSaleWeek();
     findSellersWithSalesInCurrentWeek();
@@ -108,6 +124,7 @@ export const SaleAction = () => {
     findProductsInSalesByUser,
     clearSalesWeek,
     findGroupedProductsInCurrentWeek,
-    clearProductsInSales
+    clearProductsInSales,
+    postSale
   };
 };
