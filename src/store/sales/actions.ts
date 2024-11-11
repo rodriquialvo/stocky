@@ -5,6 +5,7 @@ import {
   getStartStatus,
   getSuccessStatus,
 } from '../helper/statusStateFactory';
+import { CartAction } from '../shoppingcart/actions';
 import { useSaleStore } from './slice';
 
 export const SaleAction = () => {
@@ -15,6 +16,7 @@ export const SaleAction = () => {
   const setProductsInSalesByUser = useSaleStore(state => state.setProductsInSalesByUser);
   const setProductsInSales = useSaleStore(state => state.setProductsInSales);
   const clearSaleWeek = useSaleStore(state => state.clearSaleWeek);
+  const {clearCart} = CartAction()
 
   const getSales = async (filter) => {
     setStatus(getStartStatus());
@@ -101,6 +103,7 @@ export const SaleAction = () => {
       }
       setStatus(getSuccessStatus());
       getSales({});
+      clearCart()
     } catch (e) {
       console.log("e", e);
       setStatus(getErrorStatus(e as Error));

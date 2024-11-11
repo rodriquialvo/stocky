@@ -6,13 +6,12 @@ import {
 } from '../helper/statusStateFactory';
 import { useAPICartService } from '../../services/shoppingcart/cart.service';
 import { Toast } from '@chakra-ui/react';
-import { AddToCartRequestDto, CreateNewCartRequestDto, UpdateQuantityRequestDto } from '../../services/shoppingcart/dtos/generic';
+import { AddToCartRequestDto, Cart, CreateNewCartRequestDto, UpdateQuantityRequestDto } from '../../services/shoppingcart/dtos/generic';
 
 export const CartAction = () => {
   const cartService = useAPICartService();
   const setStatus = useCartStore(state => state.setStatus);
   const setCart = useCartStore(state => state.setCart);
-  const clearCart = useCartStore(state => state.clearCart);
   const setAddToCartStatus = useCartStore(state => state.setAddToCartStatus);
   const cart = useCartStore(state => state.cart);
 
@@ -105,11 +104,21 @@ export const CartAction = () => {
     }
   };
 
+  const clearCart = async () => {
+    setStatus(getStartStatus());
+    try {
+      setCart({ items: [] } as Cart);
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  };
+
   return {
     createNewCart,
     addToCart,
     removeFromCart,
     updateQuantity,
-    getCart
+    getCart,
+    clearCart
   };
 };
