@@ -7,6 +7,8 @@ import { useCartStore } from '../../store/shoppingcart/slice';
 import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 import QuantityPicker from '../QuantityPicker/QuantityPicker';
 import { CartPanelProps } from './interfaces';
+import { SaleAction } from '../../store/sales/actions';
+import { useSaleStore } from '../../store/sales/slice';
 
 //REMOVE
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -14,9 +16,9 @@ const CartPanel: FC<CartPanelProps> = props => {
 
   const cart = useCartStore(state => state.cart);
   const userLogged = useSessionStore(state => state.userLogged);
-  const basicToken = useSessionStore(state => state.basicToken);
-
+  const {postSale} = SaleAction()
   const [variantsQuantity, setVariantsQuantity] = useState({});
+  const status = useSaleStore(state => state.status)
 
   const { updateQuantity, removeFromCart, getCart } = CartAction();
 
@@ -45,6 +47,10 @@ const CartPanel: FC<CartPanelProps> = props => {
   const onRemoveFromCartPressed = async (variantId: string) => {
     await removeFromCart(cart._id, variantId)
   };
+
+  const onConfirmOrderPressed = () => {
+    postSale({cartId: cart._id})
+  }
 
   useEffect(() => {
     if (userLogged?.id) {
@@ -146,10 +152,10 @@ const CartPanel: FC<CartPanelProps> = props => {
                 <Heading>Total: {formattedNumberToMoney(cart.total)}</Heading>
                 <Divider my={5} />
                 <Button
-                  // mt={4}
+                  isLoading={status.isFetching}
                   w={"full"}
                   colorScheme={'pink'}
-                // onClick={() => controller.onAddToCartPressed({ size, color, quantity })}
+                onClick={onConfirmOrderPressed}
                 >Terminar compra</Button>
 
               </Box>

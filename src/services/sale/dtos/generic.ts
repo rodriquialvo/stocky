@@ -37,8 +37,8 @@ interface VariantData {
   }
 
 export interface CreateSaleRequestDto {
-    date: string;
-    details: Detail[];
+    date?: string;
+    details?: Detail[];
     cartId: string;
 }
 
