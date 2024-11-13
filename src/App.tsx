@@ -40,6 +40,9 @@ import SalesWeek from './pages/SalesWeek/SalesWeek.page';
  */
 /******  71592864-ffe3-4f6c-8318-8a7efa937a71  *******/function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
+  const usserLogged = useSessionStore(state => state.isAdminUser);
+
+  console.log("isAdmin", usserLogged);
   return (
     <BrowserRouter>
       {/* <Box display="flex"> */}

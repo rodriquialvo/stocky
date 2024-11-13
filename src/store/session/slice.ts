@@ -8,6 +8,7 @@ type State = {
   userLogged: User;
   isAuthenticated: boolean;
   basicToken: string;
+  isAdminUser: boolean
 };
 
 const initialState: State = {
@@ -21,6 +22,7 @@ const initialState: State = {
   },
   basicToken: '',
   isAuthenticated: false,
+  isAdminUser: false
 };
 
 type Action = {
@@ -42,7 +44,7 @@ export const useSessionStore = create<State & Action>()(
       setStatus: (status: Status) => set({ status }),
       setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
       reset: () => set({ ...initialState }),
-      setLoginData: (data: ResponseLoginDto) => set({ userLogged: data.user, basicToken: data.basicToken }),
+      setLoginData: (data: ResponseLoginDto) => set({ userLogged: data.user, basicToken: data.basicToken, isAdminUser: data.user.roles[0].name === 'admin' }),
     }),
     {
       name: 'users-store', // nombre del key en localStorage

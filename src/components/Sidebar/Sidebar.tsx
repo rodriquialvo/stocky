@@ -5,6 +5,7 @@ import { FaBox, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { SIDEBAR_ITEMS } from '../../constants/sidebar';
 import { SidebarItemProps } from './interfaces';
+import { useSessionStore } from '../../store/session/slice';
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -13,7 +14,6 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) => {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
-
   return (
     <Box
       as="nav"
@@ -52,27 +52,35 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) =
 };
 
 const SidebarContent: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
+  const isAdminUser = useSessionStore(state => state.isAdminUser)
+
   return (
     <VStack align="stretch" spacing={0}>
       <Accordion allowToggle>
         <SidebarItem
           icon={FaBox}
-          label={SIDEBAR_ITEMS.Stock.label}
+          label={SIDEBAR_ITEMS(isAdminUser).Stock.label}
           isExpanded={isExpanded}
-          subItems={SIDEBAR_ITEMS.Stock.subItems}
+          subItems={SIDEBAR_ITEMS(isAdminUser).Stock.subItems}
         />
-        <SidebarItem
-          icon={FaUsers}
-          label={SIDEBAR_ITEMS.Resellers.label}
-          isExpanded={isExpanded}
-          subItems={SIDEBAR_ITEMS.Resellers.subItems}
-        />
-        <SidebarItem
-          icon={FaUsers}
-          label={SIDEBAR_ITEMS.Sales.label}
-          isExpanded={isExpanded}
-          subItems={SIDEBAR_ITEMS.Sales.subItems}
-        />
+        {
+          isAdminUser &&
+          <>
+            <SidebarItem
+              icon={FaUsers}
+              label={SIDEBAR_ITEMS(isAdminUser).Resellers.label}
+              isExpanded={isExpanded}
+              subItems={SIDEBAR_ITEMS(isAdminUser).Resellers.subItems}
+            />
+            <SidebarItem
+              icon={FaUsers}
+              label={SIDEBAR_ITEMS(isAdminUser).Sales.label}
+              isExpanded={isExpanded}
+              subItems={SIDEBAR_ITEMS(isAdminUser).Sales.subItems}
+            />
+          </>
+        }
+
       </Accordion>
     </VStack>
   );

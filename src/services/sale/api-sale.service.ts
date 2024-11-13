@@ -1,16 +1,19 @@
+import { useSessionStore } from '../../store/session/slice';
 import Http from '../http';
 import { CreateSaleRequestDto, GetSalesFilter, SaleReponseDto, SalesReponseDto, UpdateStatusRequestDto } from './dtos/generic';
 import { SaleService } from './sale.service';
 
 export class ApiSaleService implements SaleService {
   private http: Http;
+  private basicToken = useSessionStore(state => state.basicToken);
+
 
   // todo encode token dinamically
   constructor() {
-    this.http = new Http('', 'sales');
+    this.http = new Http(this.basicToken, 'sales');
   }
 
-  postSale = (body: CreateSaleRequestDto) => this.http.post<SalesReponseDto>('', body);
+  postSale = (body: CreateSaleRequestDto) => this.http.post<SalesReponseDto>('', {...body, date: new Date().toISOString()});
 
   updateStatusSale = (saleId: string, data: UpdateStatusRequestDto) => this.http.put<SaleReponseDto>(`${saleId}`, data);
 

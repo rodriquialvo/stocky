@@ -9,7 +9,7 @@ import { ProductAction } from '../../store/product/actions';
 const IncreaseAndDiscountPricePanel: FC<IncreaseAndDiscountPricePanelProps> = props => {
   const productsSelected = useProductStore(state => state.productsSelected);
   const [percentage, setPercentage] = useState("0")
-  const {selectProduct, cleanProductsSelected, selectAllProducts} = ProductAction();
+  const {selectProduct} = ProductAction();
 
   return (
     <Drawer
@@ -70,7 +70,7 @@ const IncreaseAndDiscountPricePanel: FC<IncreaseAndDiscountPricePanelProps> = pr
                     <Text>{formattedNumberToMoney(product.prices.reseller)}</Text>
                     <Text fontWeight={"bold"}>{formattedNumberToMoney(product.prices.reseller + product.prices.reseller * parseFloat(percentage)/100)  }</Text>
                     <Text>{formattedNumberToMoney(product.prices.retail)}</Text>
-                    <Text fontWeight={"bold"}>{formattedNumberToMoney(product.prices.retail)}</Text>
+                    <Text fontWeight={"bold"}>{formattedNumberToMoney(product.prices.retail + product.prices.retail * parseFloat(percentage)/100)}</Text>
                     <IconButton
                       aria-label='Delete'
                       icon={<DeleteIcon />}
