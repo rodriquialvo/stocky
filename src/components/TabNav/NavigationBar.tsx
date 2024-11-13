@@ -4,6 +4,7 @@ import {
   Flex,
   IconButton,
   Button,
+  Text,
 } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { FiShoppingCart } from 'react-icons/fi';
@@ -12,15 +13,16 @@ import { TabNavProps } from './interfaces';
 import FilterPanel from '../FilterPanel/FilterPanel';
 import CartPanel from '../CartPanel/CartPanel';
 import { useCartStore } from '../../store/shoppingcart/slice';
+import { formattedNumberToMoney } from '../../utils/functions';
 
 const NavigationBar: React.FC<TabNavProps> = ({
 }) => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [islopenFilterPanel, setIsOpenFilterPanel] = useState(false);
-  // const [isOpenCartPanel, setIsOpenCartPanel] = useState(false);
   const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
   const isOpenCartPanel = useCartStore(state => state.isOpenCartPanel);
+  const cart = useCartStore(state => state.cart);
   // Función para manejar el scroll y determinar la dirección
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
@@ -86,6 +88,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
           ml={4}
           onClick={() => setIsOpenCartPanel(true)}
         />
+        <Text color={"pink.600"} fontWeight={"bold"}>{formattedNumberToMoney(cart.total)}</Text>
       </Flex>
       <FilterPanel
         isOpen={islopenFilterPanel}

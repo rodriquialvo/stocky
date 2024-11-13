@@ -14,7 +14,8 @@ export interface ProductDetailController {
   colors: {label: string, value: string}[];
   imageSelected: string,
   quantity: number,
-  size: string, color: string
+  size: string, color: string,
+  isLoading: boolean
   /* Events */
   onAddToCartPressed: (data: ParamsOnAddToCartPressed) => void,
   setImageSelected: (image: string) => void,

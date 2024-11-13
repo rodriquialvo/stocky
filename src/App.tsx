@@ -14,6 +14,7 @@ import SalesList from './pages/SalesList/SalesList';
 import ResellerList from './pages/ResellersList/ResellersList';
 import StockEntry from './pages/StockEntry/StockEntry';
 import SalesWeek from './pages/SalesWeek/SalesWeek.page';
+import ScrollToTop from './hooks/ScrollToTop';
 
 /*************  ✨ Codeium Command ⭐  *************/
 /**
@@ -47,7 +48,7 @@ import SalesWeek from './pages/SalesWeek/SalesWeek.page';
     <BrowserRouter>
       {/* <Box display="flex"> */}
       {/* Contenido principal */}
-
+      <ScrollToTop />
       <Routes>
         <Route path={ROUTES.HOME} element={userIsAuthenticated ? <Navigate to={ROUTES.GALLERY} /> : <LoginPage />} />
         <Route path={ROUTES.SHOPPING_CART} element={

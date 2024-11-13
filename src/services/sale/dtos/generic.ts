@@ -54,6 +54,10 @@ export interface UpdateStatusRequestDto {
     status: string;
 }
 
+export interface PostSaleResponseDto {
+    sale: Sale
+} 
+
 export interface GetSalesFilter {
  
 }

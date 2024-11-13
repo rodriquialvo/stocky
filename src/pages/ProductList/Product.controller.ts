@@ -4,6 +4,8 @@ import { useProductStore } from '../../store/product/slice';
 import { ProductController } from './interfaces';
 import { Product } from '../../services/product/dtos/getProducts';
 import { ItemListProductProps } from '../../components/ItemListProduct/interfaces';
+import { useLocation } from 'react-router-dom';
+import { ROUTES } from '../../constants/Routes';
 
 export const useProductController =
   (): /* <--Dependency Injections  like services hooks */
@@ -13,7 +15,7 @@ export const useProductController =
     const {selectProduct, cleanProductsSelected, selectAllProducts} = ProductAction();
     const productsSelected = useProductStore(state => state.productsSelected);
     const [isAllproductsSelected, setIsAllProductsSelected] = useState(false)
-    
+    const {pathname} = useLocation()
     const [isOpenIncreaseAndDiscountPanel, setIsOpenIncreaseAndDiscountPanel] = useState(false)
     
     useEffect(() => {
@@ -22,7 +24,11 @@ export const useProductController =
 
     useEffect(() => {
       setIsAllProductsSelected(!!productsSelected.length && productsSelected.length  === products.length)
-    },[productsSelected, products])
+    },[productsSelected, products]);
+
+    useEffect(() => {
+      pathname === ROUTES.STOCK_LIST && cleanProductsSelected()
+    }, [pathname])
 
 
     const mapProductsViewModel = (product: Product): ItemListProductProps => {
