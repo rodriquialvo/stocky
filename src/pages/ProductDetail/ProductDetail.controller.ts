@@ -20,9 +20,14 @@ export const useProductDetailController =
     const { getProductDetail } = ProductAction()
     // todo: ver si esto esta bien, estoy importand cartAction dentro del product controller
     const { addToCart } = CartAction();
+
     const addToCartstatus = useCartStore(state => state.addToCartStatus);
     const setAddToCartStatus = useCartStore(state => state.setAddToCartStatus);
+    const statusCart = useCartStore(state => state.status)
+    
     const productDetail = useProductStore(state => state.product);
+    const statusProduct = useProductStore(state => state.status);
+    
     const [isDisabledButton, setIsDisabledButton] = useState(false)
     const navigate = useNavigate();
     const [sizes, setSizes] = useState<{ label: string, value: string }[]>([]);
@@ -31,6 +36,7 @@ export const useProductDetailController =
     const [color, setColor] = useState("");
     const [quantity, setQuantity] = useState(1);
     const [imageSelected, setImageSelected] = useState("");
+    const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
 
     useEffect(() => {
       setColors(
@@ -66,6 +72,7 @@ export const useProductDetailController =
     useEffect(() => {
       if (addToCartstatus.success) {
         navigate(ROUTES.GALLERY);
+        setIsOpenCartPanel(true);
         setAddToCartStatus(getStartStatus());
       }
     }, [addToCartstatus, navigate])
@@ -127,6 +134,7 @@ export const useProductDetailController =
       onDecrease,
       quantity,
       size,
-      color
+      color,
+      isLoading: statusProduct.isFetching || statusCart.isFetching
     };
   };

@@ -1,11 +1,13 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Flex, IconButton, Text, useMediaQuery, VStack } from '@chakra-ui/react';
-import React from 'react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, IconButton, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Tooltip, useDisclosure, useMediaQuery, VStack } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { FaBox, FaUsers } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { SIDEBAR_ITEMS } from '../../constants/sidebar';
 import { SidebarItemProps } from './interfaces';
 import { useSessionStore } from '../../store/session/slice';
+import { FiLogOut } from 'react-icons/fi';
+import { SessionAction } from '../../store/session/actions';
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -47,12 +49,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) =
           <SidebarContent isExpanded={isExpanded} />
         </VStack>
       </Flex>
+      
     </Box>
   );
 };
 
 const SidebarContent: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
   const isAdminUser = useSessionStore(state => state.isAdminUser)
+  const { isOpen: isOpenModalLogout, onOpen: onOpenModalLogout, onClose: onCloseLogout } = useDisclosure();
+  const { logout } = SessionAction()
 
   return (
     <VStack align="stretch" spacing={0}>
@@ -80,8 +85,23 @@ const SidebarContent: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
             />
           </>
         }
-
       </Accordion>
+      {isExpanded && <Button onClick={onOpenModalLogout} mx={4} mt={8} colorScheme={"pink"}>Cerrar Sesion</Button>}
+      <Modal isOpen={isOpenModalLogout} onClose={onCloseLogout}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Confirmación de Rechazo</ModalHeader>
+          <ModalBody>
+            <Text>¿Está seguro que desea cerrar Sesion ?</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button size={{ base: "xs", md: "sm" }} variant="ghost" onClick={onCloseLogout}>Cancelar</Button>
+            <Button size={{ base: "xs", md: "sm" }} colorScheme="red" ml={3} onClick={logout}>
+              Confirmar Cierre de Sesión
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </VStack>
   );
 };

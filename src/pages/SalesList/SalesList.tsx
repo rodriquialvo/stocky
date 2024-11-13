@@ -17,10 +17,17 @@ import { useEffect, useState } from 'react';
 import { SaleAction } from '../../store/sales/actions';
 import { useSaleStore } from '../../store/sales/slice';
 import SaleDetailTable from './SaleDetailTable';
+import { useLocation } from 'react-router-dom';
+import { ROUTES } from '../../constants/Routes';
+import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
+import { capitalizeFirstLetter } from '../../utils/functions';
+import { formatFullDate, formatHour } from '../../utils/date';
 
 const SalesList = () => {
     const { getSales, updateStatusSale } = SaleAction();
     const sales = useSaleStore(state => state.list.sales);
+    const status = useSaleStore(state => state.status)
+
     const totalSales = useSaleStore(state => state.list.total);
     const salesPerPage = 10; // Número de ventas por página dentro de cada semana
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,6 +36,7 @@ const SalesList = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedNewStatus, setSelectedNewStatus] = useState(null);
     const { isOpen: isConfirmOpen, onOpen: onConfirmOpen, onClose: onConfirmClose } = useDisclosure();
+    const { pathname,  } = useLocation();
 
     useEffect(() => {
         getSales({
@@ -36,6 +44,13 @@ const SalesList = () => {
             limit: salesPerPage
         });
     }, [currentPage]);
+
+    useEffect(() => {
+        pathname === ROUTES.SALES_LIST &&
+        getSales({page:1})
+    }, [pathname])
+
+    console.log("pathname", pathname)
 
     const totalPages = Math.ceil(totalSales / salesPerPage);
 
@@ -68,11 +83,11 @@ const SalesList = () => {
     const toggleExpand = (saleId) => {
         setExpandedSaleId(expandedSaleId === saleId ? null : saleId);
     };
-
+    
     return (
         <Box className="pt-4 px-4  sm:pt-8 pb-0 px-8 bg-gray-100 min-h-screen" position={'relative'} height="100vh" overflowY="auto">
             <Text fontSize="2xl" fontWeight="bold" className="text-center mb-6">Ventas</Text>
-
+            {status.isFetching && <LoadingOverlay/>}
             {sales.length > 0 && sales.map((sale: any) => (
                 <Box
                     key={sale.id}
@@ -83,10 +98,10 @@ const SalesList = () => {
                         <Box flex="2">
                             <Text fontSize="md" fontWeight="semibold">Código de Venta: {sale.code}</Text>
 
-                            <Text display={{ base: "none", sm: "block" }} fontSize="sm" color="gray.500">Usuario: {sale.user?.lastname + ' ' + sale.user?.name || 'N/A'}</Text>
+                            <Text display={{ base: "none", sm: "block" }} fontSize="sm" color="gray.500">Usuario: {capitalizeFirstLetter(sale.user?.lastname) + ' ' + capitalizeFirstLetter(sale.user?.name) || 'N/A'}</Text>
                             <Text display={{ base: "block", sm: "none" }} fontSize="sm" color="gray.500">{sale.user?.lastname + ' ' + sale.user?.name || 'N/A'}</Text>
 
-                            <Text display={{ base: "none", sm: "block" }} fontSize="sm" color="gray.500">Fecha de creación: {sale.creationDate}</Text>
+                            <Text display={{ base: "none", sm: "block" }} fontSize="sm" color="gray.500">Fecha de creación: {formatFullDate(sale.date)} a las {formatHour(sale.date)}</Text>
                             <Text display={{ base: "block", sm: "none" }} fontSize="sm" color="gray.500">{sale.creationDate}</Text>
 
                             <Text fontSize="sm" color={sale.status === 'pending' ? 'orange.500' : sale.status === 'approved' ? 'green.500' : 'red.500'}>

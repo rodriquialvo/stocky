@@ -6,6 +6,7 @@ import {
   getSuccessStatus,
 } from '../helper/statusStateFactory';
 import { CartAction } from '../shoppingcart/actions';
+import { useCartStore } from '../shoppingcart/slice';
 import { useSaleStore } from './slice';
 
 export const SaleAction = () => {
@@ -16,7 +17,7 @@ export const SaleAction = () => {
   const setProductsInSalesByUser = useSaleStore(state => state.setProductsInSalesByUser);
   const setProductsInSales = useSaleStore(state => state.setProductsInSales);
   const clearSaleWeek = useSaleStore(state => state.clearSaleWeek);
-  const {clearCart} = CartAction()
+  const clearCart = useCartStore(state => state.clearCart)
 
   const getSales = async (filter) => {
     setStatus(getStartStatus());
@@ -95,14 +96,17 @@ export const SaleAction = () => {
 
   const postSale = async (body: CreateSaleRequestDto) => {
     setStatus(getStartStatus());
+    console.log("hola")
     try {
       const data = await saleService.postSale(body);
-      if (!data.sales) {
+      console.log("data", data)
+      if (!data.sale) {
         setStatus(getErrorStatus('No response'));
         return;
       }
       setStatus(getSuccessStatus());
       getSales({});
+      console.log("llega hjastra el clear")
       clearCart()
     } catch (e) {
       console.log("e", e);

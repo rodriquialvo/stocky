@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Spinner, Stack, Text } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import { useState } from "react";
 import QuantityPicker from "../../components/QuantityPicker/QuantityPicker";
@@ -6,6 +6,7 @@ import NavigationBar from "../../components/TabNav/NavigationBar";
 import { capitalizeFirstLetter, formattedNumberToMoney } from "../../utils/functions";
 import { useProductDetailController } from "./ProductDetail.controller";
 import { ProductDetailProps } from "./interfaces";
+import LoadingOverlay from "../../components/LoadingOverlay/LoadingOverlay";
 
 const ProductDetail: React.FC<ProductDetailProps> = props => {
   const [isHovered, setIsHovered] = useState(false);
@@ -27,7 +28,11 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
       <NavigationBar
       // onClickFilterButton={onOpen}
       />
-
+      {
+        controller.isLoading && (
+          <LoadingOverlay/>
+        )
+      }
       <Box
         display={"flex"}
         flexDirection={{

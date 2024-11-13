@@ -13,6 +13,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import { UserAction } from '../../store/users/actions';
 import { useUserStore } from '../../store/users/slice';
+import { Routes, useLocation } from 'react-router-dom';
+import { ROUTES } from '../../constants/Routes';
 
 const ResellerList: React.FC = () => {
     const { getResellers } = UserAction();
@@ -20,6 +22,7 @@ const ResellerList: React.FC = () => {
     const total = useUserStore(state => state.resellersList.total);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const {pathname} = useLocation()
 
     useEffect(() => {
         getResellers({
@@ -27,6 +30,11 @@ const ResellerList: React.FC = () => {
             limit: itemsPerPage
         });
     }, []);
+
+    useEffect(() => {
+        pathname === ROUTES.RESSELLERS_LIST && 
+        getResellers({page:1})
+    },[pathname])
 
     const totalPages = Math.ceil(total / itemsPerPage);
     const startIdx = (currentPage - 1) * itemsPerPage;

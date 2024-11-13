@@ -30,5 +30,5 @@ export interface CreateUserDto {
   
   export interface FilterGetResellersDto {
     page: number;
-    limit: number;
+    limit?: number;
   }

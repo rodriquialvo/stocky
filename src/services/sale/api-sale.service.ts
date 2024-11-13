@@ -1,6 +1,6 @@
 import { useSessionStore } from '../../store/session/slice';
 import Http from '../http';
-import { CreateSaleRequestDto, GetSalesFilter, SaleReponseDto, SalesReponseDto, UpdateStatusRequestDto } from './dtos/generic';
+import { CreateSaleRequestDto, GetSalesFilter, PostSaleResponseDto, SaleReponseDto, SalesReponseDto, UpdateStatusRequestDto } from './dtos/generic';
 import { SaleService } from './sale.service';
 
 export class ApiSaleService implements SaleService {
@@ -13,7 +13,7 @@ export class ApiSaleService implements SaleService {
     this.http = new Http(this.basicToken, 'sales');
   }
 
-  postSale = (body: CreateSaleRequestDto) => this.http.post<SalesReponseDto>('', {...body, date: new Date().toISOString()});
+  postSale = (body: CreateSaleRequestDto) => this.http.post<PostSaleResponseDto>('', {...body, date: new Date().toISOString()});
 
   updateStatusSale = (saleId: string, data: UpdateStatusRequestDto) => this.http.put<SaleReponseDto>(`${saleId}`, data);
 

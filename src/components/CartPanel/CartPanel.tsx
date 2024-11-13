@@ -15,8 +15,11 @@ import { useSaleStore } from '../../store/sales/slice';
 const CartPanel: FC<CartPanelProps> = props => {
 
   const cart = useCartStore(state => state.cart);
+  const statusCart = useCartStore(state => state.status)
+
   const userLogged = useSessionStore(state => state.userLogged);
-  const {postSale} = SaleAction()
+
+  const { postSale } = SaleAction()
   const [variantsQuantity, setVariantsQuantity] = useState({});
   const status = useSaleStore(state => state.status)
 
@@ -49,7 +52,7 @@ const CartPanel: FC<CartPanelProps> = props => {
   };
 
   const onConfirmOrderPressed = () => {
-    postSale({cartId: cart._id})
+    postSale({ cartId: cart._id })
   }
 
   useEffect(() => {
@@ -60,8 +63,10 @@ const CartPanel: FC<CartPanelProps> = props => {
 
   useEffect(() => {
     setVariantsQuantity(cart?.items?.reduce((acc, item) => ({ ...acc, [item.variant._id]: item.quantity }), {}))
-  }, [cart])
+  }, [cart]);
+ 
 
+  console.log("Cart", cart)
   return (
     <>
       <>
@@ -121,6 +126,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                               quantity={variantsQuantity[item.variant._id]}
                               onIncrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id] + 1)}
                               onDecrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id] - 1)}
+                              isDisabled={statusCart.isFetching}
                             />
                           </Box>
                         </Box>
@@ -155,7 +161,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                   isLoading={status.isFetching}
                   w={"full"}
                   colorScheme={'pink'}
-                onClick={onConfirmOrderPressed}
+                  onClick={onConfirmOrderPressed}
                 >Terminar compra</Button>
 
               </Box>

@@ -14,7 +14,6 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
 }) => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
-  const { logout } = SessionAction()
   const [isMobile] = useMediaQuery("(max-width: 768px)");
 
 
@@ -33,8 +32,6 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
       display={"flex"}
       flexDirection={"column"}
     >
-      <Button onClick ={logout}> LOGOUT</Button>
-
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       {children}
       {
