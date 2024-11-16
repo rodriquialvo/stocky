@@ -12,7 +12,7 @@ export const useProductController =
     ProductController => {
     const {getProducts, getProductDetailWhitStockInDropDown} = ProductAction()
     const products = useProductStore(state => state.products);
-    const {selectProduct, cleanProductsSelected, selectAllProducts} = ProductAction();
+    const {selectProduct, cleanProductsSelected, selectAllProducts, increasePricesOfProducts} = ProductAction();
     const productsSelected = useProductStore(state => state.productsSelected);
     const [isAllproductsSelected, setIsAllProductsSelected] = useState(false)
     const {pathname} = useLocation()

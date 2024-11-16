@@ -66,7 +66,6 @@ const CartPanel: FC<CartPanelProps> = props => {
   }, [cart]);
  
 
-  console.log("Cart", cart)
   return (
     <>
       <>
@@ -105,7 +104,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                           alignItems={"center"}
                         >
                           <Image
-                            src={item.product.pictures[0]?.url || 'https://picsum.photos/200'}
+                            src={item?.product?.pictures[0]?.url || 'https://picsum.photos/200'}
                             alt={item.product.name}
                             boxSize="80px"
                             objectFit="cover"

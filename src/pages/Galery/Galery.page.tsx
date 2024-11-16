@@ -1,9 +1,8 @@
 import React from 'react';
-import { Box, SimpleGrid, Spinner, useDisclosure } from '@chakra-ui/react';
+import { Box, SimpleGrid } from '@chakra-ui/react';
 import NavigationBar from '../../components/TabNav/NavigationBar';
 import GalleryItem from '../../components/GalleryItem/GaleryItem';
 import Hero from '../../components/Hero/Hero';
-import FilterPanel from '../../components/FilterPanel/FilterPanel';
 import { useGaleryController } from './Galery.controller';
 import { GaleryProps } from './interfaces';
 
@@ -43,7 +42,7 @@ const GalleryPage: React.FC<GaleryProps> = props => {
         
       </Box>
       <SimpleGrid
-        columns={{ base: 1, lg: 4 }} // Número de columnas según el tamaño de pantalla
+        columns={{ base: 1, md: 2, lg: 4 }} // Número de columnas según el tamaño de pantalla
         spacing={10}
         p={4} // Añade un poco de padding
         justifyItems="center" // Centra los elementos dentro de cada celda

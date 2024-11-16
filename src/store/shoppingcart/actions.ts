@@ -105,7 +105,6 @@ export const CartAction = () => {
   };
 
   const clearCart = async () => {
-    console.log("emntra aca")
     try {
       setCart({ items: [] } as Cart);
     } catch (e) {

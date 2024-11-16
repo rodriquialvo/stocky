@@ -43,7 +43,6 @@ import ScrollToTop from './hooks/ScrollToTop';
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
   const usserLogged = useSessionStore(state => state.isAdminUser);
 
-  console.log("isAdmin", usserLogged);
   return (
     <BrowserRouter>
       {/* <Box display="flex"> */}

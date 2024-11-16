@@ -9,8 +9,10 @@ import { ProductAction } from '../../store/product/actions';
 const IncreaseAndDiscountPricePanel: FC<IncreaseAndDiscountPricePanelProps> = props => {
   const productsSelected = useProductStore(state => state.productsSelected);
   const [percentage, setPercentage] = useState("0")
-  const {selectProduct} = ProductAction();
-
+  const {selectProduct, increasePricesOfProducts} = ProductAction();
+  const onIncreaseOrDiscountPrice = () => {
+    increasePricesOfProducts({productsIds: productsSelected.map(prod => prod.id), percentageIncrease: parseFloat(percentage)})
+  }
   return (
     <Drawer
       size="xl"
@@ -114,6 +116,8 @@ const IncreaseAndDiscountPricePanel: FC<IncreaseAndDiscountPricePanelProps> = pr
                 w="full"
                 colorScheme="pink"
                 my={4}
+                onClick={onIncreaseOrDiscountPrice}
+                isDisabled={percentage === "0"}
               >
                 Aplicar {parseFloat(percentage) < 0 ? "Descuento" : "Aumento"}
               </Button>

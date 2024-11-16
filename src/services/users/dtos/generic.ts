@@ -25,7 +25,7 @@ export interface CreateUserDto {
   }
 
   export interface GetResellerSingeResponseDto {
-    reseller: Reseller;
+    user: Reseller;
   }
   
   export interface FilterGetResellersDto {

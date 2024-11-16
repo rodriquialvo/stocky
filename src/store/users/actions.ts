@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { CreateUserDto, FilterGetResellersDto } from '../../services/users/dtos/generic';
 import { useAPIUserService } from '../../services/users/user.service';
 import {
@@ -31,12 +32,14 @@ export const UserAction = () => {
     setStatus(getStartStatus());
     try {
       const response = await usersService.createUser(reseller);
-      if (!response.reseller) {
+      if (!response.user) {
         setStatus(getErrorStatus('No response'));
         return;
       }
       setStatus(getSuccessStatus());
+      toast.success('Usuario creado con éxito');
     } catch (e) {
+      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };

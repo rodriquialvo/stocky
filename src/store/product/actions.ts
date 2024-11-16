@@ -9,6 +9,7 @@ import {
 import { ImageAction } from '../image/actions';
 import { useProductStore } from './slice';
 import { Product } from '../../services/product/dtos/getProducts';
+import toast from 'react-hot-toast';
 
 export const ProductAction = () => {
   const productService = useAPIProductService();
@@ -166,6 +167,26 @@ export const ProductAction = () => {
     setProductsSelected(products)
   }
 
+  const increasePricesOfProducts = async ({ productsIds, percentageIncrease }: { productsIds: string[], percentageIncrease: number }) => {
+    setStatus(getStartStatus());
+    try {
+      const response = await productService.putIncreasePricesOfProducts({ productsIds, percentageIncrease });
+      if (!response.products) {
+        setStatus(getErrorStatus('No response'));
+        return;
+      }
+      setCalculatedPrices(response.prices);
+      setStatus(getSuccessStatus());
+      toast.success('Precios aumentados con éxito');
+      getProducts();
+      setProductsSelected([]);
+      return response;
+    } catch (e) {
+      console.log("Error", e)
+      setStatus(getErrorStatus(e as Error));
+    }
+  }
+
 
   return {
     getProducts,
@@ -177,6 +198,7 @@ export const ProductAction = () => {
     clearCalculatePrices,
     selectProduct,
     cleanProductsSelected,
-    selectAllProducts
+    selectAllProducts,
+    increasePricesOfProducts
   };
 };

@@ -1,4 +1,5 @@
 import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
+import { useSessionStore } from '../../store/session/slice';
 import Http from '../http';
 import { GetProductAtributesResponse } from './dtos/getProductAtributes';
 import { GetProductDetailWhitStocksResponse } from './dtos/getProductDetail';
@@ -8,8 +9,10 @@ import { ProductService } from './product.service';
 
 export class ApiProductService implements ProductService {
   private http: Http;
+  private basicToken = useSessionStore(state => state.basicToken);
+
   constructor() {
-    this.http = new Http('', 'products');
+    this.http = new Http(this.basicToken, 'products');
   }
 
   getProducts = (params?) => this.http.get<GetProductsResponse>('filter', params);
@@ -23,4 +26,6 @@ export class ApiProductService implements ProductService {
   getProductAtributes = (params?: {type?: string}) => this.http.get<GetProductAtributesResponse>('', params);
 
   getCalculatePrices = (params: any) => this.http.get<GetProductAtributesResponse>('calculations/prices', params);
+
+  putIncreasePricesOfProducts = (data: {productsIds: string[], percentageIncrease: number}) => this.http.put<GetProductAtributesResponse>('prices/increase', data);
 }
