@@ -14,5 +14,4 @@ export class ApiUserService implements UserService {
 
   getUsers = (filter: FilterGetResellersDto) => this.http.get<GetResellersResponseDto>('resellers', filter);
   createUser = (reseller: CreateUserDto) => this.http.post<GetResellerSingeResponseDto>('', reseller);
-
 }

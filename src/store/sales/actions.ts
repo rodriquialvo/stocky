@@ -96,17 +96,14 @@ export const SaleAction = () => {
 
   const postSale = async (body: CreateSaleRequestDto) => {
     setStatus(getStartStatus());
-    console.log("hola")
     try {
       const data = await saleService.postSale(body);
-      console.log("data", data)
       if (!data.sale) {
         setStatus(getErrorStatus('No response'));
         return;
       }
       setStatus(getSuccessStatus());
       getSales({});
-      console.log("llega hjastra el clear")
       clearCart()
     } catch (e) {
       console.log("e", e);

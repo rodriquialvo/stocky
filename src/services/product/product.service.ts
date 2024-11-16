@@ -9,7 +9,8 @@ export interface ProductService {
   postCreateNewProduct: (body: ProductFormData) => Promise<PostProductResponse>
   getProductDetail: (id: string, param?: { by?: string }) => Promise<GetProductDetailResponse>,
   getProductsByCodeOrName: (q: string) => Promise<GetProductsResponse>;
-  getCalculatePrices: (params: any) => Promise<any>
+  getCalculatePrices: (params: any) => Promise<any>,
+  putIncreasePricesOfProducts: (data: {productsIds: string[], percentageIncrease: number}) => Promise<any>
 }
 
 export const useAPIProductService = (): ProductService => {

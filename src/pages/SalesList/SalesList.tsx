@@ -50,7 +50,6 @@ const SalesList = () => {
         getSales({page:1})
     }, [pathname])
 
-    console.log("pathname", pathname)
 
     const totalPages = Math.ceil(totalSales / salesPerPage);
 

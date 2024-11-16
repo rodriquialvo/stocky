@@ -187,7 +187,6 @@ export const useCreateNewProductController =
 
     const handleChangePercentageRetail = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      console.log(value);
       const data = {
         ...formData,
         percentages: {
