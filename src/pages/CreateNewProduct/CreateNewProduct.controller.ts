@@ -88,7 +88,7 @@ export const useCreateNewProductController =
         })
         setImages([]);
         getCategories();
-        getSizes()
+        // getSizes()
       }
     }, [isCurrentPage])
 

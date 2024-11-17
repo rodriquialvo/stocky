@@ -63,7 +63,6 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   // Responsive padding and font sizes
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
-
   return (
     <Box
       width={{ base: '100%', md: '80%' }}
@@ -176,14 +175,14 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             setSelectedItems={controller.setSelectedColors}
           />
         </FormControl>
-        <FormControl >
+        {/* <FormControl >
           <FormLabel htmlFor="sizes">Talles</FormLabel>
           <ItemsSelector
             items={controller.sizesOptions}
             selectedItems={controller.selectedSizes}
             setSelectedItems={controller.setSelectedSizes}
           />
-        </FormControl>
+        </FormControl> */}
         {/* Color Select */}
         {/* <FormControl>
           <FormLabel htmlFor="colors">Colores</FormLabel>

@@ -8,17 +8,19 @@ import { ProductAttribute } from '../../services/product/dtos/getProductAtribute
 type State = {
   status: Status;
   sizes: ProductAttribute[];
-
+  sizesTypes: ProductAttribute[];
 };
 
 const initialState: State = {
   status: getDefaultStatus(),
   sizes: [],
+  sizesTypes: [],
 };
 
 type Action = {
   setStatus: (status: Status) => void;
   setSizes: (sizes: ProductAttribute[]) => void;
+  setSizesTypes: (sizesTypes: ProductAttribute[]) => void;
 };
 
 // Create your store, which includes both state and (optionally) actions
@@ -28,6 +30,7 @@ export const useProductAtributesStore = create<State & Action>()(
       ...initialState,
       setStatus: (status: Status) => set({ status }),
       setSizes: (sizes) => set({sizes}),
+      setSizesTypes: (sizesTypes) => set({sizesTypes}),
     }),
     {
       name: 'productsAtributes-store', // nombre del key en localStorage

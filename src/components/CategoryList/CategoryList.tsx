@@ -1,6 +1,6 @@
 // CategoryList.tsx
-import React, { useState } from "react";
-import { Box, Text, VStack, Button, SimpleGrid } from "@chakra-ui/react";
+import React from "react";
+import { Box, Button, SimpleGrid } from "@chakra-ui/react";
 
 
 export interface Category {
@@ -20,8 +20,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ categories, onCategorySelec
     <SimpleGrid
       justifyContent={"center"}
       spacing={4}
-      columns={{ base: 1, lg: 4 }}
-      my={4} // Número de columnas según el tamaño de pantalla
+      my={4}
     >
       {categories.map((category) => (
         <CategoryItem  categorySelected={categorySelected} key={category.id} category={category} onCategorySelect={onCategorySelect} />
@@ -43,7 +42,9 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ category, onCategorySelect,
         px={2}
         borderWidth={categorySelected === category.id ? 2 : 0}
         borderColor={"pink.100"}
-        variant="link" onClick={() => onCategorySelect(category)}>
+        variant="link" onClick={() => onCategorySelect(category)}
+        mx={2}
+        >
         {category.name}
       </Button>
     </Box>
