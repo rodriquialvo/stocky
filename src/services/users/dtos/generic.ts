@@ -1,10 +1,12 @@
 import { Role } from "../../session/dtos/session.dto";
 
 export interface Reseller {
+    id: string,
     name: string;
     lastname: string;
     email: string;
     phone: string;
+    address: string;
     active?: boolean;
     lastConnection?: string;
     roles: Role[];

@@ -11,18 +11,17 @@ import {
     Tr,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserAction } from '../../store/users/actions';
 import { useUserStore } from '../../store/users/slice';
-import { Routes, useLocation } from 'react-router-dom';
-import { ROUTES } from '../../constants/Routes';
 
 const ResellerList: React.FC = () => {
+    const navigate = useNavigate();
     const { getResellers } = UserAction();
     const resellers = useUserStore(state => state.resellersList.resellers);
     const total = useUserStore(state => state.resellersList.total);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-    const {pathname} = useLocation()
+    const itemsPerPage = 30;
 
     useEffect(() => {
         getResellers({
@@ -31,10 +30,6 @@ const ResellerList: React.FC = () => {
         });
     }, []);
 
-    useEffect(() => {
-        pathname === ROUTES.RESSELLERS_LIST && 
-        getResellers({page:1})
-    },[pathname])
 
     const totalPages = Math.ceil(total / itemsPerPage);
     const startIdx = (currentPage - 1) * itemsPerPage;
@@ -45,6 +40,11 @@ const ResellerList: React.FC = () => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
             setCurrentPage(pageNumber);
         }
+    };
+
+    const handleNavigate = (reseller) => {
+        console.log("reseller", reseller);
+        navigate('/resellers/new', { state: { reseller } });
     };
 
     return (
@@ -62,6 +62,7 @@ const ResellerList: React.FC = () => {
                             <Th>Phone</Th>
                             <Th>Active</Th>
                             <Th>Last Connection</Th>
+                            <Th>Edit</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -73,6 +74,11 @@ const ResellerList: React.FC = () => {
                                 <Td>{reseller.phone}</Td>
                                 <Td>{reseller.active ? 'Yes' : 'No'}</Td>
                                 <Td>{reseller.lastConnection}</Td>
+                                <Td>
+                                    <Button colorScheme="blue" size="sm" onClick={() => handleNavigate(reseller)}>
+                                        Edit
+                                    </Button>
+                                </Td>
                             </Tr>
                         ))}
                     </Tbody>

@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import { CreateUserDto, FilterGetResellersDto } from '../../services/users/dtos/generic';
+import { CreateUserDto, FilterGetResellersDto, Reseller } from '../../services/users/dtos/generic';
 import { useAPIUserService } from '../../services/users/user.service';
 import {
   getErrorStatus,
@@ -12,6 +12,7 @@ export const UserAction = () => {
   const usersService = useAPIUserService();
   const setStatus = useUserStore(state => state.setStatus);
   const setResellersList = useUserStore(state => state.setResellersList);
+  const setCreateOrUpdateStatus = useUserStore(state => state.setCreateOrUpdateStatus);
 
   const getResellers = async (filter: FilterGetResellersDto) => {
     setStatus(getStartStatus());
@@ -29,23 +30,43 @@ export const UserAction = () => {
   };
 
   const createUser = async (reseller: CreateUserDto) => {
-    setStatus(getStartStatus());
+    setCreateOrUpdateStatus(getStartStatus());
     try {
       const response = await usersService.createUser(reseller);
       if (!response.user) {
         setStatus(getErrorStatus('No response'));
         return;
       }
-      setStatus(getSuccessStatus());
-      toast.success('Usuario creado con éxito');
+      setCreateOrUpdateStatus(getSuccessStatus());
     } catch (e) {
       console.log("e", e);
-      setStatus(getErrorStatus(e as Error));
+      setCreateOrUpdateStatus(getErrorStatus(e as Error));
     }
+  };
+
+  const updateUser = async (id: string, reseller: Partial<Reseller>) => {
+    setCreateOrUpdateStatus(getStartStatus());
+    try {
+      const response = await usersService.updateUser(id, reseller);
+      if (!response.user) {
+        setStatus(getErrorStatus('No response'));
+        return;
+      }
+      setCreateOrUpdateStatus(getSuccessStatus());
+    } catch (e) {
+      console.log("e", e);
+      setCreateOrUpdateStatus(getErrorStatus(e as Error));
+    }
+  };
+
+  const clearCreateOrUpdateStatus = () => {
+    setCreateOrUpdateStatus(getStartStatus());
   };
 
   return {
     getResellers,
-    createUser
+    createUser,
+    updateUser,
+    clearCreateOrUpdateStatus
   };
 };

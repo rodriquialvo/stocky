@@ -1,18 +1,30 @@
-import { Box, Button, FormControl, FormLabel, Heading, Input, Select, useBreakpointValue, VStack, useToast } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Heading, Input, Select, useBreakpointValue, VStack, useToast, Checkbox } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 import { RoleAction } from '../../store/roles/actions';
 import { useRoleStore } from '../../store/roles/slice';
 import { UserAction } from '../../store/users/actions';
 import { useCreateNewResellerController } from './CreateNewReseller.controller';
 import { CreateNewResellerProps } from './interfaces';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../store/users/slice';
 
 export const CreateNewResellerPage: FC<
   CreateNewResellerProps
 > = props => {
   const toast = useToast();
+  const navigate = useNavigate();
+
+  const location = useLocation();
+  const reseller = location.state?.reseller;
+
+  const texts = {
+    title: reseller ? 'Editar Revendedor' : 'Crear revendedor',
+    button: reseller ? 'Guardar cambios' : 'Crear revendedor',
+  }
 
   const { getRoles } = RoleAction();
-  const { createUser } = UserAction();
+  const { createOrUpdateStatus } = useUserStore(state => state);
+  const { createUser, updateUser, clearCreateOrUpdateStatus } = UserAction();
   const roles = useRoleStore(state => state.roles);
 
   const { useController = useCreateNewResellerController } = props;
@@ -25,17 +37,46 @@ export const CreateNewResellerPage: FC<
     getRoles();
   }, []);
 
+  useEffect(() => {
+    if (!createOrUpdateStatus.isError && !createOrUpdateStatus.success) {
+      return;
+    }
+    if (createOrUpdateStatus.success) {
+      toast({
+        title: 'Operación exitosa',
+        description: 'La operación se realizo con exito.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right',
+      });
+      navigate('/resellers/list');
+    } else if (createOrUpdateStatus.error) {
+      toast({
+        title: 'Error',
+        description: 'La operación no se pudo realizar.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    }
+    clearCreateOrUpdateStatus();
+  }, [createOrUpdateStatus]);
+
   const [formValues, setFormValues] = useState({
-    name: '',
-    lastname: '',
-    email: '',
-    phone: '',
-    roles: [],
-    address: '',
+    name: reseller ? reseller.name : '',
+    lastname: reseller ? reseller.lastname : '',
+    email: reseller ? reseller.email : '',
+    phone: reseller ? reseller.phone : '',
+    roles: reseller ? reseller.roles.map(role => role.id) : [],
+    address: reseller ? reseller.address : '',
+    active: reseller ? reseller.active : true
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type, checked }: any = e.target;
+    console.log("name", name, "value", value, "type", type, "checked", checked);
 
     let newValue = value;
     if (type === 'select-one') {
@@ -62,8 +103,11 @@ export const CreateNewResellerPage: FC<
       });
       return;
     }
-    createUser(formValues);
-    // Aquí puedes añadir lógica para enviar los datos a la API o manejar los datos
+    if (!reseller) {
+      createUser(formValues);
+    } else {
+      updateUser(reseller.id, formValues);
+    }
   };
 
 
@@ -89,7 +133,7 @@ export const CreateNewResellerPage: FC<
     >
       <VStack spacing={4} width="100%">
         <Heading fontSize={headingSize} fontWeight="bold" mb={6} textAlign="center">
-          Nuevo Revendedor/a
+          {texts.title}
         </Heading>
 
         <FormControl isRequired>
@@ -137,8 +181,16 @@ export const CreateNewResellerPage: FC<
           </Select>
         </FormControl>
 
+        {/* add heck with active */}
+        <FormControl>
+          <FormLabel htmlFor="active">Activo</FormLabel>
+          <Checkbox id="active" name="active" isChecked={formValues.active} onChange={handleChange}>
+            Activo
+          </Checkbox>
+        </FormControl>
+
         <Button type="submit" colorScheme="blue" width="full" mt={4} onClick={handleSubmit}>
-          Añadir Revendedor/a
+          {texts.button}
         </Button>
       </VStack>
     </Box>
