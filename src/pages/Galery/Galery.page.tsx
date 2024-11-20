@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, SimpleGrid } from '@chakra-ui/react';
 import NavigationBar from '../../components/TabNav/NavigationBar';
 import GalleryItem from '../../components/GalleryItem/GaleryItem';
 import Hero from '../../components/Hero/Hero';
 import { useGaleryController } from './Galery.controller';
 import { GaleryProps } from './interfaces';
+import { useProductStore } from '../../store/product/slice';
+import { ProductAction } from '../../store/product/actions';
 
 const galleryData = [
   {
@@ -20,9 +22,15 @@ const galleryData = [
 ];
 
 const GalleryPage: React.FC<GaleryProps> = props => {
+  const { getProducts } = ProductAction();
+  const productFilters = useProductStore(state => state.productsFilters);
   const { useController = useGaleryController } = props;
   const controller = useController();
   
+  useEffect(() => {
+    getProducts(productFilters);
+  }, [productFilters]);
+
   return (
     <Box
     >

@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from 'react';
 import {
   Box,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
   Button,
+  Checkbox,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
   DrawerContent,
   DrawerOverlay,
-  VStack,
-  Checkbox,
   FormLabel,
-  useBreakpointValue,
-  Text,
   Input,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  RadioGroup,
-  Stack,
   Radio,
+  RadioGroup,
   Spinner,
+  Stack,
+  Text,
+  VStack
 } from '@chakra-ui/react';
-import { ProductAtributesAction } from '../../store/product-atributes/actions';
-import { useProductAtributesStore } from '../../store/product-atributes/slice';
+import React, { useEffect, useState } from 'react';
+import { mapColors } from '../../constants/maps';
+import { Category } from '../../services/categories/dtos/getCategories';
 import { CategoryAction } from '../../store/category/actions';
 import { useCategorytore } from '../../store/category/slice';
-import { Category } from '../../services/categories/dtos/getCategories';
-import CategoryList from '../CategoryList/CategoryList';
-import { mapColors } from '../../constants/maps';
-import { capitalizeFirstLetter } from '../../utils/functions';
+import { ProductAtributesAction } from '../../store/product-atributes/actions';
+import { useProductAtributesStore } from '../../store/product-atributes/slice';
+import { ProductAction } from '../../store/product/actions';
 import { useSessionStore } from '../../store/session/slice';
+import { capitalizeFirstLetter } from '../../utils/functions';
+import CategoryList from '../CategoryList/CategoryList';
 import { initialStateFilters } from './constants';
 
 interface FilterPanelProps {
@@ -37,19 +37,25 @@ interface FilterPanelProps {
   onClose: () => void
 }
 const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
-  const [inStockOnly, setInStockOnly] = useState(false);
+  // actions
   const { getSizes, getSizesTypes } = ProductAtributesAction();
+  const { getCategories } = CategoryAction();
+  const { setProductsFiltersAction } = ProductAction();
+
+  // stores
   const sizes = useProductAtributesStore(state => state.sizes);
   const sizesTypes = useProductAtributesStore(state => state.sizesTypes);
-  const { getCategories } = CategoryAction();
+  const statusProductAtributes = useProductAtributesStore(state => state.status);
   const categories = useCategorytore(state => state.categories);
+  const isAdminUser = useSessionStore(state => state.isAdminUser);
+
+  // local states
+  const [isFirstRequest, setIsFirstRequest] = useState(true);
   const [selectedPath, setSelectedPath] = useState<Category[]>([]);
   const [categorySelected, setCategorySelected] = useState<string | null>(null);
   const [currentCategories, setCurrentCategories] = useState<Category[]>(categories);
   const [typeSizeSelected, setTypeSizeSelected] = useState<string>("");
-  const statusProductAtributes = useProductAtributesStore(state => state.status);
   const [filters, setFilters] = useState(initialStateFilters);
-  const isAdminUser = useSessionStore(state => state.isAdminUser);
 
   useEffect(() => {
     getCategories();
@@ -73,6 +79,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
 
   const onPressedStartCategories = () => {
     setSelectedPath([]);
+    setFilters({ ...filters, categories: [] })
     setCurrentCategories(categories);
     setCategorySelected('')
   }
@@ -132,7 +139,14 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
     });
   };
 
-
+  const onApplyFiltersPressed = () => {
+    if (JSON.stringify(filters) !== JSON.stringify(initialStateFilters) || !isFirstRequest) {
+      if (isFirstRequest) {
+        setIsFirstRequest(false);
+      }
+      setProductsFiltersAction(filters);
+    }
+  }
 
   const filterContent = (
     <VStack py={8} spacing={4} align="normal">
@@ -294,17 +308,17 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
       {/* Filtro de disponibilidad */}
       <Box>
         <Checkbox
-          isChecked={filters.inStockOnly}
-          checked={filters.inStockOnly}
-          name="inStockOnly"
-          onChange={(e) => updateField(e.target.name, !filters.inStockOnly)}
+          isChecked={filters.hasStock}
+          checked={filters.hasStock}
+          name="hasStock"
+          onChange={(e) => updateField(e.target.name, !filters.hasStock)}
         >
           Solo en stock
         </Checkbox>
       </Box>
 
       {/* Botón para aplicar los filtros */}
-      <Button colorScheme="pink">
+      <Button colorScheme="pink" onClick={onApplyFiltersPressed}>
         Aplicar Filtros
       </Button>
     </VStack>
@@ -313,7 +327,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
   return (
     <>
       <>
-        <Drawer size={{lg: "lg"}} isOpen={isOpen} placement="right" onClose={onClose}>
+        <Drawer size={{ lg: "lg" }} isOpen={isOpen} placement="right" onClose={onClose}>
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />

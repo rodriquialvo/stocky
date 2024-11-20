@@ -20,6 +20,7 @@ export const ProductAction = () => {
   const setProductsWhitStocks = useProductStore(state => state.setProductsWhitStocks);
   const setProductsByCodeOrName = useProductStore(state => state.setProductsByCodeOrName);
   const setCalculatedPrices = useProductStore(state => state.setCalculatedPrices);
+  const setProductsFilters = useProductStore(state => state.setProductsFilters);
 
   const setProductsSelected = useProductStore(state => state.setProductsSelected);
   const productsSelected = useProductStore(state => state.productsSelected)
@@ -27,10 +28,10 @@ export const ProductAction = () => {
   const products = useProductStore(state => state.products);
 
   const { createNewImageUrl } = ImageAction()
-  const getProducts = async () => {
+  const getProducts = async (filters) => {
     setStatus(getStartStatus());
     try {
-      const data = await productService.getProducts();
+      const data = await productService.getProducts(filters);
       if (!data.products) {
         setStatus(getErrorStatus('No response'));
         return;
@@ -178,13 +179,17 @@ export const ProductAction = () => {
       setCalculatedPrices(response.prices);
       setStatus(getSuccessStatus());
       toast.success('Precios aumentados con éxito');
-      getProducts();
+      getProducts({});
       setProductsSelected([]);
       return response;
     } catch (e) {
       console.log("Error", e)
       setStatus(getErrorStatus(e as Error));
     }
+  }
+
+  const setProductsFiltersAction = (productsFilters) => {
+    setProductsFilters(productsFilters)
   }
 
 
@@ -199,6 +204,7 @@ export const ProductAction = () => {
     selectProduct,
     cleanProductsSelected,
     selectAllProducts,
-    increasePricesOfProducts
+    increasePricesOfProducts,
+    setProductsFiltersAction
   };
 };

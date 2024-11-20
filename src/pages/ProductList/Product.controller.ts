@@ -19,7 +19,7 @@ export const useProductController =
     const [isOpenIncreaseAndDiscountPanel, setIsOpenIncreaseAndDiscountPanel] = useState(false)
     
     useEffect(() => {
-      getProducts()
+      getProducts({})
     },[]);
 
     useEffect(() => {

@@ -19,7 +19,7 @@ export const useGaleryController =
     /* Listeners */
 
     useEffect(() => {
-      getProducts()
+      getProducts({})
     },[])
     /* View Events */
     const onPressProduct = (product: Product) => {
