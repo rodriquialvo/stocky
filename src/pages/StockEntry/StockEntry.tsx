@@ -65,11 +65,12 @@ export default function StockEntry() {
 
   // check if last entry is completed
   const isRowComplete = (index) => {
+    
     const product = stockEntries[index]?.product?.id;
-    const quantity = stockEntries[index].quantity;
-    const color = stockEntries[index].color;
-    const size = stockEntries[index].size;
-    const cost = stockEntries[index].cost
+    const quantity = stockEntries[index]?.quantity;
+    const color = stockEntries[index]?.color;
+    const size = stockEntries[index]?.size;
+    const cost = stockEntries[index]?.cost
     return Boolean(product && quantity && color && size && cost);
   }
 
@@ -95,8 +96,10 @@ export default function StockEntry() {
   };
 
   const handleRemoveEntry = (index) => {
-    const updatedEntries = stockEntries.filter((_, i) => i !== index);
-    setStockEntries(updatedEntries);
+    if(stockEntries.length > 1) {
+      const updatedEntries = stockEntries.filter((_, i) => i !== index);
+      setStockEntries(updatedEntries);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -126,7 +129,6 @@ export default function StockEntry() {
           {stockEntries.map((entry, index) => (
             <HStack key={index} spacing={4} w="full">
               <Text fontSize="md" mb={1}>{index + 1}</Text>
-
               <Box position="relative" w="100%">
                 <Input
                   size="lg"
@@ -214,10 +216,10 @@ export default function StockEntry() {
               </Button>
             </HStack>
           ))}
-          <Button colorScheme="teal" onClick={handleAddEntry} size="lg" w="full" mt={4}>
+          <Button  colorScheme="teal" onClick={handleAddEntry} size="lg" w="full" mt={4}>
             Añadir otro producto
           </Button>
-          <Button isDisabled={postStockLoading} type="submit" colorScheme="blue" size="lg" w="full" mt={6}>
+          <Button isDisabled={postStockLoading || !isRowComplete(stockEntries.length - 1)} type="submit" colorScheme="blue" size="lg" w="full" mt={6}>
             Guardar todos los stocks
           </Button>
         </VStack>

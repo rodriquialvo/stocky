@@ -88,20 +88,19 @@ export const useCreateNewProductController =
         })
         setImages([]);
         getCategories();
-        // getSizes()
+        getSizes()
       }
     }, [isCurrentPage])
 
     useEffect(() => {
       setIsDisabledButtonSubmit(
-        !formData.name ||
-        !formData.code ||
-        !formData.description ||
+        !formData.name.length ||
+        !formData.code.length ||
+        !formData.description.length ||
         !categorySelected ||
         !selectedColors.length ||
         !selectedSizes.length ||
         !images.length
-
       )
       
     }, [formData, categorySelected, selectedColors, selectedSizes,images]) 

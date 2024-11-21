@@ -76,7 +76,6 @@ export const CreateNewResellerPage: FC<
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type, checked }: any = e.target;
-    console.log("name", name, "value", value, "type", type, "checked", checked);
 
     let newValue = value;
     if (type === 'select-one') {

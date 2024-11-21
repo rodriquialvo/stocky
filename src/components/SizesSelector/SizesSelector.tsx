@@ -27,6 +27,7 @@ const ItemsSelector = ({
                 value={value}
                 isChecked={!!selectedItems.find(e => value === e)}
                 onChange={() => handleItemChange(value, selectedItems)}
+                key={value}
               >
                 {label}
               </Checkbox>

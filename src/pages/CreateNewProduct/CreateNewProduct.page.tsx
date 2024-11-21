@@ -93,7 +93,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           />
         </FormControl>
         <FormControl isRequired>
-        <FormLabel htmlFor="category">Categoria</FormLabel>
+          <FormLabel htmlFor="category">Categoria</FormLabel>
 
           <Breadcrumb separator=" / ">
             <BreadcrumbItem>
@@ -175,14 +175,14 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             setSelectedItems={controller.setSelectedColors}
           />
         </FormControl>
-        {/* <FormControl >
+        <FormControl>
           <FormLabel htmlFor="sizes">Talles</FormLabel>
           <ItemsSelector
             items={controller.sizesOptions}
             selectedItems={controller.selectedSizes}
             setSelectedItems={controller.setSelectedSizes}
           />
-        </FormControl> */}
+        </FormControl>
         {/* Color Select */}
         {/* <FormControl>
           <FormLabel htmlFor="colors">Colores</FormLabel>
@@ -209,7 +209,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             onChange={controller.handleChangeCostPrice}
             placeholder="Introduce el precio de costo"
             min={0}
-            // step="0.01"
+          // step="0.01"
           />
         </FormControl>
 
@@ -222,7 +222,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             value={controller.formData.percentages.reseller}
             onChange={controller.handleChangePercentageReseller}
             min={0}
-            // step="0.01"
+          // step="0.01"
           />
         </FormControl>
 
@@ -235,11 +235,11 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             value={controller.formData.percentages.retail}
             onChange={controller.handleChangePercentageRetail}
             min={0}
-            // step="0.01"
+          // step="0.01"
           />
         </FormControl>
-       
-       <FormControl isDisabled={true}>
+
+        <FormControl isDisabled={true}>
           <FormLabel htmlFor="resellerPrice">Precio Revendedor</FormLabel>
           <Input
             type="number"
