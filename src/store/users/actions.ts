@@ -1,4 +1,3 @@
-import toast from 'react-hot-toast';
 import { CreateUserDto, FilterGetResellersDto, Reseller } from '../../services/users/dtos/generic';
 import { useAPIUserService } from '../../services/users/user.service';
 import {
@@ -39,7 +38,6 @@ export const UserAction = () => {
       }
       setCreateOrUpdateStatus(getSuccessStatus());
     } catch (e) {
-      console.log("e", e);
       setCreateOrUpdateStatus(getErrorStatus(e as Error));
     }
   };
@@ -54,7 +52,6 @@ export const UserAction = () => {
       }
       setCreateOrUpdateStatus(getSuccessStatus());
     } catch (e) {
-      console.log("e", e);
       setCreateOrUpdateStatus(getErrorStatus(e as Error));
     }
   };

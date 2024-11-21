@@ -43,7 +43,6 @@ const ResellerList: React.FC = () => {
     };
 
     const handleNavigate = (reseller) => {
-        console.log("reseller", reseller);
         navigate('/resellers/new', { state: { reseller } });
     };
 

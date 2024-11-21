@@ -106,7 +106,6 @@ export const SaleAction = () => {
       getSales({});
       clearCart()
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   }

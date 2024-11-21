@@ -36,15 +36,14 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, im
       flexDirection="column"
       alignItems="start"
       transition="transform 0.3s" // Transición suave
-      _hover={{ transform: { base: 'none', md: 'scale(1.05)' }, cursor: 'pointer' }} // Efecto hover solo en pantallas medianas y grandes
-      onClick={onClick}
-      
+      _hover={{ transform: { base: 'none', md: 'scale(1.05)' }, cursor: 'pointer' }} // Efecto hover solo en pantallas medianas y grandes 
     >
       <Box position="relative" width="full" height="96">
         <Image
           src={images[currentIndex]}
           alt={name}
           className="w-full h-full object-cover"
+          onClick={onClick}
         />
         
         {/* Botones para navegar entre imágenes */}
