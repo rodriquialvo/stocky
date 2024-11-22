@@ -4,9 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { mapColors } from '../../constants/maps';
 import { ROUTES } from '../../constants/Routes';
 import { Category } from '../../services/categories/dtos/getCategories';
-import { CategoryAction } from '../../store/category/actions';
 import { useCategorytore } from '../../store/category/slice';
-import { ProductAtributesAction } from '../../store/product-atributes/actions';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
@@ -22,7 +20,6 @@ export const useCreateNewProductController =
     const status = useProductStore(state => state.status)
     const location = useLocation();
     const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
-    const { getCategories } = CategoryAction();
     const categories = useCategorytore(state => state.categories);
 
     const [formData, setFormData] = useState<ProductFormData>({
@@ -54,7 +51,6 @@ export const useCreateNewProductController =
     const [categorySelected, setCategorySelected] = useState<string | null>(null);
     const [selectedColors, setSelectedColors] = useState([]);
     const [selectedSizes, setSelectedSizes] = useState([]);
-    const { getSizes } = ProductAtributesAction();
     const sizes = useProductAtributesStore(state => state.sizes);
     const [isDisabledButtonSubmit, setIsDisabledButtonSubmit] = useState(true);
 
@@ -87,8 +83,6 @@ export const useCreateNewProductController =
           sizes: []
         })
         setImages([]);
-        getCategories();
-        getSizes()
       }
     }, [isCurrentPage])
 

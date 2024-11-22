@@ -22,7 +22,6 @@ export const CreateNewResellerPage: FC<
     button: reseller ? 'Guardar cambios' : 'Crear revendedor',
   }
 
-  const { getRoles } = RoleAction();
   const { createOrUpdateStatus } = useUserStore(state => state);
   const { createUser, updateUser, clearCreateOrUpdateStatus } = UserAction();
   const roles = useRoleStore(state => state.roles);
@@ -31,11 +30,6 @@ export const CreateNewResellerPage: FC<
   const controller = useController();
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
-
-  useEffect(() => {
-    // TODO: limitar estos gets al ingresar a las paginas, mucho consumo
-    getRoles();
-  }, []);
 
   useEffect(() => {
     if (!createOrUpdateStatus.isError && !createOrUpdateStatus.success) {

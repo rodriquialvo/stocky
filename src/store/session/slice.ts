@@ -44,7 +44,7 @@ export const useSessionStore = create<State & Action>()(
       setStatus: (status: Status) => set({ status }),
       setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
       reset: () => set({ ...initialState }),
-      setLoginData: (data: ResponseLoginDto) => set({ userLogged: data.user, basicToken: data.basicToken, isAdminUser: data.user.roles[0].name === 'admin' }),
+      setLoginData: (data: ResponseLoginDto) => set({ userLogged: data.user, basicToken: data.basicToken, isAdminUser: !!data.user.roles.find((role) => role.name === 'admin')}),
     }),
     {
       name: 'users-store', // nombre del key en localStorage

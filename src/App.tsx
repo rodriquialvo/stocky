@@ -4,7 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { LoginPage } from './pages/Login/Login.page';
 import { ProductList } from './pages/ProductList/ProductList';
 import { useSessionStore } from './store/session/slice';
-import {ROUTES} from './constants/Routes';
+import { ROUTES } from './constants/Routes';
 import CreateNewProduct from './pages/CreateNewProduct/CreateNewProduct.page';
 import { CreateNewResellerPage } from './pages/CreateNewReseller/CreateNewReseller.page';
 import GalleryPage from './pages/Galery/Galery.page';
@@ -15,33 +15,24 @@ import ResellerList from './pages/ResellersList/ResellersList';
 import StockEntry from './pages/StockEntry/StockEntry';
 import SalesWeek from './pages/SalesWeek/SalesWeek.page';
 import ScrollToTop from './hooks/ScrollToTop';
+import { useEffect } from 'react';
+import { CategoryAction } from './store/category/actions';
+import { ProductAtributesAction } from './store/product-atributes/actions';
+import { useProductAtributesStore } from './store/product-atributes/slice';
+import { RoleAction } from './store/roles/actions';
 
-/*************  ✨ Codeium Command ⭐  *************/
-/**
- * Componente principal de la aplicación
- * 
- * Este componente se encarga de renderizar
- * las rutas de la aplicación y de autenticar
- * al usuario.
- * 
- * Se utiliza el hook useSessionStore para 
- * obtener el estado de autenticación del usuario
- * y mostrar el login o el contenido principal
- * según sea el caso.
- * 
- * El contenido principal se renderiza en un
- * componente Box con un display flex.
- * 
- * Se utiliza el componente ProtectedRoute para
- * proteger las rutas que requieren autenticación
- * y mostrar el login en caso de no estar autenticado.
- * 
- * @returns Un JSX Element con el contenido principal
- *          de la aplicación y las rutas configuradas.
- */
-/******  71592864-ffe3-4f6c-8318-8a7efa937a71  *******/function App() {
+function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
+  const { getCategories } = CategoryAction();
+  const { getSizes, getSizesTypes } = ProductAtributesAction();
+  const { getRoles } = RoleAction();
 
+  useEffect(() => {
+    getCategories();
+    getSizesTypes();
+    getSizes();
+    getRoles();
+  },[])
 
   return (
     <BrowserRouter>

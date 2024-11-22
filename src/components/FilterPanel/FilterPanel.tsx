@@ -22,7 +22,6 @@ import {
 import React, { useEffect, useState } from 'react';
 import { mapColors } from '../../constants/maps';
 import { Category } from '../../services/categories/dtos/getCategories';
-import { CategoryAction } from '../../store/category/actions';
 import { useCategorytore } from '../../store/category/slice';
 import { ProductAtributesAction } from '../../store/product-atributes/actions';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
@@ -39,8 +38,7 @@ interface FilterPanelProps {
 }
 const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
   // actions
-  const { getSizes, getSizesTypes } = ProductAtributesAction();
-  const { getCategories } = CategoryAction();
+  const { getSizes } = ProductAtributesAction();
   const { setProductsFiltersAction } = ProductAction();
 
   // stores
@@ -63,12 +61,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
     retail: false
   });
   const productFilters = useProductStore(state => state.productsFilters);
-
-
-  useEffect(() => {
-    getCategories();
-    getSizesTypes();
-  }, []);
 
   useEffect(() => {
     if (!!typeSizeSelected.length) {

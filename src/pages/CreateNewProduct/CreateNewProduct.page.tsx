@@ -24,42 +24,6 @@ import ItemsSelector from '../../components/SizesSelector/SizesSelector';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
-  const data: { categories: Category[] } = {
-    categories: [
-      {
-        id: "67060410220d19482c921bc8",
-        name: "Lencería",
-        children: [
-          {
-            id: "670604a5220d19482c921bce",
-            name: "Bombacha",
-            children: []
-          },
-          {
-            id: "670604ef220d19482c921bd0",
-            name: "Vedetina",
-            children: [
-              {
-                id: "67076a06fbd5968aa38cda3b",
-                name: "Vedetina Clásica",
-                children: []
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: "6706041f220d19482c921bca",
-        name: "Ropa Interior",
-        children: []
-      },
-      {
-        id: "6706042e220d19482c921bcc",
-        name: "Accesorios",
-        children: []
-      }
-    ]
-  };
   // Responsive padding and font sizes
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
