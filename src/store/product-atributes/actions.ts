@@ -10,17 +10,29 @@ export const ProductAtributesAction = () => {
   const setStatus = useProductAtributesStore(state => state.setStatus);
   const setSizes = useProductAtributesStore(state => state.setSizes);
   const setSizesTypes = useProductAtributesStore(state => state.setSizesTypes);
-const productAtributesService = useAPIProductAtributesService()
+  const productAtributesService = useAPIProductAtributesService();
+  const AllSizesAndTypes = useProductAtributesStore(state => state.AllSizesAndTypes);
+  const setAllSizesAndTypes = useProductAtributesStore(state => state.setAllSizesAndTypes);
   const getSizes = async (subtype?: string) => {
     setStatus(getStartStatus());
     try {
-      const data = await productAtributesService.getProductAtributes({type:"size", subtype});
-      if (!data.productAttributes) {
-        setStatus(getErrorStatus('No response'));
-        return;
+      if (!!AllSizesAndTypes.length) {
+        if (!!subtype) {
+          setSizes(AllSizesAndTypes.filter(item => item.type === "size" && item.subtype === subtype))
+        }
+      } else {
+        const data = await productAtributesService.getProductAtributes({ type: "size", subtype });
+        if (!data.productAttributes) {
+          setStatus(getErrorStatus('No response'));
+          return;
+        }
+        if(!!subtype) {
+          setSizes(data.productAttributes);
+        } else {
+          setAllSizesAndTypes(data.productAttributes)
+        }
       }
       setStatus(getSuccessStatus());
-      setSizes(data.productAttributes);
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
     }
@@ -29,7 +41,7 @@ const productAtributesService = useAPIProductAtributesService()
   const getSizesTypes = async () => {
     setStatus(getStartStatus());
     try {
-      const data = await productAtributesService.getProductAtributesSubTypes({type:"size"});
+      const data = await productAtributesService.getProductAtributesSubTypes({ type: "size" });
       if (!data.productAttributeSubtypes) {
         setStatus(getErrorStatus('No response'));
         return;
