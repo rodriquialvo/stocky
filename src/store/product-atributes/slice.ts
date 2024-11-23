@@ -9,21 +9,27 @@ type State = {
   status: Status;
   sizes: ProductAttribute[];
   sizesTypes: ProductAttribute[];
-  AllSizesAndTypes: ProductAttribute[];
+  allSizesAndTypes: ProductAttribute[];
+  allColors: ProductAttribute[];
+  allBrands: ProductAttribute[];
 };
 
 const initialState: State = {
   status: getDefaultStatus(),
   sizes: [],
   sizesTypes: [],
-  AllSizesAndTypes: []
+  allSizesAndTypes: [],
+  allColors: [],
+  allBrands: []
 };
 
 type Action = {
   setStatus: (status: Status) => void;
   setSizes: (sizes: ProductAttribute[]) => void;
   setSizesTypes: (sizesTypes: ProductAttribute[]) => void;
-  setAllSizesAndTypes: (sizesTypes: ProductAttribute[]) => void;
+  setAllSizesAndTypes: (sizes: ProductAttribute[]) => void;
+  setAllcolors: (colors: ProductAttribute[]) => void;
+  setAlBrands: (brands: ProductAttribute[]) => void 
 };
 
 // Create your store, which includes both state and (optionally) actions
@@ -33,7 +39,9 @@ export const useProductAtributesStore = create<State & Action>()(
       setStatus: (status: Status) => set({ status }),
       setSizes: (sizes) => set({sizes}),
       setSizesTypes: (sizesTypes) => set({sizesTypes}),
-      setAllSizesAndTypes: (AllSizesAndTypes) => set({AllSizesAndTypes}),
+      setAllSizesAndTypes: (allSizesAndTypes) => set({allSizesAndTypes}),
+      setAllcolors: (allColors) => set({allColors}),
+      setAlBrands: (allBrands) => set({allBrands})
     }),
   )
 

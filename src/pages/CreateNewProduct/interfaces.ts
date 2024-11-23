@@ -1,6 +1,7 @@
 import { ImageListType } from "react-images-uploading";
 import { Category } from "../../services/categories/dtos/getCategories";
 import { Dispatch, SetStateAction } from "react";
+import { ProductAttribute } from "../../services/product/dtos/getProductAtributes";
 
 export interface CreateNewProductController {
   /* State */
@@ -14,7 +15,8 @@ export interface CreateNewProductController {
   selectedColors: string[];
   colors: { label: string, value: string }[]
   sizesOptions: { label: string, value: string }[]
-  isDisabledButtonSubmit: boolean
+  isDisabledButtonSubmit: boolean,
+  sizesTypes: ProductAttribute[]
 
   /* Events */
   setImages: (imageList: ImageListType) => void
@@ -34,9 +36,10 @@ export interface CreateNewProductController {
   handleChangePercentageReseller: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleChangePercentageRetail: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setSelectedColors: Dispatch<SetStateAction<string[]>>;
-  selectedSizes: string[],
-  setSelectedSizes: Dispatch<SetStateAction<string[]>>;
   calculatedPrices: any;
+  onSelectAllColors: () => void,
+  handleColorChange: (colorValue: string) => void
+  onSelectSizeType: (value: string) => void,
 }
 
 export interface CreateNewProductProps {
@@ -53,7 +56,7 @@ export interface ProductFormData {
   prices: Prices;
   percentages: Percentages;
   colors: string[],
-  sizes: string[]
+  sizeType: string
 }
 
 export interface Attributes {

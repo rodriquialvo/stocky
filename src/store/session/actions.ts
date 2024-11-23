@@ -34,28 +34,8 @@ export const SessionAction = () => {
     reset();
   };
 
-  // const refreshToken = async () => {
-  //   setStatus(getStartStatus());
-  //   try {
-  //     const response = await sessionService.refreshToken({
-  //       refreshToken: session.accessTokenRefresh!,
-  //     });
-  //     if (!response.success) {
-  //       setStatus(getErrorStatus(response.message));
-  //       return;
-  //     }
-  //     setSessionOnLocalStorage(
-  //       new Session(response.accessToken, session.accessTokenRefresh),
-  //     );
-  //     setStatus(getSuccessStatus());
-  //   } catch (e) {
-  //     setStatus(getErrorStatus(e as Error));
-  //   }
-  // };
-
   return {
     login,
-    // refreshToken,
     logout,
   };
 };
