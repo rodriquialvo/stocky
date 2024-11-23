@@ -24,15 +24,19 @@ import { RoleAction } from './store/roles/actions';
 function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
   const { getCategories } = CategoryAction();
-  const { getSizes, getSizesTypes } = ProductAtributesAction();
+  const { getSizes, getSizesTypes, getAllColors, getAllBrands } = ProductAtributesAction();
   const { getRoles } = RoleAction();
 
   useEffect(() => {
-    getCategories();
-    getSizesTypes();
-    getSizes();
-    getRoles();
-  },[])
+    if(userIsAuthenticated) {
+      getCategories();
+      getSizesTypes();
+      getSizes();
+      getRoles();
+      getAllColors();
+      getAllBrands()
+    }
+  },[userIsAuthenticated])
 
   return (
     <BrowserRouter>
@@ -91,10 +95,6 @@ function App() {
             <SalesWeek />
           </ProtectedRoute>
         } />
-        {/* <Route path="/stock/add" element={<h1>Ingreso de Stock</h1>} />
-          <Route path="/resellers/list" element={<h1>Lista de Revendedores</h1>} />
-          <Route path="/resellers/new" element={<h1>Nuevo Revendedor</h1>} />
-          <Route path="/resellers/metrics" element={<h1>Métricas de Revendedores</h1>} /> */}
       </Routes>
 
       {/* </Box> */}

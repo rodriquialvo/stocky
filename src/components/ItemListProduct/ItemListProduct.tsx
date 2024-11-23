@@ -17,7 +17,6 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
         <Checkbox
           onMouseDown ={props.onPressCheckbox}
           isChecked={props.isChecked}
-          
         />
         <Heading
           ml={5}

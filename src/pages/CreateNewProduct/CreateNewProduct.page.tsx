@@ -11,6 +11,14 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Checkbox,
+  Text,
+  CheckboxGroup,
+  Wrap,
+  WrapItem,
+  RadioGroup,
+  Stack,
+  Radio,
 } from '@chakra-ui/react';
 import { Select } from 'chakra-react-select';
 import { FC, useState } from 'react';
@@ -21,12 +29,14 @@ import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadG
 import CategoryList, { Category } from '../../components/CategoryList/CategoryList';
 import ColorsSelector from '../../components/ColorsSelector/ColorsSelector';
 import ItemsSelector from '../../components/SizesSelector/SizesSelector';
+import { capitalizeFirstLetter } from '../../utils/functions';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
   // Responsive padding and font sizes
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
+  console.log("formData", controller.formData)
   return (
     <Box
       width={{ base: '100%', md: '80%' }}
@@ -105,21 +115,6 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             placeholder="Introduce el nombre"
           />
         </FormControl>
-
-        {/* <FormControl>
-          <FormLabel htmlFor="categorie">Categoria</FormLabel>
-          <Select
-            options={controller.categories}
-            onChange={(option) => controller.handleSelectChange(option, 'categorie')}
-            placeholder="Selecciona una Categoria"
-            isSearchable
-            isMulti
-          />
-          <Button mt={2} size="sm" onClick={controller.onBrandOpen} colorScheme="blue">
-            Añadir Categoria
-          </Button>
-        </FormControl> */}
-
         {/* Description Field */}
         <FormControl isRequired>
           <FormLabel htmlFor="description">Descripción</FormLabel>
@@ -132,35 +127,43 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           />
         </FormControl>
         <FormControl >
+
           <FormLabel htmlFor="colors">Colores</FormLabel>
-          <ItemsSelector
-            items={controller.colors}
-            selectedItems={controller.selectedColors}
-            setSelectedItems={controller.setSelectedColors}
-          />
+          <Checkbox
+            isChecked={controller.selectedColors.length === controller.colors.length}
+            onChange={controller.onSelectAllColors}
+          ><Text >Seleccionar todos</Text></Checkbox>
+          <Wrap spacing="10px">
+            {controller.colors.map(({ label, value }) => (
+              <WrapItem justifyContent={"center"} alignItems={"center"} gap={2} key={value}>
+                <input
+                  type='checkbox'
+                  checked={controller.selectedColors.includes(value)}
+                  onChange={() => controller.handleColorChange(value)}
+                />
+                <Text>{label}</Text>
+              </WrapItem>
+            ))}
+          </Wrap>
         </FormControl>
         <FormControl>
-          <FormLabel htmlFor="sizes">Talles</FormLabel>
-          <ItemsSelector
-            items={controller.sizesOptions}
-            selectedItems={controller.selectedSizes}
-            setSelectedItems={controller.setSelectedSizes}
-          />
+          <Box>
+            <FormLabel htmlFor="sizes">Tipo de talle</FormLabel>
+            {controller.sizesTypes.map((sizetype) => (
+              <RadioGroup defaultValue=''>
+                <Stack spacing={5}>
+                  <Radio
+                    onClick={() => controller.onSelectSizeType(sizetype._id)}
+                    isChecked={controller.formData.sizeType === sizetype._id}
+                    colorScheme='pink'
+                  >
+                    <Text >{capitalizeFirstLetter(sizetype.value)}</Text>
+                  </Radio>
+                </Stack>
+              </RadioGroup>
+            ))}
+          </Box>
         </FormControl>
-        {/* Color Select */}
-        {/* <FormControl>
-          <FormLabel htmlFor="colors">Colores</FormLabel>
-          <Select
-            isMulti
-            options={controller.colors}
-            onChange={controller.handleColorsChange}
-            placeholder="Selecciona colores"
-            isSearchable
-          />
-          <Button mt={2} size="sm" onClick={controller.onColorOpen} colorScheme="blue">
-            Añadir Color
-          </Button>
-        </FormControl> */}
 
         {/* Cost Price Field */}
         <FormControl isRequired>

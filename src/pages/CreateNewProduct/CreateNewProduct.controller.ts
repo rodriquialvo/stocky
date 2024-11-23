@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ImageListType } from 'react-images-uploading';
 import { useLocation } from 'react-router-dom';
-import { mapColors } from '../../constants/maps';
 import { ROUTES } from '../../constants/Routes';
 import { Category } from '../../services/categories/dtos/getCategories';
 import { useCategorytore } from '../../store/category/slice';
@@ -9,79 +8,60 @@ import { useProductAtributesStore } from '../../store/product-atributes/slice';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { CreateNewProductController, ProductFormData } from './interfaces';
+import { initialStateProductformData } from './constants';
+import { getDefaultStatus, getStartStatus } from '../../store/helper/statusStateFactory';
+import toast from 'react-hot-toast';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
     CreateNewProductController => {
 
     const [images, setImages] = useState<ImageListType>([]);
-    const { createNewProduct, getCalculatePrices, clearCalculatePrices } = ProductAction();
+    const { createNewProduct, clearCalculatePrices } = ProductAction();
     const calculatedPrices = useProductStore(state => state.calculatedPrices);
     const status = useProductStore(state => state.status)
+    const setStatus = useProductStore(state => state.setStatus)
+
     const location = useLocation();
     const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
     const categories = useCategorytore(state => state.categories);
 
-    const [formData, setFormData] = useState<ProductFormData>({
-      name: "",
-      code: "",
-      description: "",
-      categories: [
-        ""
-      ],
-      attributes: {
-        brand: ""
-      },
-      pictures: [],
-      prices: {
-        cost: 0,
-        retail: 0,
-        reseller: 0
-      },
-      percentages: {
-        retail: 0,
-        reseller: 0
-      },
-      colors: [],
-      sizes: []
-    });
+    const [formData, setFormData] = useState<ProductFormData>(initialStateProductformData);
 
     const [currentCategories, setCurrentCategories] = useState<Category[]>(categories);
     const [selectedPath, setSelectedPath] = useState<Category[]>([]);
     const [categorySelected, setCategorySelected] = useState<string | null>(null);
     const [selectedColors, setSelectedColors] = useState([]);
-    const [selectedSizes, setSelectedSizes] = useState([]);
     const sizes = useProductAtributesStore(state => state.sizes);
+    const allColors = useProductAtributesStore(state => state.allColors);
     const [isDisabledButtonSubmit, setIsDisabledButtonSubmit] = useState(true);
+    const sizesTypes = useProductAtributesStore(state => state.sizesTypes);
 
     useEffect(() => {
       return () => {
         clearCalculatePrices();
       }
-    }, [])
+    }, []);
+
+    useEffect(() => {
+      if(status.success) {
+        setStatus(getDefaultStatus());
+        setFormData(initialStateProductformData)
+      }
+    }, [status.success])
+
+    useEffect(() => {
+      setFormData({
+        ...formData,
+        categories: [categorySelected],
+        colors: selectedColors,
+        pictures: images.map(image => image?.file),
+      })
+    },[categorySelected, selectedColors, images])
 
     useEffect(() => {
       if (isCurrentPage) {
-        setFormData({
-          ...formData,
-          name: "",
-          code: "",
-          description: "",
-          categories: [
-            ""
-          ],
-          attributes: {
-            brand: ""
-          },
-          pictures: [],
-          prices: {
-            cost: 0,
-            retail: 0,
-            reseller: 0
-          },
-          colors: [],
-          sizes: []
-        })
+        setFormData(initialStateProductformData)
         setImages([]);
       }
     }, [isCurrentPage])
@@ -93,11 +73,11 @@ export const useCreateNewProductController =
         !formData.description.length ||
         !categorySelected ||
         !selectedColors.length ||
-        !selectedSizes.length ||
+        !formData.sizeType.length ||
         !images.length
       )
       
-    }, [formData, categorySelected, selectedColors, selectedSizes,images]) 
+    }, [formData, categorySelected, selectedColors, images]) 
 
     const handleCategorySelect = (category: Category) => {
       if (category.children && category.children.length > 0) {
@@ -219,13 +199,7 @@ export const useCreateNewProductController =
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      createNewProduct({
-        ...formData,
-        pictures: images.map(image => image.file),
-        categories: [categorySelected],
-        colors: selectedColors,
-        sizes: selectedSizes
-      })
+      createNewProduct(formData)
 
     };
 
@@ -233,6 +207,14 @@ export const useCreateNewProductController =
       setSelectedPath([]);
       setCurrentCategories(categories);
       setCategorySelected('')
+    }
+
+    const onSelectAllColors = () => {
+      if(selectedColors.length === allColors.length) {
+        setSelectedColors([]);
+        return
+      }
+      setSelectedColors(allColors.map(color => color.value));
     }
 
     const calcaulatePrices = (value: number, caller: string) => {
@@ -250,7 +232,15 @@ export const useCreateNewProductController =
       return { reseller, retail };
     }
 
+    const handleColorChange = (colorValue: string) => {
+      setSelectedColors((prev) =>
+        prev.includes(colorValue) ? prev.filter((c) => c !== colorValue) : [...prev, colorValue]
+      );
+    };
 
+    const onSelectSizeType = (sizeType: string) => {
+      setFormData({...formData, sizeType});
+    }
     // Return state and events
     return {
       handleSubmit,
@@ -278,11 +268,13 @@ export const useCreateNewProductController =
       handleChangePercentageRetail,
       selectedColors,
       setSelectedColors,
-      colors: Object.entries(mapColors).map(([value, label]) => ({ label, value })),
+      colors: allColors.map(({ label, value }) => ({ label, value })),
       sizesOptions: sizes.map(size => ({ label: size.value, value: size.value })),
-      selectedSizes,
-      setSelectedSizes,
       isDisabledButtonSubmit,
-      calculatedPrices
+      calculatedPrices,
+      onSelectAllColors,
+      handleColorChange,
+      sizesTypes,
+      onSelectSizeType,
     };
   };

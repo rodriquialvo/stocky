@@ -1,4 +1,3 @@
-import { Toast } from '@chakra-ui/react';
 import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
 import { useAPIProductService } from '../../services/product/product.service';
 import {
@@ -58,13 +57,9 @@ export const ProductAction = () => {
       }
       setCalculatedPrices({});
       setStatus(getSuccessStatus());
-      Toast({
-        title: 'Product added successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.success("Producto creado con éxito")
     } catch (e) {
+      console.log("error", e)
       setStatus(getErrorStatus(e as Error));
     }
   };
