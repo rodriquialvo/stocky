@@ -7,6 +7,7 @@ import { useGaleryController } from './Galery.controller';
 import { GaleryProps } from './interfaces';
 import { useProductStore } from '../../store/product/slice';
 import { ProductAction } from '../../store/product/actions';
+import WhatsAppButton from '../../components/WhatsAppButtonFloat/WhatsAppButtonFloat';
 
 const galleryData = [
   {
@@ -34,10 +35,13 @@ const GalleryPage: React.FC<GaleryProps> = props => {
   return (
     <Box
     >
+      
       {/* <Spinner/> */}
       <Hero
         images={galleryData[0].images}
       />
+              <WhatsAppButton/>
+
       <NavigationBar
       />
       <Box
@@ -45,7 +49,6 @@ const GalleryPage: React.FC<GaleryProps> = props => {
         display={"flex"}
         flexDirection={"row"}
         background="gray.100"
-
       >
         
       </Box>
@@ -61,7 +64,6 @@ const GalleryPage: React.FC<GaleryProps> = props => {
           <GalleryItem key={index} {...item} />
         ))}
       </SimpleGrid>
-
     </Box>
   );
 };

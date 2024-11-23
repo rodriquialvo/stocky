@@ -20,7 +20,7 @@ import SaleDetailTable from './SaleDetailTable';
 import { useLocation } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
-import { capitalizeFirstLetter } from '../../utils/functions';
+import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 import { formatFullDate, formatHour } from '../../utils/date';
 
 const SalesList = () => {
@@ -82,6 +82,19 @@ const SalesList = () => {
     const toggleExpand = (saleId) => {
         setExpandedSaleId(expandedSaleId === saleId ? null : saleId);
     };
+
+    const statusLabel = (status: 'pending' | 'approved' | 'rejected') => {
+        switch (status) {
+            case 'pending':
+                return 'Pendiente'; 
+            case 'approved':
+                return 'Aprobada';
+            case 'rejected':
+                return 'Rechazada';        
+            default:
+                break;
+        }
+    }
     
     return (
         <Box className="pt-4 px-4  sm:pt-8 pb-0 px-8 bg-gray-100 min-h-screen" position={'relative'} height="100vh" overflowY="auto">
@@ -104,11 +117,11 @@ const SalesList = () => {
                             <Text display={{ base: "block", sm: "none" }} fontSize="sm" color="gray.500">{sale.creationDate}</Text>
 
                             <Text fontSize="sm" color={sale.status === 'pending' ? 'orange.500' : sale.status === 'approved' ? 'green.500' : 'red.500'}>
-                                Estado: {sale.status}
+                                Estado: {statusLabel(sale.status)}
                             </Text>
                         </Box>
                         <Box textAlign="right" flex="1">
-                            <Text fontSize={{ base: "xs", md: "md" }} fontWeight="bold">Total: ${sale.details.reduce((acc, detail) => acc + detail.prices.reseller * detail.quantity, 0)}</Text>
+                            <Text fontSize={{ base: "xs", md: "md" }} fontWeight="bold">Total: {formattedNumberToMoney(sale.details.reduce((acc, detail) => acc + detail.prices.reseller * detail.quantity, 0))}</Text>
                             {sale.status === 'pending' ? (
                                 <>
                                     <Box display={{ base: "none", md: "flex" }} justifyContent="flex-end" gap="2" mt="2">
