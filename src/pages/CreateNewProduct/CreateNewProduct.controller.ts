@@ -18,24 +18,29 @@ export const useCreateNewProductController =
 
     const [images, setImages] = useState<ImageListType>([]);
     const { createNewProduct, clearCalculatePrices } = ProductAction();
+
     const calculatedPrices = useProductStore(state => state.calculatedPrices);
     const status = useProductStore(state => state.status)
     const setStatus = useProductStore(state => state.setStatus)
 
-    const location = useLocation();
-    const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
+    const sizes = useProductAtributesStore(state => state.sizes);
+    const allColors = useProductAtributesStore(state => state.allColors);
+    const sizesTypes = useProductAtributesStore(state => state.sizesTypes);
+    const allBrands = useProductAtributesStore(state => state.allBrands);
+    
     const categories = useCategorytore(state => state.categories);
-
+    
+    const location = useLocation();
+    
+    
+    const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
+    
     const [formData, setFormData] = useState<ProductFormData>(initialStateProductformData);
-
+    const [selectedColors, setSelectedColors] = useState([]);
     const [currentCategories, setCurrentCategories] = useState<Category[]>(categories);
     const [selectedPath, setSelectedPath] = useState<Category[]>([]);
     const [categorySelected, setCategorySelected] = useState<string | null>(null);
-    const [selectedColors, setSelectedColors] = useState([]);
-    const sizes = useProductAtributesStore(state => state.sizes);
-    const allColors = useProductAtributesStore(state => state.allColors);
     const [isDisabledButtonSubmit, setIsDisabledButtonSubmit] = useState(true);
-    const sizesTypes = useProductAtributesStore(state => state.sizesTypes);
 
     useEffect(() => {
       return () => {
@@ -108,13 +113,12 @@ export const useCreateNewProductController =
       })
     }
 
-    const handleChangeBrand = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = e.target;
+    const handleChangeBrand = (brand: string) => {
       setFormData({
         ...formData,
         attributes: {
           ...formData.attributes,
-          brand: value
+          brand
         }
       })
     }
@@ -276,5 +280,6 @@ export const useCreateNewProductController =
       handleColorChange,
       sizesTypes,
       onSelectSizeType,
+      allBrands
     };
   };

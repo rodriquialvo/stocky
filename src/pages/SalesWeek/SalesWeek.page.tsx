@@ -26,6 +26,7 @@ import { useEffect } from 'react';
 import { FiRefreshCcw } from 'react-icons/fi';
 import { SaleAction } from '../../store/sales/actions';
 import { useSaleStore } from '../../store/sales/slice';
+import { formattedNumberToMoney } from '../../utils/functions';
 
 interface Product {
   id: number;
@@ -138,14 +139,14 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
             <Tr key={product.id}>
               <Td>{product.variantData.productName}</Td>
               <Td isNumeric>{product.quantity}</Td>
-              <Td isNumeric>${product.prices.reseller.toFixed(2)}</Td>
-              <Td isNumeric>${(product.quantity * product.prices.reseller).toFixed(2)}</Td>
+              <Td isNumeric>{formattedNumberToMoney(product.prices.reseller)}</Td>
+              <Td isNumeric>{formattedNumberToMoney((product.quantity * product.prices.reseller))}</Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
       <Text fontSize="lg" fontWeight="bold" textAlign="right" mr={4}>
-        Total: ${totalAmount.toFixed(2)}
+        Total: {formattedNumberToMoney(totalAmount)}
       </Text>
       {/* {seller.products.length > ITEMS_PER_PAGE_PRODUCTS && (
         <Pagination
@@ -186,8 +187,8 @@ const TotalProducts = () => {
             <Tr key={product.id}>
               <Td>{product.variantData.productName}</Td>
               <Td isNumeric>{product.quantity}</Td>
-              <Td isNumeric>${product.prices.reseller.toFixed(2)}</Td>
-              <Td isNumeric>${(product.quantity * product.prices.reseller).toFixed(2)}</Td>
+              <Td isNumeric>{formattedNumberToMoney(product.prices.reseller)}</Td>
+              <Td isNumeric>{formattedNumberToMoney((product.quantity * product.prices.reseller))}</Td>
             </Tr>
           ))}
         </Tbody>
