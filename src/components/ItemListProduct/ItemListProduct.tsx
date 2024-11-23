@@ -48,7 +48,7 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
         </Heading>
         <AccordionIcon />
       </AccordionButton>
-      <AccordionPanel bg={"gray.100"}
+      <AccordionPanel rounded={"md"} shadow="inner" bg={"gray.50"}
         m={5}>
         <SimpleGrid
           columns={{ base: 2, md: 2, lg: 5 }}

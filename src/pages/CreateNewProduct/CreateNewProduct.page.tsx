@@ -13,22 +13,17 @@ import {
   BreadcrumbLink,
   Checkbox,
   Text,
-  CheckboxGroup,
   Wrap,
   WrapItem,
   RadioGroup,
   Stack,
   Radio,
 } from '@chakra-ui/react';
-import { Select } from 'chakra-react-select';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
-import Modal from '../../components/Modal/Modal';
 import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
-import CategoryList, { Category } from '../../components/CategoryList/CategoryList';
-import ColorsSelector from '../../components/ColorsSelector/ColorsSelector';
-import ItemsSelector from '../../components/SizesSelector/SizesSelector';
+import CategoryList from '../../components/CategoryList/CategoryList';
 import { capitalizeFirstLetter } from '../../utils/functions';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
@@ -48,6 +43,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
       boxShadow="lg"
       as="form"
       onSubmit={controller.handleSubmit}
+      my={10}
     >
       {/* Heading */}
       <Heading fontSize={headingSize} fontWeight="bold" mb={6} textAlign="center">
@@ -66,9 +62,9 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             placeholder="Introduce el artículo"
           />
         </FormControl>
+        
         <FormControl isRequired>
           <FormLabel htmlFor="category">Categoria</FormLabel>
-
           <Breadcrumb separator=" / ">
             <BreadcrumbItem>
               <BreadcrumbLink onClick={controller.onPressedStartCategories}>
@@ -92,28 +88,24 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           <CategoryList categorySelected={controller.categorySelected} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
 
         </FormControl>
-
-
-        {/* Name Field */}
+        
         <FormControl isRequired>
-          <FormLabel htmlFor="name">Nombre</FormLabel>
-          <Input
-            id="name"
-            name="name"
-            value={controller.formData.name}
-            onChange={controller.handleChange}
-            placeholder="Introduce el nombre"
-          />
-        </FormControl>
-        <FormControl isRequired>
-          <FormLabel htmlFor="name">Marca</FormLabel>
-          <Input
-            id="brand"
-            name="brand"
-            value={controller.formData.attributes.brand}
-            onChange={controller.handleChangeBrand}
-            placeholder="Introduce el nombre"
-          />
+          <Box>
+            <FormLabel htmlFor="brands">Marca</FormLabel>
+            {controller.allBrands.map((brand) => (
+              <RadioGroup defaultValue=''>
+                <Stack spacing={5}>
+                  <Radio
+                    onClick={() => controller.handleChangeBrand(brand.value)}
+                    isChecked={controller.formData.attributes.brand === brand.value}
+                    colorScheme='pink'
+                  >
+                    <Text >{capitalizeFirstLetter(brand.label)}</Text>
+                  </Radio>
+                </Stack>
+              </RadioGroup>
+            ))}
+          </Box>
         </FormControl>
         {/* Description Field */}
         <FormControl isRequired>

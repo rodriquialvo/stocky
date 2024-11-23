@@ -17,6 +17,7 @@ export interface CreateNewProductController {
   sizesOptions: { label: string, value: string }[]
   isDisabledButtonSubmit: boolean,
   sizesTypes: ProductAttribute[]
+  allBrands: ProductAttribute[]
 
   /* Events */
   setImages: (imageList: ImageListType) => void
@@ -27,7 +28,7 @@ export interface CreateNewProductController {
   handleChangePriceRetail: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleCategoriesChange: (selectedOptions: any) => void
-  handleChangeBrand: (e: React.ChangeEvent<HTMLInputElement>) => void
+  handleChangeBrand: (brand: string) => void
   handleChangeCode: (e: React.ChangeEvent<HTMLInputElement>) => void
   onPressedStartCategories: () => void,
   handleBreadcrumbClick: (category: Category, index: number) => void,
