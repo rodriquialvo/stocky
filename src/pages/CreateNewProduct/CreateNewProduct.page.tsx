@@ -36,7 +36,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   // Responsive padding and font sizes
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
-  console.log("formData", controller.formData)
+
   return (
     <Box
       width={{ base: '100%', md: '80%' }}

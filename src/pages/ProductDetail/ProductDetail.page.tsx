@@ -144,9 +144,9 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
           >
             <Text>Detalles del producto:</Text>
             <Text>{controller.productDetail?.description}</Text>
-            <Text>-Marca {controller.productDetail?.attributes.brand}</Text>
-            <Text>-Talles: "FALTA ESTE CAMPO"</Text>
-            <Text>-Colores: "FALTA ESTE CAMPO"</Text>
+            <Text>-Marca: {capitalizeFirstLetter(controller.productDetail?.attributes.brand)}</Text>
+            <Text>-Talles: {controller.productDetail.sizes.join(", ")}</Text>
+            <Text>-Colores: {controller.colorsProduct.join(", ")}</Text>
             <Text>-Articulo: {controller.productDetail?.code}</Text>
           </Box>
         </Box>

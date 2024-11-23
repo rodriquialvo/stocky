@@ -9,6 +9,7 @@ import { CartAction } from '../../store/shoppingcart/actions';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
 import { mapColors } from '../../constants/maps';
+import { useProductAtributesStore } from '../../store/product-atributes/slice';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
@@ -37,6 +38,7 @@ export const useProductDetailController =
     const [quantity, setQuantity] = useState(1);
     const [imageSelected, setImageSelected] = useState("");
     const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
+    const allColors = useProductAtributesStore(state => state.allColors);
 
     useEffect(() => {
       setColors(
@@ -135,6 +137,7 @@ export const useProductDetailController =
       quantity,
       size,
       color,
-      isLoading: statusProduct.isFetching || statusCart.isFetching
+      isLoading: statusProduct.isFetching || statusCart.isFetching,
+      colorsProduct: allColors.filter(color => productDetail.colors.includes(color.value)).map(color => color.label),
     };
   };

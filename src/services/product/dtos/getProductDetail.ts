@@ -13,6 +13,8 @@ export interface ProductDetail {
     prices:      Prices;
     hasStock:    boolean;
     stocks?:      Stock[];
+    sizes:       string[];
+    colors:      string[];
 }
 
 export interface Attributes {
