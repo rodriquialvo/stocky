@@ -59,7 +59,6 @@ export const ProductAction = () => {
       setStatus(getSuccessStatus());
       toast.success("Producto creado con éxito")
     } catch (e) {
-      console.log("error", e)
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -178,7 +177,6 @@ export const ProductAction = () => {
       setProductsSelected([]);
       return response;
     } catch (e) {
-      console.log("Error", e)
       setStatus(getErrorStatus(e as Error));
     }
   }
