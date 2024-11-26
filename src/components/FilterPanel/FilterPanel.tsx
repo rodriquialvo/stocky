@@ -62,6 +62,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
   });
   const productFilters = useProductStore(state => state.productsFilters);
 
+  console.log("Filters", filters)
+  console.log("productFilters", productFilters)
   useEffect(() => {
     if (!!typeSizeSelected.length) {
       getSizes(typeSizeSelected);
@@ -143,7 +145,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
       if (isFirstRequest) {
         setIsFirstRequest(false);
       }
-      setProductsFiltersAction({...filters, minRetailPrice: pricesEnabled.retail ? filters.minRetailPrice : 0, minCostPrices: pricesEnabled.cost ? filters.minCostPrices : 0, minResellerPrice: pricesEnabled.reseller ? filters.minResellerPrice : 0});
+      setProductsFiltersAction({...filters, minRetailPrice: pricesEnabled.retail ? filters.minRetailPrice : 0, minCostPrice: pricesEnabled.cost ? filters.minCostPrice : 0, minResellerPrice: pricesEnabled.reseller ? filters.minResellerPrice : 0});
     }
   }
 
@@ -194,9 +196,9 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
             <Text>Desde</Text>
             <Input
               type="number"
-              name="minCostPrices"
-              value={filters.minCostPrices}
-              // onChange={(e) => updateField(e.target.name, e.target.value)}
+              name="minCostPrice"
+              value={filters.minCostPrice}
+              onChange={(e) => updateField(e.target.name, e.target.value)}
               placeholder='Minimo precio de costo'
               isDisabled={!pricesEnabled.cost}
             />
@@ -335,7 +337,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
       </Box>
 
       {/* Botón para aplicar los filtros */}
-      <Button colorScheme="pink" onClick={onApplyFiltersPressed} isDisabled={(JSON.stringify(filters) !== JSON.stringify(productFilters))}>
+      <Button colorScheme="pink" onClick={onApplyFiltersPressed} isDisabled={(JSON.stringify(filters) === JSON.stringify(productFilters))}>
         Aplicar Filtros
       </Button>
       <Button isDisabled={productFilters === initialStateFilters} mt={2} variant='outline'  colorScheme="pink" onClick={onClearFiltersPressed}>

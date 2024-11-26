@@ -99,7 +99,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
 
         </FormControl>
 
-        <FormControl isRequired>
+        <FormControl>
           <Box>
             <FormLabel htmlFor="brands">Marca</FormLabel>
             {controller.allBrands.map((brand) => (
@@ -159,7 +159,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
                     isChecked={controller.formData.sizeType === sizetype._id}
                     colorScheme='pink'
                   >
-                    <Text >{capitalizeFirstLetter(sizetype.value)}</Text>
+                    <Text >{capitalizeFirstLetter(sizetype.label || sizetype.value)}</Text>
                   </Radio>
                 </Stack>
               </RadioGroup>

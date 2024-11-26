@@ -1,10 +1,9 @@
-import { Box, Accordion, AccordionItem, AccordionButton, AccordionIcon, AccordionPanel, Heading, Checkbox, Button } from '@chakra-ui/react';
+import { Box, Accordion, AccordionItem, Heading, Checkbox, Button } from '@chakra-ui/react';
 
 import NavigationBar from '../../components/TabNav/NavigationBar';
 import ItemListProduct from '../../components/ItemListProduct/ItemListProduct';
 import { useProductController } from './Product.controller';
 import { ProductProps } from './interfaces';
-import { AddIcon } from '@chakra-ui/icons';
 import IncreaseAndDiscountPricePanel from '../../components/IncreaseAndDiscountPricePanel/IncreaseAndDiscountPricePanel';
 
 export const ProductList: React.FC<ProductProps> = (props) => {
@@ -27,7 +26,6 @@ export const ProductList: React.FC<ProductProps> = (props) => {
             onMouseDown={controller.onSelectAllProducts}
             colorScheme={"pink"}
           />
-
           <Heading
             ml={5}
             fontSize="md" flex='1' textAlign='left'>
@@ -79,10 +77,10 @@ export const ProductList: React.FC<ProductProps> = (props) => {
       >
         Aplicar aumento/descuento
       </Button>
-      <IncreaseAndDiscountPricePanel
-        isOpen={controller.isOpenIncreaseAndDiscountPanel}
-        onClose={controller.onClosePanelIncreaseAndDiscount}
-      />
+        <IncreaseAndDiscountPricePanel
+          isOpen={controller.isOpenIncreaseAndDiscountPanel}
+          onClose={controller.onClosePanelIncreaseAndDiscount}
+        />
     </Box>
   );
 };

@@ -176,7 +176,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
               color={"GrayText"}
             >{controller.productDetail?.attributes.brand} - Articulo {controller.productDetail?.code}</Text>
             <Heading>{capitalizeFirstLetter(controller.productDetail?.name)}</Heading >
-            <Heading>{formattedNumberToMoney(controller.productDetail?.prices.reseller)}</Heading>
+            <Heading>{formattedNumberToMoney(controller.productDetail?.prices.retail)}</Heading>
             <Divider
               my={5}
               display={{

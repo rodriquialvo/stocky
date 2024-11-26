@@ -6,7 +6,6 @@ export interface ProductController {
   productsViewModel: ItemListProductProps[],
   isOpenIncreaseAndDiscountPanel: boolean,
   isAllproductsSelected: boolean
-
   /* Events */
   // handlePrevPage: () => void;
   // handleNextPage: () => void;

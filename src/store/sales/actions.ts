@@ -5,6 +5,7 @@ import {
   getStartStatus,
   getSuccessStatus,
 } from '../helper/statusStateFactory';
+import { ProductAction } from '../product/actions';
 import { CartAction } from '../shoppingcart/actions';
 import { useCartStore } from '../shoppingcart/slice';
 import { useSaleStore } from './slice';
@@ -18,6 +19,7 @@ export const SaleAction = () => {
   const setProductsInSales = useSaleStore(state => state.setProductsInSales);
   const clearSaleWeek = useSaleStore(state => state.clearSaleWeek);
   const clearCart = useCartStore(state => state.clearCart)
+  const {getProducts} = ProductAction()
 
   const getSales = async (filter) => {
     setStatus(getStartStatus());
@@ -104,7 +106,8 @@ export const SaleAction = () => {
       }
       setStatus(getSuccessStatus());
       getSales({});
-      clearCart()
+      clearCart();
+      getProducts({});
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
     }

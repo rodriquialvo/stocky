@@ -70,9 +70,9 @@ const IncreaseAndDiscountPricePanel: FC<IncreaseAndDiscountPricePanelProps> = pr
                   >
                     <Text>{capitalizeFirstLetter(product.name)}</Text>
                     <Text>{formattedNumberToMoney(product.prices.reseller)}</Text>
-                    <Text fontWeight={"bold"}>{formattedNumberToMoney(product.prices.reseller + product.prices.reseller * parseFloat(percentage)/100)  }</Text>
+                    <Text fontWeight={"bold"}>{formattedNumberToMoney( Math.ceil((product.prices.reseller + (product.prices.reseller * parseFloat(percentage))  / 100) / 10) * 10)}</Text>
                     <Text>{formattedNumberToMoney(product.prices.retail)}</Text>
-                    <Text fontWeight={"bold"}>{formattedNumberToMoney(product.prices.retail + product.prices.retail * parseFloat(percentage)/100)}</Text>
+                    <Text fontWeight={"bold"}>{formattedNumberToMoney( Math.ceil((product.prices.retail + (product.prices.retail * parseFloat(percentage)) / 100) / 10) * 10)}</Text>
                     <IconButton
                       aria-label='Delete'
                       icon={<DeleteIcon />}

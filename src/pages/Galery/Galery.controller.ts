@@ -12,15 +12,10 @@ export const useGaleryController =
   (): /* <--Dependency Injections  like services hooks */
   GaleryController => {
     /* State */
-    const {getProducts} = ProductAction()
     const products = useProductStore(state => state.products)
     const navigate = useNavigate();
 
     /* Listeners */
-
-    useEffect(() => {
-      getProducts({})
-    },[])
     /* View Events */
     const onPressProduct = (product: Product) => {
       navigate(ROUTES.PRODUCT_DETAILS(product.id))
@@ -32,7 +27,7 @@ export const useGaleryController =
         availability: product.hasStock,
         images: product.pictures.map(picture => picture.url),
         name: product.name,
-        price: formattedNumberToMoney(product?.prices?.reseller),
+        price: formattedNumberToMoney(product?.prices?.retail),
         onClick: () => onPressProduct(product),
         brand: product.attributes.brand
       }

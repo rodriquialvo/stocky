@@ -7,7 +7,7 @@ export const initialStateFilters: FiltersState = {
     sort: 'default',
     page: 1,
     limit: "20",
-    minCostPrices: "0",
+    minCostPrice: "0",
     maxCostPrices: "0",
     minQuantity: "0",
     maxQuantity: "0",
@@ -25,7 +25,7 @@ export interface FiltersState {
     sort: string;
     page: number | string;
     limit: number | string;
-    minCostPrices: number | string;
+    minCostPrice: number | string;
     maxCostPrices: number | string;
     minQuantity: number | string;
     maxQuantity: number | string;

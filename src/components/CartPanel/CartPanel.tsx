@@ -1,5 +1,5 @@
 import { DeleteIcon } from '@chakra-ui/icons';
-import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Heading, IconButton, Image, Text } from '@chakra-ui/react';
+import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Heading, IconButton, Image, Text } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 import { useSessionStore } from '../../store/session/slice';
 import { CartAction } from '../../store/shoppingcart/actions';
@@ -22,6 +22,10 @@ const CartPanel: FC<CartPanelProps> = props => {
   const { postSale } = SaleAction()
   const [variantsQuantity, setVariantsQuantity] = useState({});
   const status = useSaleStore(state => state.status)
+  const [totals, setTotals] = useState({
+    reseller: 0,
+    retail: 0
+  });
 
   const { updateQuantity, removeFromCart, getCart } = CartAction();
 
@@ -64,7 +68,6 @@ const CartPanel: FC<CartPanelProps> = props => {
   useEffect(() => {
     setVariantsQuantity(cart?.items?.reduce((acc, item) => ({ ...acc, [item.variant._id]: item.quantity }), {}))
   }, [cart]);
- 
 
   return (
     <>
@@ -99,9 +102,9 @@ const CartPanel: FC<CartPanelProps> = props => {
                         <Box
                           display={"flex"}
                           gap={4}
-                          // bg="red"
                           justifyContent={"center"}
                           alignItems={"center"}
+                          w={"100%"}
                         >
                           <Image
                             src={item?.product?.pictures[0]?.url || 'https://picsum.photos/200'}
@@ -111,17 +114,66 @@ const CartPanel: FC<CartPanelProps> = props => {
                             borderRadius={"lg"}
                           />
                           <Box
-                            // bg="red"
                             justifyContent={"space-between"}
                             display={"flex"}
                             flexDirection={"column"}
+                            width={"100%"}
                           >
-                            <Heading color={"pink.400"} textAlign={"left"} fontSize="md">{item.product.name}</Heading>
+                            <Flex
+                              alignItems={"center"}
+                              justify={"space-between"}
+                            >
+                              <Heading color={"pink.400"} textAlign={"left"} fontSize="md">{item.product.name}</Heading>
+                              <IconButton
+                                aria-label='Delete'
+                                icon={<DeleteIcon />}
+                                onClick={() => onRemoveFromCartPressed(item.variant._id)}
+                                variant='ghost'
+                              />
+                            </Flex>
                             <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {item.variant.size}</Text>
                             <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Color: {capitalizeFirstLetter(item.variant.color)}</Text>
-                            <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Precio x unidad: {formattedNumberToMoney(item.product.prices.reseller)}</Text>
+                            <Box
+                              display={"flex"}
+                              justifyContent={"space-between"}
+                              alignItems={"center"}
+                              width={"100%"}
+                            >
+                              <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Precio revendedor: {formattedNumberToMoney(item.product.prices.reseller)}</Text>
+                              <Box
+                                display={"flex"}
+                                flexDirection={"row"}
+                                // justifyContent={"end"}
+                                alignItems={"center"}
+                              >
+                                <Heading fontSize={"md"} >
+                                  {formattedNumberToMoney(item.product.prices.reseller * variantsQuantity[item.variant._id])}
+                                </Heading>
+
+                              </Box>
+                            </Box>
+                            <Box
+                              display={"flex"}
+                              justifyContent={"space-between"}
+                              alignItems={"center"}
+                              width={"100%"}
+                            >
+                              <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Precio final: {formattedNumberToMoney(item.product.prices.retail)}</Text>
+                              <Box
+                                display={"flex"}
+                                flexDirection={"row"}
+                                alignItems={"center"}
+                              >
+                                <Heading fontSize={"md"} >
+                                  {formattedNumberToMoney(item.product.prices.retail * variantsQuantity[item.variant._id])}
+                                </Heading>
+
+                              </Box>
+                            </Box>
+
+                            {/* <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Precio final: {formattedNumberToMoney(item.product.prices.retail)}</Text> */}
                             <QuantityPicker
-                              stock={10}
+                              stock={100}
                               quantity={variantsQuantity[item.variant._id]}
                               onIncrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id] + 1)}
                               onDecrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id] - 1)}
@@ -129,7 +181,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                             />
                           </Box>
                         </Box>
-                        <Box
+                        {/* <Box
                           display={"flex"}
                           flexDirection={"row"}
                           justifyContent={"end"}
@@ -144,7 +196,8 @@ const CartPanel: FC<CartPanelProps> = props => {
                             onClick={() => onRemoveFromCartPressed(item.variant._id)}
                             variant='ghost'
                           />
-                        </Box>
+                        </Box> */}
+
                       </Box>
                       <Divider my={5} />
                     </>

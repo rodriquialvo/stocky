@@ -60,8 +60,6 @@ const SidebarContent: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
   const { logout } = SessionAction()
   const userLoged = useSessionStore(state => state.userLogged)
 
-
-  console.log("userLoged", userLoged)
   return (
     <VStack align="stretch" spacing={0}>
       <Accordion allowToggle>

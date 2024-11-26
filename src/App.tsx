@@ -37,7 +37,6 @@ function App() {
       getAllBrands()
     }
   },[userIsAuthenticated])
-console.log({userIsAuthenticated})
   return (
     <BrowserRouter>
       {/* <Box display="flex"> */}

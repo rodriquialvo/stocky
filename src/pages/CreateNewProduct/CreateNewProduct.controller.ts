@@ -51,7 +51,10 @@ export const useCreateNewProductController =
     useEffect(() => {
       if(status.success) {
         setStatus(getDefaultStatus());
-        setFormData(initialStateProductformData)
+        setFormData(initialStateProductformData);
+        setImages([]);
+        setSelectedColors([]);
+        setCategorySelected(null);
       }
     }, [status.success])
 

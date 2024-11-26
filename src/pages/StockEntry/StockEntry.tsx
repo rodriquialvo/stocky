@@ -165,6 +165,7 @@ export default function StockEntry() {
                             findProductById(index, product.id);
                             handleInputChange(index, 'searchTerm', `${product.name} (${product.code})`);
                             handleInputChange(index, 'showDropdown', false);
+                            handleInputChange(index, 'cost',  product.prices.cost);
                           }}
                         >
                           {product.name} ({product.code})
