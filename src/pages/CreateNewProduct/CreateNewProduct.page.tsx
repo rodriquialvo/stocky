@@ -62,7 +62,17 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             placeholder="Introduce el artículo"
           />
         </FormControl>
-        
+        <FormControl isRequired>
+          <FormLabel htmlFor="name">Nombre</FormLabel>
+          <Input
+            id="name"
+            name="name"
+            value={controller.formData.name}
+            onChange={controller.handleChange}
+            placeholder="Introduce el nombre"
+          />
+        </FormControl>
+
         <FormControl isRequired>
           <FormLabel htmlFor="category">Categoria</FormLabel>
           <Breadcrumb separator=" / ">
@@ -88,7 +98,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           <CategoryList categorySelected={controller.categorySelected} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
 
         </FormControl>
-        
+
         <FormControl isRequired>
           <Box>
             <FormLabel htmlFor="brands">Marca</FormLabel>
