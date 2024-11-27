@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Input, List, ListItem, Select, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Checkbox, HStack, Input, List, ListItem, Text, VStack } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { mapColors } from '../../constants/maps';
@@ -7,6 +7,7 @@ import { useProductStore } from '../../store/product/slice';
 import { StockAction } from '../../store/stock/actions';
 import { useStockStore } from '../../store/stock/slice';
 import { getErrorMessage } from './errors';
+import { Select } from 'chakra-react-select';
 
 export default function StockEntry() {
   // states
@@ -65,7 +66,7 @@ export default function StockEntry() {
 
   // check if last entry is completed
   const isRowComplete = (index) => {
-    
+
     const product = stockEntries[index]?.product?.id;
     const quantity = stockEntries[index]?.quantity;
     const color = stockEntries[index]?.color;
@@ -79,7 +80,7 @@ export default function StockEntry() {
       getProductsByCodeOrName(value);
     }
     const updatedEntries = [...stockEntries];
-    updatedEntries[index][field] = value;
+    updatedEntries[index][field] = value.value || value;
     if (isDuplicatedRow(index, updatedEntries)) {
       handleRemoveEntry(index);
       return;
@@ -96,7 +97,7 @@ export default function StockEntry() {
   };
 
   const handleRemoveEntry = (index) => {
-    if(stockEntries.length > 1) {
+    if (stockEntries.length > 1) {
       const updatedEntries = stockEntries.filter((_, i) => i !== index);
       setStockEntries(updatedEntries);
     }
@@ -109,15 +110,16 @@ export default function StockEntry() {
       stockEntriesClone = stockEntriesClone.slice(0, -1);
       handleRemoveEntry(stockEntries.length - 1);
     }
-    const stockEntriesToPost = stockEntriesClone.map(entry => ({
+    const stockEntriesToPost = stockEntriesClone.map((entry: any) => {
+      return ({
       product: entry.product.id,
       variant: {
-        color: entry.color,
-        size: entry.size
+        color: entry.color.map(e => e.value),
+        size: entry.size.map(e => e.value)
       },
       costPrice: Number(entry.cost),
       quantity: Number(entry.quantity),
-    }))
+    })})
     postStockMultiple(stockEntriesToPost);
   };
 
@@ -138,6 +140,7 @@ export default function StockEntry() {
                   focusBorderColor="teal.400"
                   onFocus={() => handleInputChange(index, 'showDropdown', true)}
                 />
+
                 {entry.showDropdown && productsByCodeOrName.length > 0 && (
                   <List
                     position="absolute"
@@ -164,7 +167,7 @@ export default function StockEntry() {
                             findProductById(index, product.id);
                             handleInputChange(index, 'searchTerm', `${product.name} (${product.code})`);
                             handleInputChange(index, 'showDropdown', false);
-                            handleInputChange(index, 'cost',  product.prices.cost);
+                            handleInputChange(index, 'cost', product.prices.cost);
                           }}
                         >
                           {product.name} ({product.code})
@@ -173,30 +176,40 @@ export default function StockEntry() {
                   </List>
                 )}
               </Box>
-              <Select
-                placeholder="Color"
-                value={entry.color}
-                onChange={(e) => handleInputChange(index, 'color', e.target.value)}
-                size="lg"
-              >
-                {entry.product?.colors.map(color => (
-                  <option key={color} value={color}>
+              <Box position="relative" w="100%">
+
+                <Select
+                  isMulti
+                  placeholder="Color"
+                  value={entry.color}
+                  onChange={(value) => handleInputChange(index, 'color', value)}
+                  options={entry.product?.colors.map(color => ({ value: color, label: mapColors[color] }))}
+                  size="lg"
+                  
+                />
+              </Box>
+              {/* {entry.product?.colors.map(color => (
+                  <Checkbox key={color} value={color}>
                     {mapColors[color]}
-                  </option>
-                ))}
-              </Select>
-              <Select
-                placeholder="Talle"
-                value={entry.size}
-                onChange={(e) => handleInputChange(index, 'size', e.target.value)}
-                size="lg"
-              >
-                {entry.product?.sizes.map(size => (
+                  </Checkbox>
+                ))} */}
+              <Box position="relative" w="100%">
+
+                <Select
+                  isMulti
+                  placeholder="Talle"
+                  value={entry.size}
+                  onChange={(value) => handleInputChange(index, 'size', value)}
+                  size="lg"
+                  options={entry.product?.sizes.map(size => ({ value: size, label: size }))}
+                />
+              </Box>
+
+              {/* {entry.product?.sizes.map(size => (
                   <option key={size} value={size}>
                     {size}
                   </option>
-                ))}
-              </Select>
+                ))} */}
               <Input
                 type="number"
                 placeholder="Cantidad"
@@ -216,7 +229,7 @@ export default function StockEntry() {
               </Button>
             </HStack>
           ))}
-          <Button  colorScheme="teal" onClick={handleAddEntry} size="lg" w="full" mt={4}>
+          <Button colorScheme="teal" onClick={handleAddEntry} size="lg" w="full" mt={4}>
             Añadir otro producto
           </Button>
           <Button isDisabled={postStockLoading || !isRowComplete(stockEntries.length - 1)} type="submit" colorScheme="blue" size="lg" w="full" mt={6}>
