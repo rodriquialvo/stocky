@@ -37,7 +37,6 @@ export const StockAction = () => {
   const postStockMultiple = async (data: PostStockDto[]) => {
     setPostStockStatus(getStartStatus());
     setPostStockLoading(true);
-
     try {
       const response = await stockService.postStockMultiple(data);
       if (!response.stocks) {
