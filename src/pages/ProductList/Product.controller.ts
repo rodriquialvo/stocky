@@ -30,7 +30,6 @@ export const useProductController =
       pathname === ROUTES.STOCK_LIST && cleanProductsSelected()
     }, [pathname])
 
-console.log("productsSelected", productsSelected)
     const mapProductsViewModel = (product: Product): ItemListProductProps => {
       return {
         name: product?.name,
