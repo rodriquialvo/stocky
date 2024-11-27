@@ -138,7 +138,6 @@ export default function StockEntry() {
                   focusBorderColor="teal.400"
                   onFocus={() => handleInputChange(index, 'showDropdown', true)}
                 />
-
                 {entry.showDropdown && productsByCodeOrName.length > 0 && (
                   <List
                     position="absolute"

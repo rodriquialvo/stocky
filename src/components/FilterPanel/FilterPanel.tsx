@@ -62,8 +62,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
   });
   const productFilters = useProductStore(state => state.productsFilters);
 
-  console.log("Filters", filters)
-  console.log("productFilters", productFilters)
   useEffect(() => {
     if (!!typeSizeSelected.length) {
       getSizes(typeSizeSelected);
@@ -96,6 +94,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
   };
 
   const onSelectSizeType = (sizeType: string) => {
+    if(typeSizeSelected === sizeType) {
+      setTypeSizeSelected('');
+      return 
+    }
     setTypeSizeSelected(sizeType);
   }
 
