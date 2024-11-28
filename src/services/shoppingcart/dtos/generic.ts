@@ -10,50 +10,62 @@ export interface CartItem {
 }
 
 export interface Cart {
-    _id:       string;
-    userId:    string;
-    items:     Item[];
-    total:     number;
-    active:    boolean;
+    _id: string;
+    userId: string;
+    items: Item[];
+    total: number;
+    total_reseller: number;
+    total_retail: number;
+    active: boolean;
     createdAt: Date;
     updatedAt: Date;
-    __v:       number;
+    __v: number;
 }
 
 export interface Item {
-    product:  Product;
-    variant:  Variant;
+    product: Product;
+    variant: Variant;
     quantity: number;
-    _id:      string;
+    _id: string;
+    stock: {
+        _id: string,
+        product: string,
+        variant: string,
+        quantity: number,
+        cost_price: number,
+        date: string | Date,
+        createdAt: string | Date,
+        updatedAt: string | Date,
+    }
 }
 
 export interface Product {
     categories_filter: any[];
-    categories:        any[];
-    name:              string;
-    code:              string;
-    pictures:          Picture[];
-    prices:            Prices;
-    has_stock:         boolean;
-    _id:               string;
-    createdAt:         Date;
-    updatedAt:         Date;
+    categories: any[];
+    name: string;
+    code: string;
+    pictures: Picture[];
+    prices: Prices;
+    has_stock: boolean;
+    _id: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface Picture {
-    url:      string;
+    url: string;
     alt_text: string;
 }
 
 export interface Prices {
-    retail:   number;
+    retail: number;
     reseller: number;
 }
 
 export interface Variant {
-    size:      string;
-    color:     string;
-    _id:       string;
+    size: string;
+    color: string;
+    _id: string;
     createdAt: Date;
     updatedAt: Date;
 }

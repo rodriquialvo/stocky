@@ -72,7 +72,6 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             placeholder="Introduce el nombre"
           />
         </FormControl>
-
         <FormControl isRequired>
           <FormLabel htmlFor="category">Categoria</FormLabel>
           <Breadcrumb separator=" / ">
