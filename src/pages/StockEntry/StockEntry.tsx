@@ -8,6 +8,7 @@ import { StockAction } from '../../store/stock/actions';
 import { useStockStore } from '../../store/stock/slice';
 import { getErrorMessage } from './errors';
 import { Select } from 'chakra-react-select';
+import { useProductAtributesStore } from '../../store/product-atributes/slice';
 
 export default function StockEntry() {
   // states
@@ -26,6 +27,7 @@ export default function StockEntry() {
   const postStockStatus: any = useStockStore(state => state.postStockStatus);
   const postStockLoading = useStockStore(state => state.postStockLoading);
   const restoreStatusAndLoading = useStockStore(state => state.restoreStatusAndLoading);
+  const allColors = useProductAtributesStore(state => state.allColors);
 
   // handlers
   const findProductById = (index, id: string) => {
@@ -183,7 +185,7 @@ export default function StockEntry() {
                   placeholder="Color"
                   value={entry.color}
                   onChange={(value) => handleInputChange(index, 'color', value)}
-                  options={entry.product?.colors.map(color => ({ value: color, label: mapColors[color] }))}
+                  options={entry.product?.colors.map(color => ({ value: color, label: allColors.find(c => c.value === color)?.label }))}
                   size="lg"
                   
                 />
@@ -232,7 +234,7 @@ export default function StockEntry() {
           <Button colorScheme="teal" onClick={handleAddEntry} size="lg" w="full" mt={4}>
             Añadir otro producto
           </Button>
-          <Button isDisabled={postStockLoading || !isRowComplete(stockEntries.length - 1)} type="submit" colorScheme="blue" size="lg" w="full" mt={6}>
+          <Button isLoading={postStockStatus.isFetching} isDisabled={postStockLoading || !isRowComplete(stockEntries.length - 1)} type="submit" colorScheme="blue" size="lg" w="full" mt={6}>
             Guardar todos los stocks
           </Button>
         </VStack>

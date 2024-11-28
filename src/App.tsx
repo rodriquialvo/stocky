@@ -18,7 +18,6 @@ import ScrollToTop from './hooks/ScrollToTop';
 import { useEffect } from 'react';
 import { CategoryAction } from './store/category/actions';
 import { ProductAtributesAction } from './store/product-atributes/actions';
-import { useProductAtributesStore } from './store/product-atributes/slice';
 import { RoleAction } from './store/roles/actions';
 
 function App() {

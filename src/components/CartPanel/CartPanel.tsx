@@ -9,6 +9,7 @@ import QuantityPicker from '../QuantityPicker/QuantityPicker';
 import { CartPanelProps } from './interfaces';
 import { SaleAction } from '../../store/sales/actions';
 import { useSaleStore } from '../../store/sales/slice';
+import toast from 'react-hot-toast';
 
 //REMOVE
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -16,16 +17,12 @@ const CartPanel: FC<CartPanelProps> = props => {
 
   const cart = useCartStore(state => state.cart);
   const statusCart = useCartStore(state => state.status)
-
   const userLogged = useSessionStore(state => state.userLogged);
-
+  const [exceededItems, setExceededItems] = useState<{label: string, value: string}[]>([]);
+  const [showItemError, setShowItemError] = useState(false);
   const { postSale } = SaleAction()
   const [variantsQuantity, setVariantsQuantity] = useState({});
   const status = useSaleStore(state => state.status)
-  const [totals, setTotals] = useState({
-    reseller: 0,
-    retail: 0
-  });
 
   const { updateQuantity, removeFromCart, getCart } = CartAction();
 
@@ -56,6 +53,11 @@ const CartPanel: FC<CartPanelProps> = props => {
   };
 
   const onConfirmOrderPressed = () => {
+    if(exceededItems.length > 0) {
+      toast.error("No se puede realizar la compra debido a que hay productos con stock insuficiente")
+      setShowItemError(true);
+      return
+    }
     postSale({ cartId: cart._id })
   }
 
@@ -63,12 +65,17 @@ const CartPanel: FC<CartPanelProps> = props => {
     if (userLogged?.id) {
       getCart(userLogged.id);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setVariantsQuantity(cart?.items?.reduce((acc, item) => ({ ...acc, [item.variant._id]: item.quantity }), {}))
+    setExceededItems(cart?.items?.filter(item => item?.quantity > item.stock?.quantity)?.map(item => ({ label: item.product.name, value: item.product._id })) || [])
+  }, [cart?.items])
+
+  useEffect(() => {
+    setVariantsQuantity(cart?.items?.reduce((acc, item) => ({ ...acc, [item.variant._id]: item?.quantity }), {}))
   }, [cart]);
 
+  console.log('[cart]', cart)
   return (
     <>
       <>
@@ -92,13 +99,13 @@ const CartPanel: FC<CartPanelProps> = props => {
                     <>
                       <Box
                         my={2}
-                        // borderWidth={1}
                         flexDirection={"row"}
                         display={"flex"}
                         justifyContent={"space-between"}
                         alignItems={"center"}
+                        px={1}
+                        bg={(showItemError && !!exceededItems.find(exceededItem => exceededItem.value === item.product._id)) ? "red.100" : ""}
                       >
-
                         <Box
                           display={"flex"}
                           gap={4}
@@ -139,17 +146,16 @@ const CartPanel: FC<CartPanelProps> = props => {
                               alignItems={"center"}
                               width={"100%"}
                             >
-                              <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Precio revendedor: {formattedNumberToMoney(item.product.prices.reseller)}</Text>
+                              <Text  fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>P/u Revendedor: {formattedNumberToMoney(item.product.prices.reseller)}</Text>
                               <Box
                                 display={"flex"}
                                 flexDirection={"row"}
                                 // justifyContent={"end"}
                                 alignItems={"center"}
                               >
-                                <Heading fontSize={"md"} >
+                                <Heading  fontSize={"md"} >
                                   {formattedNumberToMoney(item.product.prices.reseller * variantsQuantity[item.variant._id])}
                                 </Heading>
-
                               </Box>
                             </Box>
                             <Box
@@ -157,23 +163,21 @@ const CartPanel: FC<CartPanelProps> = props => {
                               justifyContent={"space-between"}
                               alignItems={"center"}
                               width={"100%"}
+
                             >
-                              <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Precio final: {formattedNumberToMoney(item.product.prices.retail)}</Text>
+                              <Text fontSize={"sm"} color={"orange.600"} textAlign={"left"} size={"sm"}>P/u Cliente final: {formattedNumberToMoney(item.product.prices.retail)}</Text>
                               <Box
                                 display={"flex"}
                                 flexDirection={"row"}
                                 alignItems={"center"}
                               >
-                                <Heading fontSize={"md"} >
+                                <Heading color={"orange.400"} fontSize={"md"} >
                                   {formattedNumberToMoney(item.product.prices.retail * variantsQuantity[item.variant._id])}
                                 </Heading>
-
                               </Box>
                             </Box>
-
-                            {/* <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Precio final: {formattedNumberToMoney(item.product.prices.retail)}</Text> */}
                             <QuantityPicker
-                              stock={100}
+                              stock={item?.stock?.quantity}
                               quantity={variantsQuantity[item.variant._id]}
                               onIncrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id] + 1)}
                               onDecrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id] - 1)}
@@ -181,23 +185,6 @@ const CartPanel: FC<CartPanelProps> = props => {
                             />
                           </Box>
                         </Box>
-                        {/* <Box
-                          display={"flex"}
-                          flexDirection={"row"}
-                          justifyContent={"end"}
-                          alignItems={"center"}
-                        >
-                          <Heading fontSize={"md"} >
-                            {formattedNumberToMoney(item.product.prices.reseller * variantsQuantity[item.variant._id])}
-                          </Heading>
-                          <IconButton
-                            aria-label='Delete'
-                            icon={<DeleteIcon />}
-                            onClick={() => onRemoveFromCartPressed(item.variant._id)}
-                            variant='ghost'
-                          />
-                        </Box> */}
-
                       </Box>
                       <Divider my={5} />
                     </>
@@ -207,7 +194,9 @@ const CartPanel: FC<CartPanelProps> = props => {
               <Box
                 position="sticky"
               >
-                <Heading>Total: {formattedNumberToMoney(cart.total)}</Heading>
+                <Heading>Total:</Heading>
+                <Heading size={"sm"}>Revendedor: {formattedNumberToMoney(cart.total_reseller)}</Heading>
+                <Heading color={"orange.400"} size={"sm"}>Cliente final: {formattedNumberToMoney(cart.total_retail)}</Heading>
                 <Divider my={5} />
                 <Button
                   isLoading={status.isFetching}
@@ -215,7 +204,6 @@ const CartPanel: FC<CartPanelProps> = props => {
                   colorScheme={'pink'}
                   onClick={onConfirmOrderPressed}
                 >Terminar compra</Button>
-
               </Box>
             </DrawerBody>
           </DrawerContent>
