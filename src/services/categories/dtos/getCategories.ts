@@ -5,5 +5,6 @@ export interface GetCategoriesResponse {
 export interface Category {
     id:       string;
     name:     string;
+    sizeTypes: string[];
     children: Category[];
 }

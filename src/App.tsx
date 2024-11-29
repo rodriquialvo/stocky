@@ -19,12 +19,15 @@ import { useEffect } from 'react';
 import { CategoryAction } from './store/category/actions';
 import { ProductAtributesAction } from './store/product-atributes/actions';
 import { RoleAction } from './store/roles/actions';
+import { useProductStore } from './store/product/slice';
+import { initialStateFilters } from './components/FilterPanel/constants';
 
 function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
   const { getCategories } = CategoryAction();
   const { getSizes, getSizesTypes, getAllColors, getAllBrands } = ProductAtributesAction();
   const { getRoles } = RoleAction();
+  const setProductsFilters = useProductStore(state => state.setProductsFilters);
 
   useEffect(() => {
     if(userIsAuthenticated) {
@@ -33,7 +36,8 @@ function App() {
       getSizes();
       getRoles();
       getAllColors();
-      getAllBrands()
+      getAllBrands();
+      setProductsFilters(initialStateFilters)
     }
   },[userIsAuthenticated])
   return (

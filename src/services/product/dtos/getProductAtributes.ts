@@ -4,7 +4,8 @@ export interface GetProductAtributesResponse {
 
 export interface ProductAttribute {
     subtype: null;
-    _id:     string;
+    id:     string;
+    _id: string
     type:    string;
     value:   string;
     label: string

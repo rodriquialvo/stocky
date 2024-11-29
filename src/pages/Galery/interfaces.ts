@@ -3,6 +3,7 @@ import { GalleryItemProps } from "../../components/GalleryItem/GaleryItem";
 export interface GaleryController {
   /* State */
   productsViewModel: GalleryItemProps[];
+  isLoading: boolean
   /* Events */
 }
 

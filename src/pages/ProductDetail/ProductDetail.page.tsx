@@ -146,7 +146,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             <Text>{controller.productDetail?.description}</Text>
             <Text>-Marca: {capitalizeFirstLetter(controller.productDetail?.attributes.brand)}</Text>
             <Text>-Talles: {controller.productDetail.sizes.join(", ")}</Text>
-            <Text>-Colores: {controller.colorsProduct.join(", ")}</Text>
+            <Text>-Colores: {controller.colorsProduct.map(color => color.label).join(", ")}</Text>
             <Text>-Articulo: {controller.productDetail?.code}</Text>
           </Box>
         </Box>
@@ -202,8 +202,8 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
               <Text>Detalles del producto:</Text>
               <Text>{controller.productDetail?.description}</Text>
               <Text>-Marca {controller.productDetail?.attributes.brand}</Text>
-              <Text>-Talles: "FALTA ESTE CAMPO"</Text>
-              <Text>-Colores: "FALTA ESTE CAMPO"</Text>
+              <Text>-Talles: {controller.productDetail.sizes.join(", ")}</Text>
+              <Text>-Colores: {controller.colorsProduct.map(color => color.label).join(", ")}</Text>
               <Text>-Articulo: {controller.productDetail?.code}</Text>
             </Box>
             <Flex
@@ -224,7 +224,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   <FormLabel htmlFor="brand">Color</FormLabel>
                   <Select
                     isSearchable={false}
-                    options={controller.colors}
+                    options={controller.colorsProduct}
                     placeholder="Selecciona un color"
                     size={{
                       base: "sm",

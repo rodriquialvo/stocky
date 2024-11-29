@@ -13,6 +13,7 @@ export const useGaleryController =
   GaleryController => {
     /* State */
     const products = useProductStore(state => state.products)
+    const status = useProductStore(state => state.status)
     const navigate = useNavigate();
 
     /* Listeners */
@@ -29,12 +30,14 @@ export const useGaleryController =
         name: product.name,
         price: formattedNumberToMoney(product?.prices?.retail),
         onClick: () => onPressProduct(product),
-        brand: product.attributes.brand
+        brand: product.attributes.brand,
+        code: product.code
       }
     }
 
     // Return state and events
     return {
       productsViewModel: products?.map(mapProductsViewModel),
+      isLoading: status.isFetching
     };
   };

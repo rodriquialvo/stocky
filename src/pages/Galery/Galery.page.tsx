@@ -8,6 +8,7 @@ import { GaleryProps } from './interfaces';
 import { useProductStore } from '../../store/product/slice';
 import { ProductAction } from '../../store/product/actions';
 import WhatsAppButton from '../../components/WhatsAppButtonFloat/WhatsAppButtonFloat';
+import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 
 const galleryData = [
   {
@@ -44,6 +45,11 @@ const GalleryPage: React.FC<GaleryProps> = props => {
 
       <NavigationBar
       />
+      {
+        controller.isLoading && (
+          <LoadingOverlay/>
+        )
+      }
       <Box
         width={"100%"}
         display={"flex"}

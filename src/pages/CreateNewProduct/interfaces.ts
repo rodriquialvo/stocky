@@ -10,14 +10,14 @@ export interface CreateNewProductController {
   images: ImageListType,
   categories: Category[],
   selectedPath: Category[],
-  categorySelected: string | null,
+  categorySelected: Category | null,
   currentCategories: Category[]
   selectedColors: string[];
   colors: { label: string, value: string }[]
-  sizesOptions: { label: string, value: string }[]
   isDisabledButtonSubmit: boolean,
   sizesTypes: ProductAttribute[]
-  allBrands: ProductAttribute[]
+  allBrands: ProductAttribute[],
+  showCategoriesTypesOptions: boolean
 
   /* Events */
   setImages: (imageList: ImageListType) => void
@@ -71,11 +71,11 @@ export interface Picture {
 
 export interface Prices {
   cost: number
-  retail: number;
-  reseller: number;
+  retail: number
+  reseller: number
 }
 
 export interface Percentages {
-  retail: number;
-  reseller: number;
+  retail: number
+  reseller: number
 }

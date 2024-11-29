@@ -9,8 +9,8 @@ import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { CreateNewProductController, ProductFormData } from './interfaces';
 import { initialStateProductformData } from './constants';
-import { getDefaultStatus, getStartStatus } from '../../store/helper/statusStateFactory';
-import toast from 'react-hot-toast';
+import { getDefaultStatus } from '../../store/helper/statusStateFactory';
+import { ProductAttribute } from '../../services/product/dtos/getProductAtributes';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
@@ -23,24 +23,24 @@ export const useCreateNewProductController =
     const status = useProductStore(state => state.status)
     const setStatus = useProductStore(state => state.setStatus)
 
-    const sizes = useProductAtributesStore(state => state.sizes);
     const allColors = useProductAtributesStore(state => state.allColors);
     const sizesTypes = useProductAtributesStore(state => state.sizesTypes);
     const allBrands = useProductAtributesStore(state => state.allBrands);
-    
+
     const categories = useCategorytore(state => state.categories);
-    
     const location = useLocation();
-    
-    
+
+
     const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
-    
+
     const [formData, setFormData] = useState<ProductFormData>(initialStateProductformData);
     const [selectedColors, setSelectedColors] = useState([]);
     const [currentCategories, setCurrentCategories] = useState<Category[]>(categories);
     const [selectedPath, setSelectedPath] = useState<Category[]>([]);
-    const [categorySelected, setCategorySelected] = useState<string | null>(null);
+    const [categorySelected, setCategorySelected] = useState<Category | null>(null);
     const [isDisabledButtonSubmit, setIsDisabledButtonSubmit] = useState(true);
+    const [showCategoriesTypesOptions, setShowCategoriesTypesOptions] = useState(false);
+    const [typesSizesByIds, setTypesSizesByIds] = useState(<ProductAttribute[]>[])
 
     useEffect(() => {
       return () => {
@@ -49,7 +49,27 @@ export const useCreateNewProductController =
     }, []);
 
     useEffect(() => {
-      if(status.success) {
+      if (categorySelected?.sizeTypes.length > 1) {
+        setShowCategoriesTypesOptions(true);
+      } else {
+        setShowCategoriesTypesOptions(false);
+        setFormData({
+          ...formData,
+          sizeType: ""
+        })
+      }
+
+      let sizesTypesFilters = [];
+      sizesTypes.forEach(item => {
+        if (categorySelected?.sizeTypes.includes(item._id)) {
+          sizesTypesFilters.push(item);
+        }
+      })
+      setTypesSizesByIds(sizesTypesFilters);
+    }, [categorySelected?.sizeTypes])
+
+    useEffect(() => {
+      if (status.success) {
         setStatus(getDefaultStatus());
         setFormData(initialStateProductformData);
         setImages([]);
@@ -61,11 +81,11 @@ export const useCreateNewProductController =
     useEffect(() => {
       setFormData({
         ...formData,
-        categories: [categorySelected],
+        categories: [categorySelected?.id],
         colors: selectedColors,
         pictures: images.map(image => image?.file),
       })
-    },[categorySelected, selectedColors, images])
+    }, [categorySelected, selectedColors, images])
 
     useEffect(() => {
       if (isCurrentPage) {
@@ -81,25 +101,25 @@ export const useCreateNewProductController =
         !formData.description.length ||
         !categorySelected ||
         !selectedColors.length ||
-        !formData.sizeType.length ||
+        (showCategoriesTypesOptions && !formData.sizeType.length) ||
         !images.length
       )
-      
-    }, [formData, categorySelected, selectedColors, images]) 
-
+    }, [formData, categorySelected, selectedColors, images, showCategoriesTypesOptions])
+console.log("formData", formData)
+console.log("")
     const handleCategorySelect = (category: Category) => {
       if (category.children && category.children.length > 0) {
         setSelectedPath((prevPath) => [...prevPath, category]);
         setCurrentCategories(category.children);
       }
-      setCategorySelected(category.id)
+      setCategorySelected(category)
     };
 
     const handleBreadcrumbClick = (category: Category, index: number) => {
       const newPath = selectedPath.slice(0, index + 1);
       setSelectedPath(newPath);
       setCurrentCategories(newPath[index].children || []);
-      setCategorySelected(category.id)
+      setCategorySelected(category)
     };
 
 
@@ -213,11 +233,11 @@ export const useCreateNewProductController =
     const onPressedStartCategories = () => {
       setSelectedPath([]);
       setCurrentCategories(categories);
-      setCategorySelected('')
+      setCategorySelected(null)
     }
 
     const onSelectAllColors = () => {
-      if(selectedColors.length === allColors.length) {
+      if (selectedColors.length === allColors.length) {
         setSelectedColors([]);
         return
       }
@@ -230,10 +250,10 @@ export const useCreateNewProductController =
       if (value > 0) {
         if (caller === 'reseller') {
           reseller = formData.prices.cost + (formData.prices.cost * value / 100);
-          retail = formData.prices.cost + (formData.prices.cost * formData.percentages.retail / 100);
+          retail = formData.prices.reseller + (formData.prices.reseller * formData.percentages.retail / 100);
         } else {
           reseller = formData.prices.cost + (formData.prices.cost * formData.percentages.reseller / 100);
-          retail = formData.prices.cost + (formData.prices.cost * value / 100);
+          retail = formData.prices.reseller + (formData.prices.reseller * value / 100);
         }
       }
       return { reseller, retail };
@@ -246,9 +266,10 @@ export const useCreateNewProductController =
     };
 
     const onSelectSizeType = (sizeType: string) => {
-      setFormData({...formData, sizeType});
+      setFormData({ ...formData, sizeType });
     }
     // Return state and events
+
     return {
       handleSubmit,
       formData,
@@ -276,13 +297,13 @@ export const useCreateNewProductController =
       selectedColors,
       setSelectedColors,
       colors: allColors.map(({ label, value }) => ({ label, value })),
-      sizesOptions: sizes.map(size => ({ label: size.value, value: size.value })),
       isDisabledButtonSubmit,
       calculatedPrices,
       onSelectAllColors,
       handleColorChange,
-      sizesTypes,
+      sizesTypes: typesSizesByIds,
       onSelectSizeType,
-      allBrands
+      allBrands,
+      showCategoriesTypesOptions
     };
   };

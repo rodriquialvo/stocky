@@ -9,6 +9,7 @@ export interface GetProductAtributesSubTypesResponse {
 export interface ProductAttribute {
     subtype: null;
     _id:     string;
+    id: string
     type:    string;
     value:   string;
     label:   string;

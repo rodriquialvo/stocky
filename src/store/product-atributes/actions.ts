@@ -55,6 +55,7 @@ export const ProductAtributesAction = () => {
     }
   };
 
+
   const getAllColors = async () => {
     setStatus(getStartStatus());
     try {
@@ -89,6 +90,6 @@ export const ProductAtributesAction = () => {
     getSizes,
     getSizesTypes,
     getAllColors,
-    getAllBrands
+    getAllBrands,
   };
 };

@@ -8,7 +8,6 @@ import { useProductStore } from '../../store/product/slice';
 import { CartAction } from '../../store/shoppingcart/actions';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
-import { mapColors } from '../../constants/maps';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
 
 export const useProductDetailController =
@@ -32,7 +31,6 @@ export const useProductDetailController =
     const [isDisabledButton, setIsDisabledButton] = useState(false)
     const navigate = useNavigate();
     const [sizes, setSizes] = useState<{ label: string, value: string }[]>([]);
-    const [colors, setColors] = useState<{ label: string, value: string }[]>([]);
     const [size, setSize] = useState("");
     const [color, setColor] = useState("");
     const [quantity, setQuantity] = useState(1);
@@ -40,13 +38,7 @@ export const useProductDetailController =
     const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
     const allColors = useProductAtributesStore(state => state.allColors);
 
-    useEffect(() => {
-      setColors(
-        productDetail?.stocks?.map(stock => stock.variant.color)
-          .filter((value, index, self) => self.indexOf(value) === index).map(color => ({ label: mapColors[color], value: color }))
-      )
 
-    }, [productDetail]);
 
     useEffect(() => {
       setSizes(
@@ -127,7 +119,6 @@ export const useProductDetailController =
       onAddToCartPressed,
       isDisabledButton,
       sizes,
-      colors,
       imageSelected,
       setImageSelected,
       handleSelectColor,
@@ -138,6 +129,6 @@ export const useProductDetailController =
       size,
       color,
       isLoading: statusProduct.isFetching || statusCart.isFetching,
-      colorsProduct: allColors.filter(color => productDetail.colors.includes(color.value)).map(color => color.label),
+      colorsProduct: allColors.filter(color => productDetail.colors.includes(color.value)).map(color => { return {label: color.label, value: color.value}}),
     };
   };

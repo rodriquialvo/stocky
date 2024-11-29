@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormLabel, Heading, Input, Select, useBreakpointValue, VStack, useToast, Checkbox } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormLabel, Heading, Input, Select, useBreakpointValue, VStack, useToast, Checkbox, Flex, Text } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 import { RoleAction } from '../../store/roles/actions';
 import { useRoleStore } from '../../store/roles/slice';
@@ -7,7 +7,9 @@ import { useCreateNewResellerController } from './CreateNewReseller.controller';
 import { CreateNewResellerProps } from './interfaces';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../store/users/slice';
-
+import DatePicker, { registerLocale } from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { es } from 'date-fns/locale';
 export const CreateNewResellerPage: FC<
   CreateNewResellerProps
 > = props => {
@@ -30,6 +32,7 @@ export const CreateNewResellerPage: FC<
   const controller = useController();
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
+  const loading = useUserStore(state => state.status.isFetching);
 
   useEffect(() => {
     if (!createOrUpdateStatus.isError && !createOrUpdateStatus.success) {
@@ -65,7 +68,8 @@ export const CreateNewResellerPage: FC<
     phone: reseller ? reseller.phone : '',
     roles: reseller ? reseller.roles.map(role => role.id) : [],
     address: reseller ? reseller.address : '',
-    active: reseller ? reseller.active : true
+    active: reseller ? reseller.active : true,
+    birthdate: reseller ? reseller.birthdate : new Date(),
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -102,8 +106,7 @@ export const CreateNewResellerPage: FC<
       updateUser(reseller.id, formValues);
     }
   };
-
-
+  
   // Render
   return (
     <Box
@@ -121,13 +124,26 @@ export const CreateNewResellerPage: FC<
       as="form"
       onSubmit={(e) => {
         e.preventDefault();
-        // manejar el envío del formulario aquí
       }}
     >
       <VStack spacing={4} width="100%">
         <Heading fontSize={headingSize} fontWeight="bold" mb={6} textAlign="center">
           {texts.title}
         </Heading>
+        <Flex
+          width={"100%"}
+          gap={4}
+        >
+          <FormLabel htmlFor="birthdate">Fecha de nacimiento: *</FormLabel>
+          <DatePicker
+            locale={es}
+            onChange={(date: Date) => setFormValues({ ...formValues, birthdate: date })}
+            name="birthdate"
+            selected={formValues.birthdate}
+            dateFormat="dd/MM/yyyy"
+            maxDate={new Date()}
+          />
+        </Flex>
 
         <FormControl isRequired>
           <FormLabel htmlFor="name">Nombre</FormLabel>
@@ -144,19 +160,19 @@ export const CreateNewResellerPage: FC<
           <Input type="email" id="email" name="email" placeholder="Introduce el correo electrónico" onChange={handleChange} value={formValues.email} />
         </FormControl>
 
-        <FormControl isRequired>
-          <FormLabel htmlFor="phone">Número de Teléfono</FormLabel>
-          <Input
-            type="tel"
-            id="phone"
-            name="phone"
-            placeholder="Introduce el número de teléfono"
-            // pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-            maxLength={12}
-            onChange={handleChange}
-            value={formValues.phone}
-          />
-        </FormControl>
+        <FormLabel htmlFor="phone">Número de Teléfono</FormLabel>
+        <Input
+          type="tel"
+          id="phone"
+          name="phone"
+          placeholder="Introduce el número de teléfono"
+          // pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+          maxLength={12}
+          onChange={handleChange}
+          value={formValues.phone}
+        />
+        <FormLabel htmlFor="phone">Fecha de nacimiento</FormLabel>
+
 
         <FormControl isRequired>
           <FormLabel htmlFor="address">Dirección</FormLabel>
@@ -173,7 +189,6 @@ export const CreateNewResellerPage: FC<
             ))}
           </Select>
         </FormControl>
-
         {/* add heck with active */}
         <FormControl>
           <FormLabel htmlFor="active">Activo</FormLabel>
@@ -182,7 +197,7 @@ export const CreateNewResellerPage: FC<
           </Checkbox>
         </FormControl>
 
-        <Button type="submit" colorScheme="blue" width="full" mt={4} onClick={handleSubmit}>
+        <Button isLoading={loading} type="submit" colorScheme="blue" width="full" mt={4} onClick={handleSubmit}>
           {texts.button}
         </Button>
       </VStack>

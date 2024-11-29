@@ -11,6 +11,7 @@ export interface GalleryItemProps {
   images: string[];
   onClick?: () => void;
   brand: string;
+  code: string;
 }
 
 const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, images, onClick, ...props }) => {
@@ -76,10 +77,10 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, im
         >{capitalizeFirstLetter(name)}</Heading>
 
         <Text fontSize="lg" color="gray.600">
-          {capitalizeFirstLetter(props?.brand)}
+          Marca: {capitalizeFirstLetter(props?.brand)}
         </Text>
         <Text fontSize="lg" color="gray.600">
-         Articulo: {props?.brand}
+         Articulo: {props?.code}
         </Text>
         <Text fontWeight="bold" fontSize="lg" color="pink.500">
           {price}

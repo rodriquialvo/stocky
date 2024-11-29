@@ -83,7 +83,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             {controller.selectedPath.map((category, index) => (
               <BreadcrumbItem key={category.id}>
                 <BreadcrumbLink
-                  borderWidth={controller.categorySelected === category.id ? 2 : 0}
+                  borderWidth={controller.categorySelected?.id === category.id ? 2 : 0}
                   borderColor={"pink.100"}
                   px={2}
                   borderRadius={"md"}
@@ -93,11 +93,30 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
               </BreadcrumbItem>
             ))}
           </Breadcrumb>
-
-          <CategoryList categorySelected={controller.categorySelected} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
+          <CategoryList categorySelected={controller.categorySelected?.id} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
 
         </FormControl>
-
+        {
+          controller.showCategoriesTypesOptions &&
+          <FormControl>
+            <Box>
+              <FormLabel htmlFor="sizes">Tipo de talle</FormLabel>
+              {controller.sizesTypes.map((sizetype) => (
+                <RadioGroup defaultValue=''>
+                  <Stack spacing={5}>
+                    <Radio
+                      onClick={() => controller.onSelectSizeType(sizetype._id)}
+                      isChecked={controller.formData.sizeType === sizetype._id}
+                      colorScheme='pink'
+                    >
+                      <Text >{capitalizeFirstLetter(sizetype.label || sizetype.value)}</Text>
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              ))}
+            </Box>
+          </FormControl>
+        }
         <FormControl>
           <Box>
             <FormLabel htmlFor="brands">Marca</FormLabel>
@@ -147,24 +166,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             ))}
           </Wrap>
         </FormControl>
-        <FormControl>
-          <Box>
-            <FormLabel htmlFor="sizes">Tipo de talle</FormLabel>
-            {controller.sizesTypes.map((sizetype) => (
-              <RadioGroup defaultValue=''>
-                <Stack spacing={5}>
-                  <Radio
-                    onClick={() => controller.onSelectSizeType(sizetype._id)}
-                    isChecked={controller.formData.sizeType === sizetype._id}
-                    colorScheme='pink'
-                  >
-                    <Text >{capitalizeFirstLetter(sizetype.label || sizetype.value)}</Text>
-                  </Radio>
-                </Stack>
-              </RadioGroup>
-            ))}
-          </Box>
-        </FormControl>
+
 
         {/* Cost Price Field */}
         <FormControl isRequired>
@@ -203,6 +205,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             value={controller.formData.percentages.retail}
             onChange={controller.handleChangePercentageRetail}
             min={0}
+            placeholder='Porcentaje de venta SOBRE REVENDEDOR'
           // step="0.01"
           />
         </FormControl>

@@ -11,12 +11,12 @@ export interface ProductDetailController {
   productDetail: ProductDetail | null
   isDisabledButton: boolean,
   sizes: {label: string, value: string}[];
-  colors: {label: string, value: string}[];
+  // colors: {label: string, value: string}[];
   imageSelected: string,
   quantity: number,
   size: string, color: string,
   isLoading: boolean,
-  colorsProduct: string[],
+  colorsProduct: any[],
   /* Events */
   onAddToCartPressed: (data: ParamsOnAddToCartPressed) => void,
   setImageSelected: (image: string) => void,

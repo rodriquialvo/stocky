@@ -47,6 +47,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
   const statusProductAtributes = useProductAtributesStore(state => state.status);
   const categories = useCategorytore(state => state.categories);
   const isAdminUser = useSessionStore(state => state.isAdminUser);
+  const allColors = useProductAtributesStore(state => state.allColors);
 
   // local states
   const [isFirstRequest, setIsFirstRequest] = useState(true);
@@ -249,7 +250,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
           <RadioGroup defaultValue=''>
             <Stack spacing={5}>
               <Radio onClick={() => onSelectSizeType(sizetype.value)} isChecked={typeSizeSelected === sizetype.value} colorScheme='pink'>
-                <Text >{capitalizeFirstLetter(sizetype.value)}</Text>
+                <Text >{capitalizeFirstLetter(sizetype.label)}</Text>
               </Radio>
             </Stack>
           </RadioGroup>
@@ -281,7 +282,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
       }
       <Box >
         <FormLabel fontWeight={"bold"}>Colores</FormLabel>
-        {Object.entries(mapColors).map(([value, label]) => (
+        {allColors.map(({ value, label }) => (
           <Box key={value}>
             <Checkbox
               key={value}

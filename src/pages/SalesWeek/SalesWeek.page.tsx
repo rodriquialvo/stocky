@@ -26,7 +26,7 @@ import { useEffect } from 'react';
 import { FiRefreshCcw } from 'react-icons/fi';
 import { SaleAction } from '../../store/sales/actions';
 import { useSaleStore } from '../../store/sales/slice';
-import { formattedNumberToMoney } from '../../utils/functions';
+import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 
 interface Product {
   id: number;
@@ -121,6 +121,7 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
     0
   ) || 0;
 
+  console.log("products", products[seller.id]);
   return (
     <Box>
       {products[seller.id]?.length > 0 && (
@@ -130,6 +131,8 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
           <Tr>
             <Th>Producto</Th>
             <Th isNumeric>Cantidad</Th>
+            <Th isNumeric>Color</Th>
+            <Th isNumeric>Articulo</Th>
             <Th isNumeric>Precio</Th>
             <Th isNumeric>Subtotal</Th>
           </Tr>
@@ -139,6 +142,8 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
             <Tr key={product.id}>
               <Td>{product.variantData.productName}</Td>
               <Td isNumeric>{product.quantity}</Td>
+              <Td isNumeric>{capitalizeFirstLetter(product.variantData.variantAttributes?.[0]?.label || product.variantData.variantAttributes?.[0]?.value || '')}</Td>
+              <Td isNumeric>{product.variantData.productCode}</Td>
               <Td isNumeric>{formattedNumberToMoney(product.prices.reseller)}</Td>
               <Td isNumeric>{formattedNumberToMoney((product.quantity * product.prices.reseller))}</Td>
             </Tr>
@@ -178,6 +183,8 @@ const TotalProducts = () => {
           <Tr>
             <Th>Producto</Th>
             <Th isNumeric>Cantidad Total</Th>
+            <Th isNumeric>Color</Th>
+            <Th isNumeric>Articulo</Th>
             <Th isNumeric>Precio</Th>
             <Th isNumeric>Total</Th>
           </Tr>
@@ -187,6 +194,8 @@ const TotalProducts = () => {
             <Tr key={product.id}>
               <Td>{product.variantData.productName}</Td>
               <Td isNumeric>{product.quantity}</Td>
+              <Td isNumeric>{capitalizeFirstLetter(product.variantData.variantAttributes?.[0]?.label || product.variantData.variantAttributes?.[0]?.value || '')}</Td>
+              <Td isNumeric>{product.variantData.productCode}</Td>
               <Td isNumeric>{formattedNumberToMoney(product.prices.reseller)}</Td>
               <Td isNumeric>{formattedNumberToMoney((product.quantity * product.prices.reseller))}</Td>
             </Tr>
@@ -236,7 +245,7 @@ const SalesWeek = () => {
             </Tab>
             <Tab>
             <Box display="flex" width={'100%'} alignItems={'center'} justifyContent={'center'}>
-                <Text>Total por products</Text>
+                <Text>Total por productos</Text>
               </Box>
               <Box>
                 <Button

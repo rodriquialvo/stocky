@@ -31,6 +31,8 @@ export const ProductAction = () => {
     setStatus(getStartStatus());
     try {
       const data = await productService.getProducts(filters);
+      console.log("response", data);
+
       if (!data.products) {
         setStatus(getErrorStatus('No response'));
         return;
@@ -38,6 +40,7 @@ export const ProductAction = () => {
       setStatus(getSuccessStatus());
       setProducts(data.products);
     } catch (e) {
+      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -51,6 +54,7 @@ export const ProductAction = () => {
     );
 
       const response = await productService.postCreateNewProduct({ ...body, pictures: uploadedUrls.map(url => ({ url, alt_text: body.name + " " + body.code })) });
+      console.log("response", response);
       if (!response.product) {
         setStatus(getErrorStatus('No response'));
         return;
