@@ -104,9 +104,7 @@ export const useCreateNewProductController =
         (showCategoriesTypesOptions && !formData.sizeType.length) ||
         !images.length
       )
-    }, [formData, categorySelected, selectedColors, images, showCategoriesTypesOptions])
-console.log("formData", formData)
-console.log("")
+    }, [formData, categorySelected, selectedColors, images])
     const handleCategorySelect = (category: Category) => {
       if (category.children && category.children.length > 0) {
         setSelectedPath((prevPath) => [...prevPath, category]);
