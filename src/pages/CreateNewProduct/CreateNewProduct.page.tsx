@@ -24,7 +24,7 @@ import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
 import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
 import CategoryList from '../../components/CategoryList/CategoryList';
-import { capitalizeFirstLetter } from '../../utils/functions';
+import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
@@ -216,7 +216,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             type="number"
             id="resellerPrice"
             name="resellerPrice"
-            value={controller.formData.prices?.reseller || 0}
+            value={formattedNumberToMoney(controller.formData.prices?.reseller || 0)}
             min={0}
           />
         </FormControl>
@@ -228,7 +228,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             type="number"
             id="retailPrice"
             name="retailPrice"
-            value={controller.formData.prices?.retail || 0}
+            value={formattedNumberToMoney(controller.formData.prices?.retail || 0)}
             min={0}
             step="0.01"
           />
