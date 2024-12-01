@@ -70,7 +70,7 @@ export interface Picture {
 }
 
 export interface Prices {
-  cost: number
+  cost: number | string
   retail: number
   reseller: number
 }

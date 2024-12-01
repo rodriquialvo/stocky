@@ -145,14 +145,14 @@ const CartPanel: FC<CartPanelProps> = props => {
                               alignItems={"center"}
                               width={"100%"}
                             >
-                              <Text  fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>P/u Revendedor: {formattedNumberToMoney(item.product.prices.reseller)}</Text>
+                              <Text  fontSize={"sm"} color={"green.600"} textAlign={"left"} size={"sm"}>P/u Revendedor: {formattedNumberToMoney(item.product.prices.reseller)}</Text>
                               <Box
                                 display={"flex"}
                                 flexDirection={"row"}
                                 // justifyContent={"end"}
                                 alignItems={"center"}
                               >
-                                <Heading  fontSize={"md"} >
+                                <Heading color={"green.400"}  fontSize={"md"} >
                                   {formattedNumberToMoney(item.product.prices.reseller * variantsQuantity[item.variant._id])}
                                 </Heading>
                               </Box>
@@ -194,7 +194,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                 position="sticky"
               >
                 <Heading>Total:</Heading>
-                <Heading size={"sm"}>Revendedor: {formattedNumberToMoney(cart.total_reseller)}</Heading>
+                <Heading color={"green.400"} size={"sm"}>Revendedor: {formattedNumberToMoney(cart.total_reseller)}</Heading>
                 <Heading color={"orange.400"} size={"sm"}>Cliente final: {formattedNumberToMoney(cart.total_retail)}</Heading>
                 <Divider my={5} />
                 <Button

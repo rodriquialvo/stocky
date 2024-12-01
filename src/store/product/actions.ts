@@ -31,7 +31,6 @@ export const ProductAction = () => {
     setStatus(getStartStatus());
     try {
       const data = await productService.getProducts(filters);
-      console.log("response", data);
 
       if (!data.products) {
         setStatus(getErrorStatus('No response'));

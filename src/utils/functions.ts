@@ -132,3 +132,13 @@ export const setTimeForInactivityMinutesAndSeconds = (
 ): number => {
   return 1000 * 60 * minutes + 1000 * seconds;
 };
+
+export const roundUpPrice =(price: number | string): number => {
+  price = Number(price);
+  if (price === 0) return 0;
+    
+    const magnitude = Math.floor(Math.log10(Math.abs(price)));
+    const factor = Math.pow(10, magnitude);
+    
+    return Math.ceil(price / factor) * factor;
+}

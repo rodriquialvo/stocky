@@ -11,13 +11,13 @@ export const initialStateProductformData: ProductFormData = {
     },
     pictures: [],
     prices: {
-      cost: 0,
+      cost: '',
       retail: 0,
       reseller: 0
     },
     percentages: {
-      retail: 0,
-      reseller: 0
+      retail: 30,
+      reseller: 80
     },
     colors: [],
     sizeType: ""
