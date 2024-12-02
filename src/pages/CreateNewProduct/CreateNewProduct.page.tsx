@@ -25,7 +25,7 @@ import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
 import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
 import CategoryList from '../../components/CategoryList/CategoryList';
-import { capitalizeFirstLetter, formattedNumberToMoney, roundUpPrice } from '../../utils/functions';
+import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
