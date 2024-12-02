@@ -23,8 +23,8 @@ function SaleDetailTable({ details }) {
                         <Tr key={index}>
                             <Td>{detail.variantData.productName}</Td>
                             <Td>{detail.variantData.productCode}</Td>
-                            <Td>{detail.variantData.variantAttributes?.[0]?.value || ''}</Td>
-                            <Td>{detail.variantData.variantAttributes?.[1]?.value || ''}</Td>
+                            <Td>{detail.variantData.variantAttributes?.[0]?.label || ''}</Td>
+                            <Td>{detail.variantData.variantAttributes?.[1]?.label || ''}</Td>
                             <Td>{detail.quantity}</Td>
                             <Td>{formattedNumberToMoney(detail.prices.reseller)}</Td>
                             <Td>{formattedNumberToMoney((detail.prices.reseller * detail.quantity))}</Td>

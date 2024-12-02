@@ -108,7 +108,7 @@ const SalesList = () => {
                 >
                     <Box display="flex" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap="4">
                         <Box flex="2">
-                            <Text fontSize="md" fontWeight="semibold">Código de Venta: {sale.code}</Text>
+                            <Text fontSize="md" fontWeight="semibold">{capitalizeFirstLetter(sale.user?.name)} {capitalizeFirstLetter(sale.user?.lastname)}</Text>
 
                             <Text display={{ base: "none", sm: "block" }} fontSize="sm" color="gray.500">Usuario: {capitalizeFirstLetter(sale.user?.lastname) + ' ' + capitalizeFirstLetter(sale.user?.name) || 'N/A'}</Text>
                             <Text display={{ base: "block", sm: "none" }} fontSize="sm" color="gray.500">{sale.user?.lastname + ' ' + sale.user?.name || 'N/A'}</Text>
