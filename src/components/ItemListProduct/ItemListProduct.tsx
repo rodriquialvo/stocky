@@ -13,12 +13,12 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
   const productsWhitStocks = useProductStore(state => state.productsWhitStocks);
   const allColors = useProductAtributesStore(state => state.allColors);
 
-  const colorsObj = allColors.reduce((acc, color) => {
+  const colorsObj = allColors.length ? allColors.reduce((acc, color) => {
     return {
       ...acc,
       [color.value]: color.label
     }
-  })
+  }) : {};
   
   const navigate = useNavigate();
   return (
@@ -127,7 +127,7 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
                   >
                     <Heading
                       fontSize="md"
-                    >Color {colorsObj[stock.variant.color]} / Talle {stock.variant.size}:</Heading>
+                    >Color {colorsObj[stock.variant.color] || ''} / Talle {stock.variant.size}:</Heading>
                     <Text fontSize="md" color="pink.600" >Cantidad: <Text as="span" color="gray.600">{stock.quantity} {stock.quantity > 1 ? "unidades" : "unidad"}</Text></Text>
                     <Text fontSize="md" color="pink.600" >Precio de costo: <Text as="span" color="gray.600">{formattedNumberToMoney(stock.costPrice)}</Text></Text>
                   </Box>
