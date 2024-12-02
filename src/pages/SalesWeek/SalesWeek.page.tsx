@@ -121,7 +121,6 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
     0
   ) || 0;
 
-  console.log("products", products[seller.id]);
   return (
     <Box>
       {products[seller.id]?.length > 0 && (

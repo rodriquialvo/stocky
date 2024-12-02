@@ -18,13 +18,14 @@ import {
   RadioGroup,
   Stack,
   Radio,
+  SimpleGrid,
 } from '@chakra-ui/react';
 import { FC } from 'react';
 import { CreateNewProductProps } from './interfaces';
 import { useCreateNewProductController } from './CreateNewProduct.controller';
 import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
 import CategoryList from '../../components/CategoryList/CategoryList';
-import { capitalizeFirstLetter } from '../../utils/functions';
+import { capitalizeFirstLetter, formattedNumberToMoney, roundUpPrice } from '../../utils/functions';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
   const controller = useCreateNewProductController();
@@ -94,7 +95,6 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             ))}
           </Breadcrumb>
           <CategoryList categorySelected={controller.categorySelected?.id} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
-
         </FormControl>
         {
           controller.showCategoriesTypesOptions &&
@@ -109,7 +109,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
                       isChecked={controller.formData.sizeType === sizetype._id}
                       colorScheme='pink'
                     >
-                      <Text >{capitalizeFirstLetter(sizetype.label || sizetype.value)}</Text>
+                      <Text>{capitalizeFirstLetter(sizetype.label || sizetype.value)}</Text>
                     </Radio>
                   </Stack>
                 </RadioGroup>
@@ -120,19 +120,21 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
         <FormControl>
           <Box>
             <FormLabel htmlFor="brands">Marca</FormLabel>
-            {controller.allBrands.map((brand) => (
-              <RadioGroup defaultValue=''>
-                <Stack spacing={5}>
-                  <Radio
-                    onClick={() => controller.handleChangeBrand(brand.value)}
-                    isChecked={controller.formData.attributes.brand === brand.value}
-                    colorScheme='pink'
-                  >
-                    <Text >{capitalizeFirstLetter(brand.label)}</Text>
-                  </Radio>
-                </Stack>
-              </RadioGroup>
-            ))}
+            <SimpleGrid columns={{ base: 2, md: 3 }}>
+              {controller.allBrands.map((brand, index) => (
+                <RadioGroup key={index} defaultValue=''>
+                  <Stack spacing={5}>
+                    <Radio
+                      onClick={() => controller.handleChangeBrand(brand.value)}
+                      isChecked={controller.formData.attributes.brand === brand.value}
+                      colorScheme='pink'
+                    >
+                      <Text >{capitalizeFirstLetter(brand.label)}</Text>
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              ))}
+            </SimpleGrid>
           </Box>
         </FormControl>
         {/* Description Field */}
@@ -182,7 +184,6 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           // step="0.01"
           />
         </FormControl>
-
         <FormControl isRequired>
           <FormLabel htmlFor="percentageReseller">Porcentaje Revendedor</FormLabel>
           <Input
@@ -209,31 +210,16 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           // step="0.01"
           />
         </FormControl>
-
-        <FormControl isDisabled={true}>
-          <FormLabel htmlFor="resellerPrice">Precio Revendedor</FormLabel>
-          <Input
-            type="number"
-            id="resellerPrice"
-            name="resellerPrice"
-            value={controller.formData.prices?.reseller || 0}
-            min={0}
-          />
-        </FormControl>
-
-        {/* Final Price Field */}
-        <FormControl isDisabled={true}>
-          <FormLabel htmlFor="retailPrice">Precio Venta</FormLabel>
-          <Input
-            type="number"
-            id="retailPrice"
-            name="retailPrice"
-            value={controller.formData.prices?.retail || 0}
-            min={0}
-            step="0.01"
-          />
-        </FormControl>
-
+        <Box display={"flex"} flexDirection={'column'} gap={4} w={"100%"}>
+          <Box>
+            <FormLabel color={"green.600"} htmlFor="retailPrice">Precio Revendedor</FormLabel>
+            <Text color={"green.400"} fontWeight={"bold"}>{formattedNumberToMoney(controller.formData.prices?.reseller || 0)}</Text>
+          </Box>
+          <Box>
+            <FormLabel color={"orange.600"} htmlFor="retailPrice">Precio Venta</FormLabel>
+            <Text color={"orange.400"} fontWeight={"bold"}>{formattedNumberToMoney(controller.formData.prices?.retail || 0)}</Text>
+          </Box>
+        </Box>
         <ImageUploadGallery
           setImages={controller.setImages}
           images={controller.images}

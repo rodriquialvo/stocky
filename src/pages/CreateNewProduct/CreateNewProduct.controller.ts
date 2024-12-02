@@ -11,6 +11,7 @@ import { CreateNewProductController, ProductFormData } from './interfaces';
 import { initialStateProductformData } from './constants';
 import { getDefaultStatus } from '../../store/helper/statusStateFactory';
 import { ProductAttribute } from '../../services/product/dtos/getProductAtributes';
+import { roundUpPrice } from '../../utils/functions';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
@@ -104,7 +105,20 @@ export const useCreateNewProductController =
         (showCategoriesTypesOptions && !formData.sizeType.length) ||
         !images.length
       )
-    }, [formData, categorySelected, selectedColors, images])
+    }, [formData, categorySelected, selectedColors, images]);
+
+    useEffect(() => {
+      if (!!formData.prices.cost && !!formData.percentages.reseller && !!formData.percentages.retail) {
+        setFormData({
+          ...formData,
+          prices: {
+            ...formData.prices,
+            reseller: roundUpPrice(parseFloat(formData.prices.cost.toString()) + (parseFloat(formData.prices.cost.toString()) * parseFloat(formData.percentages.reseller.toString()) / 100)),
+            retail: roundUpPrice(parseFloat(formData.prices.reseller.toString()) + (parseFloat(formData.prices.reseller.toString()) * parseFloat(formData.percentages.retail.toString()) / 100))
+          }
+        });
+      }
+    }, [formData.prices.cost, formData.prices.reseller, formData.percentages.retail, formData.percentages.reseller])
     const handleCategorySelect = (category: Category) => {
       if (category.children && category.children.length > 0) {
         setSelectedPath((prevPath) => [...prevPath, category]);
@@ -175,11 +189,6 @@ export const useCreateNewProductController =
           reseller: parseFloat(value)
         }
       }
-      if (parseFloat(value) > 0 && formData.percentages.retail > 0) {
-        const { reseller, retail } = calcaulatePrices(parseFloat(value), 'reseller');
-        data.prices.reseller = reseller;
-        data.prices.retail = retail;
-      }
       setFormData(data);
     };
 
@@ -191,11 +200,6 @@ export const useCreateNewProductController =
           ...formData.percentages,
           retail: parseFloat(value)
         }
-      }
-      if (parseFloat(value) > 0 && formData.percentages.reseller > 0) {
-        const { retail, reseller } = calcaulatePrices(parseFloat(value), 'retail');
-        data.prices.retail = retail;
-        data.prices.reseller = reseller;
       }
       setFormData(data);
     };
@@ -242,21 +246,6 @@ export const useCreateNewProductController =
       setSelectedColors(allColors.map(color => color.value));
     }
 
-    const calcaulatePrices = (value: number, caller: string) => {
-      let reseller = 0;
-      let retail = 0;
-      if (value > 0) {
-        if (caller === 'reseller') {
-          reseller = formData.prices.cost + (formData.prices.cost * value / 100);
-          retail = formData.prices.reseller + (formData.prices.reseller * formData.percentages.retail / 100);
-        } else {
-          reseller = formData.prices.cost + (formData.prices.cost * formData.percentages.reseller / 100);
-          retail = formData.prices.reseller + (formData.prices.reseller * value / 100);
-        }
-      }
-      return { reseller, retail };
-    }
-
     const handleColorChange = (colorValue: string) => {
       setSelectedColors((prev) =>
         prev.includes(colorValue) ? prev.filter((c) => c !== colorValue) : [...prev, colorValue]
@@ -266,7 +255,6 @@ export const useCreateNewProductController =
     const onSelectSizeType = (sizeType: string) => {
       setFormData({ ...formData, sizeType });
     }
-    // Return state and events
 
     return {
       handleSubmit,
