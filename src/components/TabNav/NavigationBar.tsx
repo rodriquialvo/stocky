@@ -78,28 +78,42 @@ const NavigationBar: React.FC<TabNavProps> = ({
           onClick={() => window.location.href = "/"}
           cursor={"pointer"}
         />
-        <SearchBarwithSuggestion />
+        {/* <SearchBarwithSuggestion /> */}
         {/* Botón para Mostrar Filtros */}
-        <Button
-          leftIcon={<HamburgerIcon />}
-          colorScheme="pink"
-          variant="solid"
-          onClick={() => setIsOpenFilterPanel(true)}
-          ml={4}
-        >
-          Filters
-        </Button>
+
         {/* Carrito de Compras */}
-        <IconButton
-          aria-label="Cart"
-          icon={<FiShoppingCart />}
-          variant="ghost"
-          colorScheme="pink"
-          fontSize="1.5rem"
-          ml={4}
-          onClick={() => setIsOpenCartPanel(true)}
-        />
-        <Text color={"pink.600"} fontWeight={"bold"}>{formattedNumberToMoney(cart.total_reseller)} | {formattedNumberToMoney(cart.total_retail)}</Text>
+        <Flex
+          alignItems={"center"}
+        >
+          <Button
+            leftIcon={<HamburgerIcon />}
+            colorScheme="pink"
+            variant="solid"
+            onClick={() => setIsOpenFilterPanel(true)}
+            ml={4}
+          >
+            Filtros
+          </Button>
+          <Flex
+            alignItems={"center"}
+            flexDirection={{
+              base: "column",
+              md: "row"
+            }}
+          >
+            <IconButton
+              aria-label="Cart"
+              icon={<FiShoppingCart />}
+              variant="ghost"
+              colorScheme="pink"
+              fontSize="1.5rem"
+              ml={4}
+              onClick={() => setIsOpenCartPanel(true)}
+            />
+
+            <Text display={{ base: "none", md: "block" }} color={"pink.600"} fontWeight={"bold"}>{formattedNumberToMoney(cart.total_reseller)} | {formattedNumberToMoney(cart.total_retail)}</Text>
+          </Flex>
+        </Flex>
       </Flex>
       <FilterPanel
         isOpen={islopenFilterPanel}

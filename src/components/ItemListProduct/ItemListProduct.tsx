@@ -2,7 +2,7 @@ import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, But
 import React, { FC } from 'react';
 import { ItemListProductProps } from './interfaces';
 import { useProductStore } from '../../store/product/slice';
-import { formattedNumberToMoney } from '../../utils/functions';
+import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
 
@@ -21,11 +21,11 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
         <Heading
           ml={5}
           fontSize="md" flex='1' textAlign='left'>
-          {props.name}
+          {capitalizeFirstLetter(props.name)}
         </Heading>
-        <Heading fontSize="md" flex='1' textAlign='left'>{props?.brand}</Heading>
+        <Heading fontSize="md" flex='1' textAlign='left'>{capitalizeFirstLetter(props?.brand)}</Heading>
         <Heading fontSize="md" flex='1' textAlign='left'>
-          {props?.code}
+          {props?.code.toUpperCase()}
         </Heading>
         <Heading
           display={{
