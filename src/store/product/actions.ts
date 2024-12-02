@@ -88,7 +88,7 @@ export const ProductAction = () => {
         if (productsWhitStocks[id].lastRequest) {
           const fiveMinutesInMs = 5 * 60 * 1000;
           const now = new Date();
-          // if ((now as any) - (productsWhitStocks[id].lastRequest as any) > fiveMinutesInMs) {
+          if ((now as any) - (productsWhitStocks[id].lastRequest as any) > fiveMinutesInMs) {
             const response = await productService.getProductDetail(id);
             if (!response.product) {
               setStatus(getErrorStatus('No response'));
@@ -97,14 +97,14 @@ export const ProductAction = () => {
             setProductsWhitStocks({ ...productsWhitStocks, [id]: { ...response.product, lastRequest: new Date() } });
           }
         }
-      // } else {
-      //   const response = await productService.getProductDetail(id);
-      //   if (!response.product) {
-      //     setStatus(getErrorStatus('No response'));
-      //     return;
-      //   }
-      //   setProductsWhitStocks({ ...productsWhitStocks, [id]: { ...response.product, lastRequest: new Date() } });
-      // }
+      } else {
+        const response = await productService.getProductDetail(id);
+        if (!response.product) {
+          setStatus(getErrorStatus('No response'));
+          return;
+        }
+        setProductsWhitStocks({ ...productsWhitStocks, [id]: { ...response.product, lastRequest: new Date() } });
+      }
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
     }
