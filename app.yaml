@@ -7,10 +7,6 @@ handlers:
   - url: /static
     static_dir: build/static/
 
-  - url: /(.*)
-    static_files: build/\1
-    upload: build/.*
-
   # Redirigir todas las demás rutas a index.html (para manejo del enrutamiento en el cliente)
   - url: /.* 
     static_files: build/index.html
