@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Heading, IconButton, Input, SimpleGrid, Text, VStack } from '@chakra-ui/react';
 import { FC, useState } from 'react';
-import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
+import { capitalizeFirstLetter, formattedNumberToMoney, roundUpTo500 } from '../../utils/functions';
 import { IncreaseAndDiscountPricePanelProps } from './interfaces';
 import { useProductStore } from '../../store/product/slice';
 import { DeleteIcon } from '@chakra-ui/icons';
@@ -70,9 +70,9 @@ const IncreaseAndDiscountPricePanel: FC<IncreaseAndDiscountPricePanelProps> = pr
                   >
                     <Text>{capitalizeFirstLetter(product.name)}</Text>
                     <Text>{formattedNumberToMoney(product.prices.reseller)}</Text>
-                    <Text fontWeight={"bold"}>{formattedNumberToMoney( Math.ceil((product.prices.reseller + (product.prices.reseller * parseFloat(percentage))  / 100) / 10) * 10)}</Text>
+                    <Text fontWeight={"bold"}>{formattedNumberToMoney( roundUpTo500((product.prices.reseller + (product.prices.reseller * parseFloat(percentage))  / 100)))}</Text>
                     <Text>{formattedNumberToMoney(product.prices.retail)}</Text>
-                    <Text fontWeight={"bold"}>{formattedNumberToMoney( Math.ceil((product.prices.retail + (product.prices.retail * parseFloat(percentage)) / 100) / 10) * 10)}</Text>
+                    <Text fontWeight={"bold"}>{formattedNumberToMoney( roundUpTo500((product.prices.retail + (product.prices.retail * parseFloat(percentage)) / 100)))}</Text>
                     <IconButton
                       aria-label='Delete'
                       icon={<DeleteIcon />}

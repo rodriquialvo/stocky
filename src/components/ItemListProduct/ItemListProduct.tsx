@@ -119,7 +119,8 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
               <SimpleGrid
                 columns={{ base: 2, md: 2, lg: 5 }}
               >
-                {productsWhitStocks[props.id]?.stocks.map(stock => (
+                {productsWhitStocks[props.id]?.stocks.map(stock => {
+                 return (
                   <Box
                     gap={4}
                     alignItems={"center"}
@@ -130,7 +131,8 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
                     <Text fontSize="md" color="pink.600" >Cantidad: <Text as="span" color="gray.600">{stock.quantity} {stock.quantity > 1 ? "unidades" : "unidad"}</Text></Text>
                     <Text fontSize="md" color="pink.600" >Precio de costo: <Text as="span" color="gray.600">{formattedNumberToMoney(stock.costPrice)}</Text></Text>
                   </Box>
-                ))
+                )
+                } )
                 }
               </SimpleGrid>
             </Box>

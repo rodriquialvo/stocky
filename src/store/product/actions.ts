@@ -53,7 +53,6 @@ export const ProductAction = () => {
     );
 
       const response = await productService.postCreateNewProduct({ ...body, pictures: uploadedUrls.map(url => ({ url, alt_text: body.name + " " + body.code })) });
-      console.log("response", response);
       if (!response.product) {
         setStatus(getErrorStatus('No response'));
         return;
@@ -66,10 +65,10 @@ export const ProductAction = () => {
     }
   };
 
-  const getProductDetail = async (id: string) => {
+  const getProductDetail = async (id: string, param?: { by?: string }) => {
     setStatus(getStartStatus());
     try {
-      const response = await productService.getProductDetail(id,{ by: "variant"} );
+      const response = await productService.getProductDetail(id, param );
       if (!response.product) {
         setStatus(getErrorStatus('No response'));
         return;
@@ -89,7 +88,7 @@ export const ProductAction = () => {
         if (productsWhitStocks[id].lastRequest) {
           const fiveMinutesInMs = 5 * 60 * 1000;
           const now = new Date();
-          if ((now as any) - (productsWhitStocks[id].lastRequest as any) > fiveMinutesInMs) {
+          // if ((now as any) - (productsWhitStocks[id].lastRequest as any) > fiveMinutesInMs) {
             const response = await productService.getProductDetail(id);
             if (!response.product) {
               setStatus(getErrorStatus('No response'));
@@ -98,14 +97,14 @@ export const ProductAction = () => {
             setProductsWhitStocks({ ...productsWhitStocks, [id]: { ...response.product, lastRequest: new Date() } });
           }
         }
-      } else {
-        const response = await productService.getProductDetail(id);
-        if (!response.product) {
-          setStatus(getErrorStatus('No response'));
-          return;
-        }
-        setProductsWhitStocks({ ...productsWhitStocks, [id]: { ...response.product, lastRequest: new Date() } });
-      }
+      // } else {
+      //   const response = await productService.getProductDetail(id);
+      //   if (!response.product) {
+      //     setStatus(getErrorStatus('No response'));
+      //     return;
+      //   }
+      //   setProductsWhitStocks({ ...productsWhitStocks, [id]: { ...response.product, lastRequest: new Date() } });
+      // }
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
     }

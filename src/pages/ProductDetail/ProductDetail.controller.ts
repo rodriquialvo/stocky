@@ -51,7 +51,7 @@ export const useProductDetailController =
     /* Listeners */
 
     useEffect(() => {
-      getProductDetail(id)
+      getProductDetail(id, {by: 'variant'});
     }, [id]);
 
     useEffect(() => {
