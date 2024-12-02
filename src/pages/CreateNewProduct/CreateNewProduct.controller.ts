@@ -11,6 +11,7 @@ import { CreateNewProductController, ProductFormData } from './interfaces';
 import { initialStateProductformData } from './constants';
 import { getDefaultStatus } from '../../store/helper/statusStateFactory';
 import { ProductAttribute } from '../../services/product/dtos/getProductAtributes';
+import { roundUpTo500 } from '../../utils/functions';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
@@ -112,8 +113,8 @@ export const useCreateNewProductController =
           ...formData,
           prices: {
             ...formData.prices,
-            reseller: (parseFloat(formData.prices.cost.toString()) + (parseFloat(formData.prices.cost.toString()) * parseFloat(formData.percentages.reseller.toString()) / 100)),
-            retail: (parseFloat(formData.prices.reseller.toString()) + (parseFloat(formData.prices.reseller.toString()) * parseFloat(formData.percentages.retail.toString()) / 100))
+            reseller: roundUpTo500(parseFloat(formData.prices.cost.toString()) + (parseFloat(formData.prices.cost.toString()) * parseFloat(formData.percentages.reseller.toString()) / 100)),
+            retail: roundUpTo500(parseFloat(formData.prices.reseller.toString()) + (parseFloat(formData.prices.reseller.toString()) * parseFloat(formData.percentages.retail.toString()) / 100))
           }
         });
       }
