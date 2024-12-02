@@ -41,7 +41,7 @@ function App() {
     }
   },[userIsAuthenticated])
   return (
-    <BrowserRouter basename='/'>
+    <BrowserRouter basename="/">
       {/* <Box display="flex"> */}
       {/* Contenido principal */}
       <ScrollToTop />

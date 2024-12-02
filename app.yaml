@@ -3,10 +3,11 @@ runtime: nodejs20
 instance_class: F4
 
 handlers:
-  - url: /(.+)
-    static_files: build/\1
-    upload: build/(.*)
+  # Rutas para archivos estáticos (JS, CSS, imágenes, etc.)
+  - url: /static
+    static_dir: build/static/
 
-  - url: /
+  # Redirigir todas las demás rutas a index.html (para manejo del enrutamiento en el cliente)
+  - url: /.* 
     static_files: build/index.html
     upload: build/index.html
