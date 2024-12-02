@@ -27,6 +27,7 @@ import { FiRefreshCcw } from 'react-icons/fi';
 import { SaleAction } from '../../store/sales/actions';
 import { useSaleStore } from '../../store/sales/slice';
 import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
+import { formatDateYearMonthDay } from '../../utils/date';
 
 interface Product {
   id: number;
@@ -133,6 +134,7 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
             <Th isNumeric>Color</Th>
             <Th isNumeric>Articulo</Th>
             <Th isNumeric>Precio</Th>
+            <Th isNumeric>Fecha</Th>
             <Th isNumeric>Subtotal</Th>
           </Tr>
         </Thead>
@@ -144,6 +146,7 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
               <Td isNumeric>{capitalizeFirstLetter(product.variantData.variantAttributes?.[0]?.label || product.variantData.variantAttributes?.[0]?.value || '')}</Td>
               <Td isNumeric>{product.variantData.productCode}</Td>
               <Td isNumeric>{formattedNumberToMoney(product.prices.reseller)}</Td>
+              <Td isNumeric>{formatDateYearMonthDay(product.createdAt)}</Td>
               <Td isNumeric>{formattedNumberToMoney((product.quantity * product.prices.reseller))}</Td>
             </Tr>
           ))}

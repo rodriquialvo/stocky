@@ -75,6 +75,7 @@ const CartPanel: FC<CartPanelProps> = props => {
     setVariantsQuantity(cart?.items?.reduce((acc, item) => ({ ...acc, [item.variant._id]: item?.quantity }), {}))
   }, [cart]);
 
+  console.log("cart", cart)
   return (
     <>
       <>

@@ -5,6 +5,7 @@ import {
   IconButton,
   Button,
   Text,
+  Image,
 } from '@chakra-ui/react';
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { FiShoppingCart } from 'react-icons/fi';
@@ -14,6 +15,7 @@ import FilterPanel from '../FilterPanel/FilterPanel';
 import CartPanel from '../CartPanel/CartPanel';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { formattedNumberToMoney } from '../../utils/functions';
+import { images } from '../../constants/images';
 
 const NavigationBar: React.FC<TabNavProps> = ({
 }) => {
@@ -67,6 +69,15 @@ const NavigationBar: React.FC<TabNavProps> = ({
         gap={4}
       >
         {/* Barra de Búsqueda */}
+        <Image
+          src={images.logo}
+          alt="Logo"
+          height={"50px"}
+          width={"50px"}
+          borderRadius={100}
+          onClick={() => window.location.href = "/"}
+          cursor={"pointer"}
+        />
         <SearchBarwithSuggestion />
         {/* Botón para Mostrar Filtros */}
         <Button
