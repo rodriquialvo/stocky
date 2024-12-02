@@ -5,11 +5,21 @@ import { useProductStore } from '../../store/product/slice';
 import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
+import { useProductAtributesStore } from '../../store/product-atributes/slice';
 
 //REMOVE
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ItemListProduct: FC<ItemListProductProps> = props => {
-  const productsWhitStocks = useProductStore(state => state.productsWhitStocks)
+  const productsWhitStocks = useProductStore(state => state.productsWhitStocks);
+  const allColors = useProductAtributesStore(state => state.allColors);
+
+  const colorsObj = allColors.reduce((acc, color) => {
+    return {
+      ...acc,
+      [color.value]: color.label
+    }
+  })
+  
   const navigate = useNavigate();
   return (
     <AccordionItem px={0} onClick={props.onClick}>
@@ -116,7 +126,7 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
                   >
                     <Heading
                       fontSize="md"
-                    >Color {stock.variant.color} / Talle {stock.variant.size}:</Heading>
+                    >Color {colorsObj[stock.variant.color]} / Talle {stock.variant.size}:</Heading>
                     <Text fontSize="md" color="pink.600" >Cantidad: <Text as="span" color="gray.600">{stock.quantity} {stock.quantity > 1 ? "unidades" : "unidad"}</Text></Text>
                     <Text fontSize="md" color="pink.600" >Precio de costo: <Text as="span" color="gray.600">{formattedNumberToMoney(stock.costPrice)}</Text></Text>
                   </Box>
