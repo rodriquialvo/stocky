@@ -124,9 +124,9 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             <SimpleGrid columns={{ base: 2, md: 3 }}>
               {controller.allBrands.map((brand, index) => (
                 <RadioGroup key={index} defaultValue=''>
-                  <Stack spacing={5}>
+                  <Stack onClick={() => controller.handleChangeBrand(brand.value)} spacing={5}>
                     <Radio
-                      onClick={() => controller.handleChangeBrand(brand.value)}
+                      // onClick={() => controller.handleChangeBrand(brand.value)}
                       isChecked={controller.formData.attributes.brand === brand.value}
                       colorScheme='pink'
                     >
