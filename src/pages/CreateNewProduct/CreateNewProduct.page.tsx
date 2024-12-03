@@ -19,6 +19,7 @@ import {
   Stack,
   Radio,
   SimpleGrid,
+  Flex,
 } from '@chakra-ui/react';
 import { FC } from 'react';
 import { CreateNewProductProps } from './interfaces';
@@ -149,24 +150,22 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           />
         </FormControl>
         <FormControl >
-
           <FormLabel htmlFor="colors">Colores</FormLabel>
           <Checkbox
             isChecked={controller.selectedColors.length === controller.colors.length}
             onChange={controller.onSelectAllColors}
           ><Text >Seleccionar todos</Text></Checkbox>
-          <Wrap spacing="10px">
+          <SimpleGrid columns={{ base: 2, md: 3 }} >
             {controller.colors.map(({ label, value }) => (
-              <WrapItem justifyContent={"center"} alignItems={"center"} gap={2} key={value}>
+              <Flex cursor={"pointer"} onClick={() => controller.handleColorChange(value)}  alignItems={"center"} gap={2} key={value}>
                 <input
                   type='checkbox'
                   checked={controller.selectedColors.includes(value)}
-                  onChange={() => controller.handleColorChange(value)}
                 />
                 <Text>{label}</Text>
-              </WrapItem>
+              </Flex>
             ))}
-          </Wrap>
+          </SimpleGrid>
         </FormControl>
 
 

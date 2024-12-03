@@ -2,7 +2,7 @@ import { ROUTES } from "./Routes";
 
 export const SIDEBAR_ITEMS = (isAdmin: boolean) => ({
     Stock: {
-        label: 'Stock',
+        label: 'Productos',
         subItems: [
             isAdmin && { label: 'Lista', route: ROUTES.STOCK_LIST },
             isAdmin && { label: 'Nuevo producto', route: ROUTES.NEW_PRODUCT },
@@ -11,7 +11,7 @@ export const SIDEBAR_ITEMS = (isAdmin: boolean) => ({
         ]
     },
     Resellers: {
-        label: 'Resellers',
+        label: 'Revendedores/as',
         subItems: [
             { label: 'Lista', route: ROUTES.RESSELLERS_LIST },
             { label: 'Nuevo', route: ROUTES.NEW_RESELLER },
@@ -19,7 +19,7 @@ export const SIDEBAR_ITEMS = (isAdmin: boolean) => ({
         ]
     },
     Sales: {
-        label: 'Sales',
+        label: 'Ventas',
         subItems: [
             { label: 'Lista', route: ROUTES.SALES_LIST },
             { label: 'Semana', route: ROUTES.SALES_WEEK },
