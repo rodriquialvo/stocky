@@ -110,8 +110,10 @@ const NavigationBar: React.FC<TabNavProps> = ({
               ml={4}
               onClick={() => setIsOpenCartPanel(true)}
             />
-
-            <Text display={{ base: "none", md: "block" }} color={"pink.600"} fontWeight={"bold"}>{formattedNumberToMoney(cart.total_reseller)} | {formattedNumberToMoney(cart.total_retail)}</Text>
+            {
+              !!cart.items.length &&
+              <Text display={{ base: "none", md: "block" }} color={"pink.600"} fontWeight={"bold"}>{formattedNumberToMoney(cart.total_reseller)} | {formattedNumberToMoney(cart.total_retail)}</Text>
+            }
           </Flex>
         </Flex>
       </Flex>

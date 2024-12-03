@@ -80,7 +80,7 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
             <Heading
               fontSize="md"
               color={"pink.600"}
-            >Articulo:</Heading>
+            >Artículo:</Heading>
             <Text fontSize="md" color="gray.600" as='span' >{productsWhitStocks[props.id]?.code.toString().toUpperCase()}</Text>
           </Box>
           <Box

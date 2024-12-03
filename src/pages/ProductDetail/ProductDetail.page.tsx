@@ -147,7 +147,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             <Text>-Marca: {capitalizeFirstLetter(controller.productDetail?.attributes.brand)}</Text>
             <Text>-Talles: {controller.productDetail?.sizes.join(", ")}</Text>
             <Text>-Colores: {controller.colorsProduct.map(color => color.label).join(", ")}</Text>
-            <Text>-Articulo: {controller.productDetail?.code}</Text>
+            <Text>-Artículo: {controller.productDetail?.code}</Text>
           </Box>
         </Box>
         <Box
@@ -174,7 +174,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
           >
             <Text
               color={"GrayText"}
-            >{controller.productDetail?.attributes.brand} - Articulo {controller.productDetail?.code}</Text>
+            >{capitalizeFirstLetter(controller.productDetail?.attributes.brand)} - Artículo {controller.productDetail?.code}</Text>
             <Heading>{capitalizeFirstLetter(controller.productDetail?.name)}</Heading >
             <Heading>{formattedNumberToMoney(controller.productDetail?.prices.retail)}</Heading>
             <Divider
@@ -204,7 +204,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
               <Text>-Marca {controller.productDetail?.attributes.brand}</Text>
               <Text>-Talles: {controller.productDetail?.sizes.join(", ")}</Text>
               <Text>-Colores: {controller.colorsProduct.map(color => color.label).join(", ")}</Text>
-              <Text>-Articulo: {controller.productDetail?.code}</Text>
+              <Text>-Artículo: {controller.productDetail?.code}</Text>
             </Box>
             <Flex
               gap={8}

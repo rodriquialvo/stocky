@@ -132,7 +132,7 @@ const SellerTable = ({ seller, products }: { seller: Seller, products: any }) =>
             <Th>Producto</Th>
             <Th isNumeric>Cantidad</Th>
             <Th isNumeric>Color</Th>
-            <Th isNumeric>Articulo</Th>
+            <Th isNumeric>Artículo</Th>
             <Th isNumeric>Precio</Th>
             <Th isNumeric>Fecha</Th>
             <Th isNumeric>Subtotal</Th>
@@ -186,7 +186,7 @@ const TotalProducts = () => {
             <Th>Producto</Th>
             <Th isNumeric>Cantidad Total</Th>
             <Th isNumeric>Color</Th>
-            <Th isNumeric>Articulo</Th>
+            <Th isNumeric>Artículo</Th>
             <Th isNumeric>Precio</Th>
             <Th isNumeric>Total</Th>
           </Tr>

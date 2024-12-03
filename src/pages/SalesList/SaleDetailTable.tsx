@@ -10,7 +10,7 @@ function SaleDetailTable({ details }) {
                 <Thead>
                     <Tr>
                         <Th>Producto</Th>
-                        <Th>Articulo</Th>
+                        <Th>Artículo</Th>
                         <Th>Color</Th>
                         <Th>Talle</Th>
                         <Th>Cantidad</Th>

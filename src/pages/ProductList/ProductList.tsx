@@ -33,7 +33,7 @@ export const ProductList: React.FC<ProductProps> = (props) => {
           </Heading>
           <Heading fontSize="md" flex='1' textAlign='left'>Marca</Heading>
           <Heading fontSize="md" flex='1' textAlign='left'>
-            Articulo
+            Artículo
           </Heading>
           <Heading
             display={{

@@ -80,7 +80,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, im
           Marca: {capitalizeFirstLetter(props?.brand)}
         </Text>
         <Text fontSize="lg" color="gray.600">
-         Articulo: {props?.code}
+         Artículo: {props?.code}
         </Text>
         <Text fontWeight="bold" fontSize="lg" color="pink.500">
           {price}
