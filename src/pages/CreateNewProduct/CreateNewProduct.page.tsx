@@ -40,12 +40,13 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
       maxWidth="900px"
       mx="auto"
       p={padding}
-      bg="gray.100"
+      bg="gray.800"
       borderRadius="lg"
       boxShadow="lg"
       as="form"
       onSubmit={controller.handleSubmit}
       my={10}
+      color={"white"}
     >
       {/* Heading */}
       <Heading fontSize={headingSize} fontWeight="bold" mb={6} textAlign="center">

@@ -31,6 +31,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
       minHeight="100vh"  // Ocupa todo el alto de la ventana
       display={"flex"}
       flexDirection={"column"}
+      bg={"gray.50"}
     >
       <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
       {children}
