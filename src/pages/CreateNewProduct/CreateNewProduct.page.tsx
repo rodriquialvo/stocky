@@ -13,8 +13,6 @@ import {
   BreadcrumbLink,
   Checkbox,
   Text,
-  Wrap,
-  WrapItem,
   RadioGroup,
   Stack,
   Radio,
@@ -46,7 +44,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
       as="form"
       onSubmit={controller.handleSubmit}
       my={10}
-      color={"white"}
+      color={"gray.100"}
     >
       {/* Heading */}
       <Heading fontSize={headingSize} fontWeight="bold" mb={6} textAlign="center">
@@ -75,7 +73,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             placeholder="Introduce el nombre"
           />
         </FormControl>
-        <FormControl isRequired>
+        <FormControl color="white" isRequired>
           <FormLabel htmlFor="category">Categoria</FormLabel>
           <Breadcrumb separator=" / ">
             <BreadcrumbItem>
@@ -96,7 +94,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
               </BreadcrumbItem>
             ))}
           </Breadcrumb>
-          <CategoryList categorySelected={controller.categorySelected?.id} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
+          <CategoryList colorText='gray.100' categorySelected={controller.categorySelected?.id} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
         </FormControl>
         {
           controller.showCategoriesTypesOptions &&
@@ -105,9 +103,8 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
               <FormLabel htmlFor="sizes">Tipo de talle</FormLabel>
               {controller.sizesTypes.map((sizetype) => (
                 <RadioGroup defaultValue=''>
-                  <Stack spacing={5}>
+                  <Stack onClick={() => controller.onSelectSizeType(sizetype._id)} spacing={5}>
                     <Radio
-                      onClick={() => controller.onSelectSizeType(sizetype._id)}
                       isChecked={controller.formData.sizeType === sizetype._id}
                       colorScheme='pink'
                     >

@@ -13,9 +13,10 @@ interface CategoryListProps {
   categories: Category[];
   onCategorySelect: (category: Category) => void;
   categorySelected?: string | undefined;
+  colorText?: string
 }
 
-const CategoryList: React.FC<CategoryListProps> = ({ categories, onCategorySelect, categorySelected }) => {
+const CategoryList: React.FC<CategoryListProps> = ({ categories, onCategorySelect, categorySelected, colorText }) => {
   return (
     <SimpleGrid
       justifyContent={"center"}
@@ -23,7 +24,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ categories, onCategorySelec
       my={4}
     >
       {categories.map((category) => (
-        <CategoryItem  categorySelected={categorySelected} key={category.id} category={category} onCategorySelect={onCategorySelect} />
+        <CategoryItem colorText={colorText}  categorySelected={categorySelected} key={category.id} category={category} onCategorySelect={onCategorySelect} />
       ))}
     </SimpleGrid>
   );
@@ -33,9 +34,10 @@ interface CategoryItemProps {
   category: Category;
   onCategorySelect: (category: Category) => void;
   categorySelected?: string | undefined;
+  colorText?: string
 }
 
-const CategoryItem: React.FC<CategoryItemProps> = ({ category, onCategorySelect, categorySelected }) => {
+const CategoryItem: React.FC<CategoryItemProps> = ({ category, onCategorySelect, categorySelected, colorText }) => {
   return (
     <Box>
       <Button
@@ -44,6 +46,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ category, onCategorySelect,
         borderColor={"pink.100"}
         variant="link" onClick={() => onCategorySelect(category)}
         mx={2}
+        color={colorText}
         >
         {category.name}
       </Button>
