@@ -96,8 +96,6 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           </Breadcrumb>
           <CategoryList colorText='gray.100' categorySelected={controller.categorySelected?.id} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
         </FormControl>
-        {
-          controller.showCategoriesTypesOptions &&
           <FormControl>
             <Box>
               <FormLabel htmlFor="sizes">Tipo de talle</FormLabel>
@@ -115,7 +113,6 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
               ))}
             </Box>
           </FormControl>
-        }
         <FormControl>
           <Box>
             <FormLabel htmlFor="brands">Marca</FormLabel>

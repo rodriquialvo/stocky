@@ -136,3 +136,7 @@ export const setTimeForInactivityMinutesAndSeconds = (
 export function roundUpTo500(value: number): number {
   return Math.ceil(value / 500) * 500;
 }
+
+export function roundUpTo100(value: number): number {
+  return Math.ceil(value / 100) * 100;
+}

@@ -12,6 +12,7 @@ import { initialStateProductformData } from './constants';
 import { getDefaultStatus } from '../../store/helper/statusStateFactory';
 import { ProductAttribute } from '../../services/product/dtos/getProductAtributes';
 import { roundUpTo500 } from '../../utils/functions';
+import { set } from 'react-datepicker/dist/date_utils';
 
 export const useCreateNewProductController =
   (): /* <--Dependency Injections  like services hooks */
@@ -109,12 +110,13 @@ export const useCreateNewProductController =
 
     useEffect(() => {
       if (!!formData.prices.cost && !!formData.percentages.reseller && !!formData.percentages.retail) {
+        let priceResellerWithoutRound =((parseFloat(formData.prices.cost.toString()) + (parseFloat(formData.prices.cost.toString()) * parseFloat(formData.percentages.reseller.toString()) / 100)));
         setFormData({
           ...formData,
           prices: {
             ...formData.prices,
-            reseller: roundUpTo500(parseFloat(formData.prices.cost.toString()) + (parseFloat(formData.prices.cost.toString()) * parseFloat(formData.percentages.reseller.toString()) / 100)),
-            retail: roundUpTo500(parseFloat(formData.prices.reseller.toString()) + (parseFloat(formData.prices.reseller.toString()) * parseFloat(formData.percentages.retail.toString()) / 100))
+            reseller: roundUpTo500(priceResellerWithoutRound),
+            retail: roundUpTo500(parseFloat(priceResellerWithoutRound.toString()) + (parseFloat(priceResellerWithoutRound.toString()) * parseFloat(formData.percentages.retail.toString()) / 100))
           }
         });
       }
