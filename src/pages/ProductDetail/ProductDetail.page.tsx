@@ -30,7 +30,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
       />
       {
         controller.isLoading && (
-          <LoadingOverlay/>
+          <LoadingOverlay />
         )
       }
       <Box
@@ -43,7 +43,6 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
         padding={10}
         width={"90%"}
         alignSelf={"center"}
-      // bg={"orange"}
       >
         <Box
           width={{
@@ -123,8 +122,33 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 px={0}
                 transform={isHovered ? 'scale(1.1)' : 'scale(1)'} // Aumentar tamaño cuando está en hover
                 transition="transform 0.3s ease" // Animación suave
-
               />
+              <Box position={"absolute"} w={'100%'} display={{
+                base: 'flex',
+                md: 'none'
+              }} justifyContent={"space-between"}>
+
+                <Button
+                  onClick={controller.handlePrev}
+                  position="absolute"
+                  left={2}
+                  top="50%"
+                  transform="translateY(-50%)"
+                  colorScheme="teal" // Personaliza el color del botón
+                >
+                  &#8249; {/* Ícono de flecha izquierda */}
+                </Button>
+                <Button
+                  onClick={controller.handleNext}
+                  position="absolute"
+                  right={2}
+                  top="50%"
+                  transform="translateY(-50%)"
+                  colorScheme="teal" // Personaliza el color del botón
+                >
+                  &#8250; {/* Ícono de flecha derecha */}
+                </Button>
+              </Box>
             </Box>
           </Box>
           <Box

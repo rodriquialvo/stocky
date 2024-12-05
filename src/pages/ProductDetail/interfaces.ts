@@ -10,7 +10,7 @@ export interface ProductDetailController {
   /* State */
   productDetail: ProductDetail | null
   isDisabledButton: boolean,
-  sizes: {label: string, value: string}[];
+  sizes: { label: string, value: string }[];
   // colors: {label: string, value: string}[];
   imageSelected: string,
   quantity: number,
@@ -23,7 +23,9 @@ export interface ProductDetailController {
   handleSelectColor: (event) => void,
   handleSelectSize: (event) => void,
   onIncrease: () => void,
-  onDecrease: () => void
+  onDecrease: () => void,
+  handleNext: () => void,
+  handlePrev: () => void
 }
 
 export interface ProductDetailProps {

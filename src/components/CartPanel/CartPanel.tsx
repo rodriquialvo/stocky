@@ -194,8 +194,8 @@ const CartPanel: FC<CartPanelProps> = props => {
                 position="sticky"
               >
                 <Heading>Total:</Heading>
-                <Heading color={"green.400"} size={"sm"}>Revendedor: {formattedNumberToMoney(cart.total_reseller)}</Heading>
-                <Heading color={"orange.400"} size={"sm"}>Cliente final: {formattedNumberToMoney(cart.total_retail)}</Heading>
+                <Heading color={"green.400"} size={"sm"}>Revendedor: {!!cart.items.length ? formattedNumberToMoney(cart.total_reseller) : "0"}</Heading>
+                <Heading color={"orange.400"} size={"sm"}>Cliente final: {!!cart.items.length ? formattedNumberToMoney(cart.total_retail) : "0"}</Heading>
                 <Divider my={5} />
                 <Button
                   isLoading={status.isFetching}

@@ -29,6 +29,9 @@ export const useProductDetailController =
     const statusProduct = useProductStore(state => state.status);
     
     const [isDisabledButton, setIsDisabledButton] = useState(false)
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+
     const navigate = useNavigate();
     const [sizes, setSizes] = useState<{ label: string, value: string }[]>([]);
     const [size, setSize] = useState("");
@@ -47,6 +50,10 @@ export const useProductDetailController =
       
       setSize("");
     }, [color, productDetail])
+
+    useEffect(() => {
+      setImageSelected(productDetail?.pictures[currentImageIndex].url);
+    }, [currentImageIndex, productDetail])
 
     /* Listeners */
 
@@ -109,6 +116,15 @@ export const useProductDetailController =
       }
     };
 
+    const handleNext = () => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % productDetail.pictures.length);
+      setImageSelected(productDetail.pictures[currentImageIndex].url);
+    };
+  
+    const handlePrev = () => {
+      setCurrentImageIndex((prevIndex) => (prevIndex - 1 + productDetail.pictures.length) % productDetail.pictures.length);
+    };
+
     /* Private Methods */
     //Ex. const increaseCount = () => {}
 
@@ -130,5 +146,7 @@ export const useProductDetailController =
       color,
       isLoading: statusProduct.isFetching || statusCart.isFetching,
       colorsProduct: allColors.filter(color => productDetail?.colors?.includes(color.value)).map(color => { return {label: color.label, value: color.value}}),
+      handleNext,
+      handlePrev
     };
   };
