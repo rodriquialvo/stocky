@@ -11,7 +11,7 @@ import { CreateNewProductController, ProductFormData } from './interfaces';
 import { initialStateProductformData } from './constants';
 import { getDefaultStatus } from '../../store/helper/statusStateFactory';
 import { ProductAttribute } from '../../services/product/dtos/getProductAtributes';
-import { roundUpTo500 } from '../../utils/functions';
+import { roundUpTo100 } from '../../utils/functions';
 import { set } from 'react-datepicker/dist/date_utils';
 
 export const useCreateNewProductController =
@@ -115,8 +115,8 @@ export const useCreateNewProductController =
           ...formData,
           prices: {
             ...formData.prices,
-            reseller: roundUpTo500(priceResellerWithoutRound),
-            retail: roundUpTo500(parseFloat(priceResellerWithoutRound.toString()) + (parseFloat(priceResellerWithoutRound.toString()) * parseFloat(formData.percentages.retail.toString()) / 100))
+            reseller: roundUpTo100(priceResellerWithoutRound),
+            retail: roundUpTo100(parseFloat(priceResellerWithoutRound.toString()) + (parseFloat(priceResellerWithoutRound.toString()) * parseFloat(formData.percentages.retail.toString()) / 100))
           }
         });
       }
