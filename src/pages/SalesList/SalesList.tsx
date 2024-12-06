@@ -22,6 +22,7 @@ import { ROUTES } from '../../constants/Routes';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 import { formatFullDate, formatHour } from '../../utils/date';
+import Pagination from '../../components/Pagination/Pagination';
 
 const SalesList = () => {
     const { getSales, updateStatusSale } = SaleAction();
@@ -52,14 +53,6 @@ const SalesList = () => {
 
 
     const totalPages = Math.ceil(totalSales / salesPerPage);
-
-    const nextPage = () => {
-        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-    };
-
-    const previousPage = () => {
-        if (currentPage > 0) setCurrentPage(currentPage - 1);
-    };
 
     const handleStatusChangeClick = (sale) => {
         setSelectedSale(sale);
@@ -158,46 +151,11 @@ const SalesList = () => {
                 </Box>
             ))}
 
-            <Box
-                px={{ base: "-4", md: "-8" }}
-                position="sticky"
-                left={0}
-                right={0}
-                bottom="0"
-                backgroundColor="white"
-                py="4"
-                boxShadow="md"
-                zIndex="10"
-            >
-                <Flex
-                    direction='row' // Cambia la dirección según el tamaño de la pantalla
-                    justifyContent="center"
-                    alignItems="center"
-                    px={{ base: "2", md: "0" }} // Padding horizontal en móvil
-                >
-                    <Button
-                        onClick={previousPage}
-                        isDisabled={currentPage === 1}
-                        mb={{ base: "2", md: "0" }} // Margen en la parte inferior en móviles
-                    >
-                        <Text>Atrás</Text>
-                    </Button>
-                    <Text fontWeight="bold" mx="4">
-                        {currentPage} de {totalPages}
-                    </Text>
-                    <Button
-                        onClick={nextPage}
-                        isDisabled={currentPage >= totalPages}
-                        mb={{ base: "2", md: "0" }} // Margen en la parte inferior en móviles
-                    >
-                        <Text>Siguiente</Text>
-                    </Button>
-                </Flex>
-            </Box>
-
-
-
-
+           <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={page => setCurrentPage(page)}
+           />
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
@@ -218,7 +176,6 @@ const SalesList = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-
             {/* Modal de Confirmación para Rechazo */}
             <Modal isOpen={isConfirmOpen} onClose={onConfirmClose}>
                 <ModalOverlay />

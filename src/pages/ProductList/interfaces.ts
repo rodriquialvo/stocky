@@ -6,12 +6,16 @@ export interface ProductController {
   productsViewModel: ItemListProductProps[],
   isOpenIncreaseAndDiscountPanel: boolean,
   isAllproductsSelected: boolean
+  currentPage: number,
+  totalPages: number,
+  isLoading: boolean
   /* Events */
   // handlePrevPage: () => void;
   // handleNextPage: () => void;
   onPressedButtonOpenPanelIncreaseAndDiscount: () => void,
   onClosePanelIncreaseAndDiscount: () => void,
   onSelectAllProducts: () => void
+  setCurrentPage: (page: number) => void
 }
 
 export interface ProductProps {

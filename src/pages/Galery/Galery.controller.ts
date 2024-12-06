@@ -15,6 +15,9 @@ export const useGaleryController =
     const products = useProductStore(state => state.products)
     const status = useProductStore(state => state.status)
     const navigate = useNavigate();
+    const { setProductsFiltersAction } = ProductAction();
+    const productFilters = useProductStore(state => state.productsFilters);
+    const totalProducts = useProductStore(state => state.total);
 
     /* Listeners */
     /* View Events */
@@ -35,9 +38,18 @@ export const useGaleryController =
       }
     }
 
+    const onChangeCurrentPage = (page: number | string) => {
+      setProductsFiltersAction({
+        ...productFilters,
+        page: Number(page)
+      })
+    }
+
     // Return state and events
     return {
       productsViewModel: products?.map(mapProductsViewModel),
-      isLoading: status.isFetching
+      isLoading: status.isFetching,
+      onChangeCurrentPage,
+      totalProducts
     };
   };

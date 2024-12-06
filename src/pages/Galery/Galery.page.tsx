@@ -9,6 +9,7 @@ import { useProductStore } from '../../store/product/slice';
 import { ProductAction } from '../../store/product/actions';
 import WhatsAppButton from '../../components/WhatsAppButtonFloat/WhatsAppButtonFloat';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
+import Pagination from '../../components/Pagination/Pagination';
 
 const galleryData = [
   {
@@ -28,7 +29,7 @@ const GalleryPage: React.FC<GaleryProps> = props => {
   const productFilters = useProductStore(state => state.productsFilters);
   const { useController = useGaleryController } = props;
   const controller = useController();
-  
+
   useEffect(() => {
     getProducts(productFilters);
   }, [productFilters]);
@@ -36,18 +37,17 @@ const GalleryPage: React.FC<GaleryProps> = props => {
   return (
     <Box
     >
-      
       {/* <Spinner/> */}
       <Hero
         images={galleryData[0].images}
       />
-              <WhatsAppButton/>
+      <WhatsAppButton />
 
       <NavigationBar
       />
       {
         controller.isLoading && (
-          <LoadingOverlay/>
+          <LoadingOverlay />
         )
       }
       <Box
@@ -56,7 +56,7 @@ const GalleryPage: React.FC<GaleryProps> = props => {
         flexDirection={"row"}
         background="gray.100"
       >
-        
+
       </Box>
       <SimpleGrid
         columns={{ base: 1, md: 2, lg: 4 }} // Número de columnas según el tamaño de pantalla
@@ -70,6 +70,11 @@ const GalleryPage: React.FC<GaleryProps> = props => {
           <GalleryItem key={index} {...item} />
         ))}
       </SimpleGrid>
+      <Pagination
+        currentPage={parseInt(productFilters.page.toString())}
+        totalPages={Math.ceil(controller.totalProducts / parseInt(productFilters.limit.toString()))}
+        onPageChange={controller.onChangeCurrentPage}
+      />
     </Box>
   );
 };

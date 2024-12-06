@@ -17,10 +17,13 @@ export const useProductController =
     const [isAllproductsSelected, setIsAllProductsSelected] = useState(false)
     const {pathname} = useLocation()
     const [isOpenIncreaseAndDiscountPanel, setIsOpenIncreaseAndDiscountPanel] = useState(false)
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const totalProducts = useProductStore(state => state.total);
+    const status = useProductStore(state => state.status);
+
     useEffect(() => {
-      getProducts({})
-    },[]);
+      getProducts({page: currentPage, limit: 30});
+    },[currentPage]);
 
     useEffect(() => {
       setIsAllProductsSelected(!!productsSelected.length && productsSelected.length  === products.length)
@@ -68,5 +71,9 @@ export const useProductController =
       onClosePanelIncreaseAndDiscount,
       onSelectAllProducts,
       isAllproductsSelected,
+      currentPage,
+      totalPages: Math.ceil(totalProducts / 30),
+      setCurrentPage,
+      isLoading: status.isFetching
     };
   };

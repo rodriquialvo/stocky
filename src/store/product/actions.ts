@@ -25,19 +25,19 @@ export const ProductAction = () => {
   const productsSelected = useProductStore(state => state.productsSelected)
   const productsWhitStocks = useProductStore(state => state.productsWhitStocks);
   const products = useProductStore(state => state.products);
-
+  const setTotalProducts = useProductStore(state => state.setTotalProducts);
   const { createNewImageUrl } = ImageAction()
   const getProducts = async (filters) => {
     setStatus(getStartStatus());
     try {
       const data = await productService.getProducts(filters);
-
       if (!data.products) {
         setStatus(getErrorStatus('No response'));
         return;
       }
       setStatus(getSuccessStatus());
       setProducts(data.products);
+      setTotalProducts(data.total);
     } catch (e) {
       console.log("e", e);
       setStatus(getErrorStatus(e as Error));

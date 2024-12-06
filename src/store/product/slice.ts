@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 import { Status, getDefaultStatus } from '../helper/statusStateFactory';
 import { Product } from '../../services/product/dtos/getProducts';
 import { ProductDetail, ProductDetailWithStocks } from '../../services/product/dtos/getProductDetail';
-import { initialStateFilters } from '../../components/FilterPanel/constants';
+import { FiltersState, initialStateFilters } from '../../components/FilterPanel/constants';
 
 type State = {
   status: Status;
@@ -17,7 +17,7 @@ type State = {
   // calculated prices in create product
   calculatedPrices: any
   productsSelected: Product[],
-  productsFilters: any
+  productsFilters: FiltersState
 };
 
 const initialState: State = {
@@ -41,7 +41,8 @@ type Action = {
   setProductsByCodeOrName: (productsByCodeOrName: Product[]) => void;
   setCalculatedPrices: (calculatedPrices: any) => void
   setProductsSelected: (products: Product[]) => void
-  setProductsFilters: (productsFilters: any) => void
+  setProductsFilters: (productsFilters: any) => void,
+  setTotalProducts: (total: number) => void
 };
 
 // Create your store, which includes both state and (optionally) actions
@@ -57,7 +58,8 @@ export const useProductStore = create<State & Action>()(
       setProductsByCodeOrName: (productsByCodeOrName) => set({ productsByCodeOrName }),
       setCalculatedPrices: (calculatedPrices) => set({ calculatedPrices }),
       setProductsSelected: (products) => set({productsSelected: products}),
-      setProductsFilters: (productsFilters) => set({productsFilters})
+      setProductsFilters: (productsFilters) => set({productsFilters}),
+      setTotalProducts: (total: number) => set({ total }),
     }),
     {
       name: 'products-store', // nombre del key en localStorage

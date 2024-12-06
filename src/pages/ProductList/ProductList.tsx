@@ -5,6 +5,8 @@ import ItemListProduct from '../../components/ItemListProduct/ItemListProduct';
 import { useProductController } from './Product.controller';
 import { ProductProps } from './interfaces';
 import IncreaseAndDiscountPricePanel from '../../components/IncreaseAndDiscountPricePanel/IncreaseAndDiscountPricePanel';
+import Pagination from '../../components/Pagination/Pagination';
+import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 
 export const ProductList: React.FC<ProductProps> = (props) => {
   const { useController = useProductController } = props;
@@ -19,6 +21,11 @@ export const ProductList: React.FC<ProductProps> = (props) => {
     <Box className=" relative min-h-screen">
       <NavigationBar
       />
+      {
+        controller.isLoading && (
+          <LoadingOverlay />
+        )
+      }
       <Accordion allowMultiple>
         <AccordionItem px={2} bg={"gray.300"} display={"flex"} py={3}>
           <Checkbox
@@ -77,10 +84,15 @@ export const ProductList: React.FC<ProductProps> = (props) => {
       >
         Aplicar aumento/descuento
       </Button>
-        <IncreaseAndDiscountPricePanel
-          isOpen={controller.isOpenIncreaseAndDiscountPanel}
-          onClose={controller.onClosePanelIncreaseAndDiscount}
-        />
+      <IncreaseAndDiscountPricePanel
+        isOpen={controller.isOpenIncreaseAndDiscountPanel}
+        onClose={controller.onClosePanelIncreaseAndDiscount}
+      />
+      <Pagination
+        currentPage={controller.currentPage}
+        totalPages={controller.totalPages}
+        onPageChange={controller.setCurrentPage}
+      />
     </Box>
   );
 };
