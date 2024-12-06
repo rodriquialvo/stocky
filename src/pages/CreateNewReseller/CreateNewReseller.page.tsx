@@ -144,7 +144,6 @@ export const CreateNewResellerPage: FC<
             maxDate={new Date()}
           />
         </Flex>
-
         <FormControl isRequired>
           <FormLabel htmlFor="name">Nombre</FormLabel>
           <Input id="name" name="name" placeholder="Introduce el nombre" onChange={handleChange} value={formValues.name} />
@@ -159,7 +158,6 @@ export const CreateNewResellerPage: FC<
           <FormLabel htmlFor="email">Correo electrónico</FormLabel>
           <Input type="email" id="email" name="email" placeholder="Introduce el correo electrónico" onChange={handleChange} value={formValues.email} />
         </FormControl>
-
         <FormLabel htmlFor="phone">Número de Teléfono</FormLabel>
         <Input
           type="tel"
@@ -172,13 +170,10 @@ export const CreateNewResellerPage: FC<
           value={formValues.phone}
         />
         <FormLabel htmlFor="phone">Fecha de nacimiento</FormLabel>
-
-
         <FormControl isRequired>
           <FormLabel htmlFor="address">Dirección</FormLabel>
           <Input id="address" name="address" placeholder="Introduce el apellido" onChange={handleChange} value={formValues.address} />
         </FormControl>
-
         <FormControl isRequired>
           <FormLabel htmlFor="roles">Rol</FormLabel>
           <Select id="roles" name="roles" placeholder="Selecciona un rol" onChange={handleChange} value={formValues.roles}>
@@ -196,7 +191,6 @@ export const CreateNewResellerPage: FC<
             Activo
           </Checkbox>
         </FormControl>
-
         <Button isLoading={loading} type="submit" colorScheme="blue" width="full" mt={4} onClick={handleSubmit}>
           {texts.button}
         </Button>

@@ -1,8 +1,8 @@
 import { HamburgerIcon } from '@chakra-ui/icons';
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, IconButton, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Tooltip, useDisclosure, useMediaQuery, VStack } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaBox, FaUsers } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { SIDEBAR_ITEMS } from '../../constants/sidebar';
 import { SidebarItemProps } from './interfaces';
 import { useSessionStore } from '../../store/session/slice';
@@ -16,13 +16,18 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) => {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
+  const {pathname} = useLocation();
+
+  useEffect(() => {
+    setIsExpanded(false)
+  }, [pathname]);
   return (
     <Box
       as="nav"
       position="fixed"
       top="0"
       left="0"
-      h="100vh"
+      h="100%"
       w={isExpanded ? (isMobile ? "100%" : "250px") : (isMobile ? 0 : "70px")}
       bg="gray.800"
       color="white"

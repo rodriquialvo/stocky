@@ -131,7 +131,7 @@ export default function StockEntry() {
       <form onSubmit={handleSubmit}>
         <VStack spacing={6}>
           {stockEntries.map((entry, index) => (
-            <HStack key={index} spacing={4} w="full">
+            <Box display={"flex"} flexDirection={{ base: "column", lg: "row" }} alignItems={"center"} gap={5} key={index}  w="full">
               <Text fontSize="md" mb={1}>{index + 1}</Text>
               <Box position="relative" w="100%">
                 <Input
@@ -190,11 +190,6 @@ export default function StockEntry() {
                   
                 />
               </Box>
-              {/* {entry.product?.colors.map(color => (
-                  <Checkbox key={color} value={color}>
-                    {mapColors[color]}
-                  </Checkbox>
-                ))} */}
               <Box position="relative" w="100%">
 
                 <Select
@@ -206,12 +201,6 @@ export default function StockEntry() {
                   options={entry.product?.sizes.map(size => ({ value: size, label: size }))}
                 />
               </Box>
-
-              {/* {entry.product?.sizes.map(size => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))} */}
               <Input
                 type="number"
                 placeholder="Cantidad"
@@ -226,10 +215,10 @@ export default function StockEntry() {
                 onChange={(e) => handleInputChange(index, 'cost', e.target.value)}
                 size="lg"
               />
-              <Button colorScheme="red" size="lg" onClick={() => handleRemoveEntry(index)}>
+              <Button w={{ base: "100%", lg: "10%" }} colorScheme="red" size="lg" onClick={() => handleRemoveEntry(index)}>
                 X
               </Button>
-            </HStack>
+            </Box>
           ))}
           <Button colorScheme="teal" onClick={handleAddEntry} size="lg" w="full" mt={4}>
             Añadir otro producto
