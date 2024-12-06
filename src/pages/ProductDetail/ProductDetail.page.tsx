@@ -167,7 +167,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             width={"100%"}
           >
             <Text>Detalles del producto:</Text>
-            <Text>{controller.productDetail?.description}</Text>
+            <Text>{capitalizeFirstLetter(controller.productDetail?.description)}</Text>
             <Text>-Marca: {capitalizeFirstLetter(controller.productDetail?.attributes.brand)}</Text>
             <Text>-Talles: {controller.productDetail?.sizes.join(", ")}</Text>
             <Text>-Colores: {controller.colorsProduct.map(color => color.label).join(", ")}</Text>
