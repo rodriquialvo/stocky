@@ -169,7 +169,6 @@ export const CreateNewResellerPage: FC<
           onChange={handleChange}
           value={formValues.phone}
         />
-        <FormLabel htmlFor="phone">Fecha de nacimiento</FormLabel>
         <FormControl isRequired>
           <FormLabel htmlFor="address">Dirección</FormLabel>
           <Input id="address" name="address" placeholder="Introduce el apellido" onChange={handleChange} value={formValues.address} />
