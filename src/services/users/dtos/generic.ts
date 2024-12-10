@@ -10,6 +10,7 @@ export interface Reseller {
     active?: boolean;
     lastConnection?: string;
     roles: Role[];
+    dni?: string;
   }
 
 export interface CreateUserDto {
@@ -19,6 +20,7 @@ export interface CreateUserDto {
     phone: string;
     address: string;
     roles: string[];
+    dni?: string;
   }
 
   export interface GetResellersResponseDto {

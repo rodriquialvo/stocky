@@ -70,6 +70,7 @@ export const CreateNewResellerPage: FC<
     address: reseller ? reseller.address : '',
     active: reseller ? reseller.active : true,
     birthdate: reseller ? reseller.birthdate : new Date(),
+    dni: reseller ? reseller.dni : '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -106,7 +107,7 @@ export const CreateNewResellerPage: FC<
       updateUser(reseller.id, formValues);
     }
   };
-  
+
   // Render
   return (
     <Box
@@ -153,7 +154,10 @@ export const CreateNewResellerPage: FC<
           <FormLabel htmlFor="lastname">Apellido</FormLabel>
           <Input id="lastname" name="lastname" placeholder="Introduce el apellido" onChange={handleChange} value={formValues.lastname} />
         </FormControl>
-
+        <FormControl isRequired>
+          <FormLabel htmlFor="dni">Dni</FormLabel>
+          <Input id="dni" name="dni" placeholder="Introduce el DNI" onChange={handleChange} value={formValues.dni} />
+        </FormControl>
         <FormControl isRequired>
           <FormLabel htmlFor="email">Correo electrónico</FormLabel>
           <Input type="email" id="email" name="email" placeholder="Introduce el correo electrónico" onChange={handleChange} value={formValues.email} />

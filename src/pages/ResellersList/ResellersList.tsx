@@ -60,7 +60,7 @@ const ResellerList: React.FC = () => {
                             <Th>Email</Th>
                             <Th>Phone</Th>
                             <Th>Active</Th>
-                            <Th>Last Connection</Th>
+                            <Th>DNI</Th>
                             <Th>Edit</Th>
                         </Tr>
                     </Thead>
@@ -72,7 +72,7 @@ const ResellerList: React.FC = () => {
                                 <Td>{reseller.email}</Td>
                                 <Td>{reseller.phone}</Td>
                                 <Td>{reseller.active ? 'Yes' : 'No'}</Td>
-                                <Td>{reseller.lastConnection}</Td>
+                                <Td>{reseller.dni}</Td>
                                 <Td>
                                     <Button colorScheme="blue" size="sm" onClick={() => handleNavigate(reseller)}>
                                         Edit
