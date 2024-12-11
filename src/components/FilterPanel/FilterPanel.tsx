@@ -12,22 +12,17 @@ import {
   DrawerOverlay,
   FormLabel,
   Input,
-  Radio,
-  RadioGroup,
-  Spinner,
-  Stack,
+  SimpleGrid,
   Text,
   VStack
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { mapColors } from '../../constants/maps';
 import { Category } from '../../services/categories/dtos/getCategories';
 import { useCategorytore } from '../../store/category/slice';
 import { ProductAtributesAction } from '../../store/product-atributes/actions';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
 import { ProductAction } from '../../store/product/actions';
 import { useSessionStore } from '../../store/session/slice';
-import { capitalizeFirstLetter } from '../../utils/functions';
 import CategoryList from '../CategoryList/CategoryList';
 import { initialStateFilters } from './constants';
 import { useProductStore } from '../../store/product/slice';
@@ -42,9 +37,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
   const { setProductsFiltersAction } = ProductAction();
 
   // stores
-  const sizes = useProductAtributesStore(state => state.sizes);
-  const sizesTypes = useProductAtributesStore(state => state.sizesTypes);
-  const statusProductAtributes = useProductAtributesStore(state => state.status);
   const categories = useCategorytore(state => state.categories);
   const isAdminUser = useSessionStore(state => state.isAdminUser);
   const allColors = useProductAtributesStore(state => state.allColors);
@@ -68,6 +60,10 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
       getSizes(typeSizeSelected);
     }
   }, [typeSizeSelected]);
+
+  useEffect(() => {
+    onClose();
+  },[productFilters]);
 
 
   const handleBreadcrumbClick = (category: Category, index: number) => {
@@ -94,13 +90,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
     setFilters({ ...filters, categories: [category.id] })
   };
 
-  const onSelectSizeType = (sizeType: string) => {
-    if(typeSizeSelected === sizeType) {
-      setTypeSizeSelected('');
-      return 
-    }
-    setTypeSizeSelected(sizeType);
-  }
 
   const updateField = (key, value) => {
     setFilters((prevFilters) => ({
@@ -148,7 +137,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
       if (isFirstRequest) {
         setIsFirstRequest(false);
       }
-      setProductsFiltersAction({...filters, minRetailPrice: pricesEnabled.retail ? filters.minRetailPrice : 0, minCostPrice: pricesEnabled.cost ? filters.minCostPrice : 0, minResellerPrice: pricesEnabled.reseller ? filters.minResellerPrice : 0});
+      setProductsFiltersAction({ ...filters, minRetailPrice: pricesEnabled.retail ? filters.minRetailPrice : 0, minCostPrice: pricesEnabled.cost ? filters.minCostPrice : 0, minResellerPrice: pricesEnabled.reseller ? filters.minResellerPrice : 0 });
     }
   }
 
@@ -168,34 +157,35 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
   const filterContent = (
     <VStack py={8} spacing={4} align="normal">
       {/* Rango de precios */}
-      <Box>
-        <Checkbox isChecked={pricesEnabled.retail} onChange={(e) => setPricesEnabled({ ...pricesEnabled, retail: !pricesEnabled.retail })} colorScheme={"pink"}><Text fontWeight={"bold"}>Precio de venta</Text></Checkbox>
-        <Text>Desde</Text>
-        <Input
-          type="number"
-          name="minRetailPrice"
-          value={filters.minRetailPrice}
-          onChange={(e) => updateField(e.target.name, e.target.value)}
-          placeholder='Minimo precio de Venta'
-          isDisabled={!pricesEnabled.retail}
-        />
-      </Box>
-      <Box>
-        <Text >Hasta</Text>
-        <Input
-          type="number"
-          value={filters.maxRetailPrice}
-          name="maxRetailPrice"
-          onChange={(e) => updateField(e.target.name, e.target.value)}
-          placeholder='Maximo precio de venta'
-          isDisabled={!pricesEnabled.retail}
-        />
-      </Box>
+
       {
         isAdminUser &&
         <>
           <Box>
-          <Checkbox isChecked={pricesEnabled.cost} onChange={(e) => setPricesEnabled({ ...pricesEnabled, cost: !pricesEnabled.cost })} colorScheme={"pink"}><Text fontWeight={"bold"}>Precio de Costo</Text></Checkbox>
+            <Checkbox isChecked={pricesEnabled.retail} onChange={() => setPricesEnabled({ ...pricesEnabled, retail: !pricesEnabled.retail })} colorScheme={"pink"}><Text fontWeight={"bold"}>Precio de venta</Text></Checkbox>
+            <Text>Desde</Text>
+            <Input
+              type="number"
+              name="minRetailPrice"
+              value={filters.minRetailPrice}
+              onChange={(e) => updateField(e.target.name, e.target.value)}
+              placeholder='Minimo precio de Venta'
+              isDisabled={!pricesEnabled.retail}
+            />
+          </Box>
+          <Box>
+            <Text >Hasta</Text>
+            <Input
+              type="number"
+              value={filters.maxRetailPrice}
+              name="maxRetailPrice"
+              onChange={(e) => updateField(e.target.name, e.target.value)}
+              placeholder='Maximo precio de venta'
+              isDisabled={!pricesEnabled.retail}
+            />
+          </Box>
+          <Box>
+            <Checkbox isChecked={pricesEnabled.cost} onChange={() => setPricesEnabled({ ...pricesEnabled, cost: !pricesEnabled.cost })} colorScheme={"pink"}><Text fontWeight={"bold"}>Precio de Costo</Text></Checkbox>
             <Text>Desde</Text>
             <Input
               type="number"
@@ -218,7 +208,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
             />
           </Box>
           <Box>
-          <Checkbox isChecked={pricesEnabled.reseller} onChange={(e) => setPricesEnabled({ ...pricesEnabled, reseller: !pricesEnabled.reseller })} colorScheme={"pink"}><Text fontWeight={"bold"}>Precio de Reventa</Text></Checkbox>
+            <Checkbox isChecked={pricesEnabled.reseller} onChange={() => setPricesEnabled({ ...pricesEnabled, reseller: !pricesEnabled.reseller })} colorScheme={"pink"}><Text fontWeight={"bold"}>Precio de Reventa</Text></Checkbox>
             <Text>Desde</Text>
             <Input
               type="number"
@@ -244,7 +234,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
       }
 
       {/* Selección de talla */}
-      <Box>
+      {/* <Box>
         <FormLabel fontWeight={"bold"}>Tipos de talle</FormLabel>
         {sizesTypes.map((sizetype) => (
           <RadioGroup defaultValue=''>
@@ -255,8 +245,8 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
             </Stack>
           </RadioGroup>
         ))}
-      </Box>
-      {
+      </Box> */}
+      {/* {
         !!typeSizeSelected.length &&
         <Box >
           <FormLabel fontWeight={"bold"}>Talles</FormLabel>
@@ -279,24 +269,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
             </Box>
           ))}
         </Box>
-      }
-      <Box >
-        <FormLabel fontWeight={"bold"}>Colores</FormLabel>
-        {allColors.map(({ value, label }) => (
-          <Box key={value}>
-            <Checkbox
-              key={value}
-              value={value}
-              isChecked={filters.color.includes(value)}
-              colorScheme={"pink"}
-              name='color'
-              onChange={(e) => updateArrayField(e.target.name, e.target.value, e.target.checked ? 'add' : 'remove')}
-            >
-              <Text >{label}</Text>
-            </Checkbox>
-          </Box>
-        ))}
-      </Box>
+      } */}
       <Box >
         <FormLabel fontWeight={"bold"} htmlFor="category">Categoria</FormLabel>
         <Box
@@ -327,6 +300,27 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
         </Box>
         <CategoryList categorySelected={categorySelected} categories={currentCategories} onCategorySelect={handleCategorySelect} />
       </Box>
+      <Box >
+        <FormLabel fontWeight={"bold"}>Colores</FormLabel>
+        <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }}>
+          {allColors.map(({ value, label }) => (
+            <Box key={value}>
+              <Checkbox
+                key={value}
+                value={value}
+                isChecked={filters.color.includes(value)}
+                colorScheme={"pink"}
+                name='color'
+                onChange={(e) => updateArrayField(e.target.name, e.target.value, e.target.checked ? 'add' : 'remove')}
+              >
+                <Text >{label}</Text>
+              </Checkbox>
+            </Box>
+          ))}
+
+        </SimpleGrid>
+      </Box>
+      
       {/* Filtro de disponibilidad */}
       <Box>
         <Checkbox
@@ -343,7 +337,7 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
       <Button colorScheme="pink" onClick={onApplyFiltersPressed} isDisabled={(JSON.stringify(filters) === JSON.stringify(productFilters))}>
         Aplicar Filtros
       </Button>
-      <Button isDisabled={productFilters === initialStateFilters} mt={2} variant='outline'  colorScheme="pink" onClick={onClearFiltersPressed}>
+      <Button isDisabled={productFilters === initialStateFilters} mt={2} variant='outline' colorScheme="pink" onClick={onClearFiltersPressed}>
         Limpiar Filtros
       </Button>
     </VStack>
