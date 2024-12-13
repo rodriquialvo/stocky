@@ -16,9 +16,7 @@ export class ApiCartService implements CartService {
 
   postAddToCart = (item: AddToCartRequestDto) => this.http.post<CartReponseDto>('add-product', item);
 
-  updateQuantity = ({ body: { quantity: value }, params: { cartId, variantId } }: UpdateQuantityRequestDto) => this.http.put<CartReponseDto>(`${cartId}/update-quantity/${variantId}`, {
-    quantity: value
-  });
+  updateQuantity = ({ body, params: { cartId, variantId } }: UpdateQuantityRequestDto) => this.http.put<CartReponseDto>(`${cartId}/update-quantity/${variantId}`, body);
 
   removeFromCart = ({ cartId, variantId }: RemoveFromCartRequestDto) => this.http.delete<CartReponseDto>(`${cartId}/remove-product/${variantId}`);
 

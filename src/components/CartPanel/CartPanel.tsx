@@ -18,7 +18,7 @@ const CartPanel: FC<CartPanelProps> = props => {
   const cart = useCartStore(state => state.cart);
   const statusCart = useCartStore(state => state.status)
   const userLogged = useSessionStore(state => state.userLogged);
-  const [exceededItems, setExceededItems] = useState<{label: string, value: string}[]>([]);
+  const [exceededItems, setExceededItems] = useState<{ label: string, value: string }[]>([]);
   const [showItemError, setShowItemError] = useState(false);
   const { postSale } = SaleAction()
   const [variantsQuantity, setVariantsQuantity] = useState({});
@@ -26,24 +26,25 @@ const CartPanel: FC<CartPanelProps> = props => {
 
   const { updateQuantity, removeFromCart, getCart } = CartAction();
 
-  const handleQuantityChange = (id: string, value: number) => {
+  const handleQuantityChange = (id: string, value: number, productId: string) => {
     if (value < 0) {
       return;
     }
-    setVariantsQuantity({ ...variantsQuantity, [id]: value });
+    setVariantsQuantity({ ...variantsQuantity, [id + productId]: value });
     if (value >= 1) {
-      onUpdateQuantityPressed(id, value);
+      onUpdateQuantityPressed(id, value, productId);
     }
   };
 
-  const onUpdateQuantityPressed = async (id: string, value: number) => {
+  const onUpdateQuantityPressed = async (id: string, value: number, productId: string) => {
     await updateQuantity({
       params: {
         cartId: cart._id,
-        variantId: id
+        variantId: id,
       },
       body: {
-        quantity: value
+        quantity: value,
+        productId: productId
       }
     })
   };
@@ -53,7 +54,7 @@ const CartPanel: FC<CartPanelProps> = props => {
   };
 
   const onConfirmOrderPressed = () => {
-    if(exceededItems.length > 0) {
+    if (exceededItems.length > 0) {
       toast.error("No se puede realizar la compra debido a que hay productos con stock insuficiente")
       setShowItemError(true);
       return
@@ -72,7 +73,8 @@ const CartPanel: FC<CartPanelProps> = props => {
   }, [cart?.items])
 
   useEffect(() => {
-    setVariantsQuantity(cart?.items?.reduce((acc, item) => ({ ...acc, [item.variant._id]: item?.quantity }), {}))
+    setVariantsQuantity(cart?.items?.reduce((acc, item) => ({ ...acc, [item.variant._id + item.product._id]: item?.quantity }), {}))
+
   }, [cart]);
 
   return (
@@ -145,15 +147,15 @@ const CartPanel: FC<CartPanelProps> = props => {
                               alignItems={"center"}
                               width={"100%"}
                             >
-                              <Text  fontSize={"sm"} color={"green.600"} textAlign={"left"} size={"sm"}>P/u Revendedor: {formattedNumberToMoney(item.product.prices.reseller)}</Text>
+                              <Text fontSize={"sm"} color={"green.600"} textAlign={"left"} size={"sm"}>P/u Revendedor: {formattedNumberToMoney(item.product.prices.reseller)}</Text>
                               <Box
                                 display={"flex"}
                                 flexDirection={"row"}
                                 // justifyContent={"end"}
                                 alignItems={"center"}
                               >
-                                <Heading color={"green.400"}  fontSize={"md"} >
-                                  {formattedNumberToMoney(item.product.prices.reseller * variantsQuantity[item.variant._id])}
+                                <Heading color={"green.400"} fontSize={"md"} >
+                                  {formattedNumberToMoney(item.product.prices.reseller * variantsQuantity[item.variant._id + item.product._id])}
                                 </Heading>
                               </Box>
                             </Box>
@@ -171,15 +173,15 @@ const CartPanel: FC<CartPanelProps> = props => {
                                 alignItems={"center"}
                               >
                                 <Heading color={"orange.400"} fontSize={"md"} >
-                                  {formattedNumberToMoney(item.product.prices.retail * variantsQuantity[item.variant._id])}
+                                  {formattedNumberToMoney(item.product.prices.retail * variantsQuantity[item.variant._id + item.product._id])}
                                 </Heading>
                               </Box>
                             </Box>
                             <QuantityPicker
                               stock={item?.stock?.quantity}
-                              quantity={variantsQuantity[item.variant._id]}
-                              onIncrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id] + 1)}
-                              onDecrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id] - 1)}
+                              quantity={variantsQuantity[item.variant._id + item.product._id]}
+                              onIncrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id] + 1, item.product._id)}
+                              onDecrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id] - 1, item.product._id)}
                               isDisabled={statusCart.isFetching}
                             />
                           </Box>

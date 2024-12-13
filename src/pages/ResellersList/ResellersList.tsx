@@ -30,6 +30,13 @@ const ResellerList: React.FC = () => {
         });
     }, []);
 
+    useEffect(() => {
+        getResellers({
+            page: currentPage,
+            limit: itemsPerPage
+        })
+    }, [currentPage])
+
 
     const totalPages = Math.ceil(total / itemsPerPage);
     const startIdx = (currentPage - 1) * itemsPerPage;
@@ -83,7 +90,6 @@ const ResellerList: React.FC = () => {
                     </Tbody>
                 </Table>
             </Box>
-
             {/* Controles de Paginación */}
             <Flex justify="center" align="center" p={4} bg="white" shadow="md" position="sticky" bottom="0">
                 <Button
@@ -107,7 +113,6 @@ const ResellerList: React.FC = () => {
                         {page}
                     </Button>
                 ))}
-
                 <Button
                     onClick={() => goToPage(currentPage + 1)}
                     isDisabled={currentPage === totalPages}

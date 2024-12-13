@@ -15,24 +15,25 @@ export const useCartController =
     const { updateQuantity, removeFromCart, getCart } = CartAction();
     const cart = useCartStore(state => state.cart);
 
-    const handleQuantityChange = (id: string, value: number) => {
+    const handleQuantityChange = (id: string, value: number, productId: string) => {
       if (value < 0) {
         return;
       }
       setVariantsQuantity({ ...variantsQuantity, [id]: value });
       if (value >= 1) {
-        onUpdateQuantityPressed(id, value);
+        onUpdateQuantityPressed(id, value, productId);
       }
     };
 
-    const onUpdateQuantityPressed = async (id: string, value: number) => {
+    const onUpdateQuantityPressed = async (id: string, value: number, productId: string) => {
       await updateQuantity({
         params: {
           cartId: cart._id,
           variantId: id
         },
         body: {
-          quantity: value
+          quantity: value,
+          productId
         }
       })
     };

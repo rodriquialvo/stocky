@@ -39,7 +39,7 @@ const ShoppingCartPage: React.FC = () => {
               <Text>PT ${item.product.prices.reseller * controller.variantsQuantity[item.variant._id]}</Text>
               <Flex>
                 <Button
-                  onClick={() => controller.handleQuantityChange(item.variant._id, controller.variantsQuantity[item.variant._id] - 1)}
+                  onClick={() => controller.handleQuantityChange(item.variant._id, controller.variantsQuantity[item.variant._id] - 1, item.product._id)}
                   size="sm"
                   className="mr-2 bg-gray-200"
                 >
@@ -47,7 +47,7 @@ const ShoppingCartPage: React.FC = () => {
                 </Button>
                 <Text>{controller.variantsQuantity[item.variant._id]}</Text>
                 <Button
-                  onClick={() => controller.handleQuantityChange(item.variant._id, controller.variantsQuantity[item.variant._id] + 1)}
+                  onClick={() => controller.handleQuantityChange(item.variant._id, controller.variantsQuantity[item.variant._id] + 1, item.product._id)}
                   size="sm"
                   className="ml-2 bg-gray-200"
                 >

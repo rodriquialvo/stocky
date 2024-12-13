@@ -93,10 +93,11 @@ export interface RemoveFromCartRequestDto {
 export interface UpdateQuantityRequestDto {
     params: {
         cartId: string,
-        variantId: string
+        variantId: string,
     },
     body: {
-        quantity: number
+        quantity: number,
+        productId: string
     }
 }
 

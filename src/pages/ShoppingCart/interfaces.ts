@@ -3,9 +3,9 @@ import { Cart, VariantsQuantityDto } from "../../services/shoppingcart/dtos/gene
 export interface CartController {
   cart: Cart;
   variantsQuantity: VariantsQuantityDto,
-  onUpdateQuantityPressed: (item: any, value: number) => void;
+  onUpdateQuantityPressed: (item: any, value: number, productId) => void;
   onRemoveFromCartPressed: (variantId: string) => void;
-  handleQuantityChange: (id: string, value: number) => void
+  handleQuantityChange: (id: string, value: number, productId: string) => void
 }
 
 export interface CartProps {
