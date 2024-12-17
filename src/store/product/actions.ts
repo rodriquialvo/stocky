@@ -152,7 +152,9 @@ export const ProductAction = () => {
       } else {
         setProductsSelected([...productsSelected, product])
       }
+      setStatus(getSuccessStatus());
     } catch (e) {
+      setStatus(getErrorStatus(e as Error));
     }
   }
 

@@ -79,7 +79,7 @@ export const ProductList: React.FC<ProductProps> = (props) => {
         borderRadius="full"
         boxShadow="md"
         p={4}
-        zIndex={10}
+        zIndex={20}
         onClick={controller.onPressedButtonOpenPanelIncreaseAndDiscount}
       >
         Aplicar aumento/descuento

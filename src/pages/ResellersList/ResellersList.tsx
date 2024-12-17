@@ -28,14 +28,7 @@ const ResellerList: React.FC = () => {
             page: currentPage,
             limit: itemsPerPage
         });
-    }, []);
-
-    useEffect(() => {
-        getResellers({
-            page: currentPage,
-            limit: itemsPerPage
-        })
-    }, [currentPage])
+    }, [currentPage]);
 
 
     const totalPages = Math.ceil(total / itemsPerPage);
