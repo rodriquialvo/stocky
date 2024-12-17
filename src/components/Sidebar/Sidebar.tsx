@@ -8,6 +8,7 @@ import { SidebarItemProps } from './interfaces';
 import { useSessionStore } from '../../store/session/slice';
 import { FiLogOut } from 'react-icons/fi';
 import { SessionAction } from '../../store/session/actions';
+import { capitalizeFirstLetter } from '../../utils/functions';
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -16,7 +17,8 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) => {
   const [isMobile] = useMediaQuery("(max-width: 768px)");
-  const {pathname} = useLocation();
+  const { pathname } = useLocation();
+  const userLoged = useSessionStore(state => state.userLogged);
 
   useEffect(() => {
     setIsExpanded(false)
@@ -51,10 +53,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) =
           />
         }
         <VStack align="stretch" flex={1} mt={4}>
+          {
+            isExpanded &&
+            <Text
+              align={"center"}
+              fontSize="xl"
+            >{capitalizeFirstLetter(userLoged?.name)} {capitalizeFirstLetter(userLoged?.lastname)}</Text>
+
+          }
           <SidebarContent isExpanded={isExpanded} />
         </VStack>
       </Flex>
-      
+
     </Box>
   );
 };
