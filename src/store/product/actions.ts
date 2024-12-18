@@ -9,6 +9,7 @@ import { ImageAction } from '../image/actions';
 import { useProductStore } from './slice';
 import { Product } from '../../services/product/dtos/getProducts';
 import toast from 'react-hot-toast';
+import { get } from 'http';
 
 export const ProductAction = () => {
   const productService = useAPIProductService();
@@ -86,7 +87,7 @@ export const ProductAction = () => {
       setStatus(getSuccessStatus());
       if (productsWhitStocks[id]) {
         if (productsWhitStocks[id].lastRequest) {
-          const fiveMinutesInMs = 5 * 60 * 1000;
+          const fiveMinutesInMs = 1000;
           const now = new Date();
           if ((now as any) - (productsWhitStocks[id].lastRequest as any) > fiveMinutesInMs) {
             const response = await productService.getProductDetail(id);
@@ -153,6 +154,7 @@ export const ProductAction = () => {
         setProductsSelected([...productsSelected, product])
       }
       setStatus(getSuccessStatus());
+
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
     }
