@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, SimpleGrid } from '@chakra-ui/react';
+import { Box, SimpleGrid, useMediaQuery } from '@chakra-ui/react';
 import NavigationBar from '../../components/TabNav/NavigationBar';
 import GalleryItem from '../../components/GalleryItem/GaleryItem';
 import Hero from '../../components/Hero/Hero';
@@ -10,25 +10,16 @@ import { ProductAction } from '../../store/product/actions';
 import WhatsAppButton from '../../components/WhatsAppButtonFloat/WhatsAppButtonFloat';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import Pagination from '../../components/Pagination/Pagination';
+import { images } from '../../constants/images';
 
-const galleryData = [
-  {
-    name: 'Body less taza soft tul y puntilla',
-    price: '$18.400',
-    availability: 'Disponible',
-    images: [
-      'https://images.unsplash.com/photo-1519644473771-e45d361c9bb8?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1526404746352-668ded9b50ab?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1506629371177-38dbb6e04a4e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    ],
-  }
-];
+
 
 const GalleryPage: React.FC<GaleryProps> = props => {
   const { getProducts } = ProductAction();
   const productFilters = useProductStore(state => state.productsFilters);
   const { useController = useGaleryController } = props;
   const controller = useController();
+  const [isMobile] = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     getProducts(productFilters);
@@ -37,10 +28,17 @@ const GalleryPage: React.FC<GaleryProps> = props => {
   return (
     <Box
     >
-      {/* <Spinner/> */}
-      <Hero
-        images={galleryData[0].images}
-      />
+      {
+        isMobile ?
+        <Hero
+          images={[images.heroNavidadMobile]}
+        />
+        :
+        <Hero
+          images={[images.heroNavidadDesktop]}
+        />
+
+      }
       <WhatsAppButton />
 
       <NavigationBar

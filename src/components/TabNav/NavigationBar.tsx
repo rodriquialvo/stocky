@@ -6,16 +6,20 @@ import {
   Button,
   Text,
   Image,
+  useMediaQuery,
 } from '@chakra-ui/react';
-import { HamburgerIcon } from '@chakra-ui/icons';
 import { FiShoppingCart } from 'react-icons/fi';
-import SearchBarwithSuggestion from '../SearchBarwithSuggestion/SearchBarwithSuggestion';
+import { IoFilter } from "react-icons/io5";
+
 import { TabNavProps } from './interfaces';
 import FilterPanel from '../FilterPanel/FilterPanel';
 import CartPanel from '../CartPanel/CartPanel';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { formattedNumberToMoney } from '../../utils/functions';
 import { images } from '../../constants/images';
+import SearchBar from '../SearchBar/SearchBar';
+import { ProductAction } from '../../store/product/actions';
+import { useProductStore } from '../../store/product/slice';
 
 const NavigationBar: React.FC<TabNavProps> = ({
 }) => {
@@ -25,6 +29,10 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
   const isOpenCartPanel = useCartStore(state => state.isOpenCartPanel);
   const cart = useCartStore(state => state.cart);
+  const [isMobile] = useMediaQuery("(max-width: 768px)");
+  const { getProducts, getProductDetailWhitStockInDropDown, setProductsFiltersAction } = ProductAction()
+  const productsFilter = useProductStore(state => state.productsFilters);
+
   // Función para manejar el scroll y determinar la dirección
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
@@ -48,6 +56,10 @@ const NavigationBar: React.FC<TabNavProps> = ({
     };
   }, [lastScrollY]);
 
+  const onSearch = (query: string) => {
+    setProductsFiltersAction({ ...productsFilter, q: query });
+  };
+
   return (
     <Box
       as="nav"
@@ -55,18 +67,20 @@ const NavigationBar: React.FC<TabNavProps> = ({
       bg="white"
       boxShadow="md"
       p={4}
+
       position="sticky"
       top={showNavbar ? 0 : { base: "-150px", lg: 0 }} // Desaparece al hacer scroll hacia abajo
       transition="top 0.3s ease-in-out"
       zIndex={10}
     >
       <Flex
-        maxW="1200px"
+        maxW="100%"
         mx="auto"
         justify="space-between"
         align="center"
         wrap="wrap"
-        gap={4}
+      // bg={"red"}
+      // gap={4}
       >
         {/* Barra de Búsqueda */}
         <Image
@@ -78,21 +92,20 @@ const NavigationBar: React.FC<TabNavProps> = ({
           onClick={() => window.location.href = "/"}
           cursor={"pointer"}
         />
-        {/* <SearchBarwithSuggestion /> */}
-        {/* Botón para Mostrar Filtros */}
-
-        {/* Carrito de Compras */}
+        <SearchBar
+          onSearch={onSearch}
+        />
         <Flex
           alignItems={"center"}
         >
           <Button
-            leftIcon={<HamburgerIcon />}
+            leftIcon={<IoFilter />}
             colorScheme="pink"
             variant="solid"
             onClick={() => setIsOpenFilterPanel(true)}
-            ml={4}
+          // ml={4}
           >
-            Filtros
+            {!isMobile && "Filtros"}
           </Button>
           <Flex
             alignItems={"center"}

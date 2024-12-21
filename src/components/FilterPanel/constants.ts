@@ -32,4 +32,5 @@ export interface FiltersState {
     minResellerPrice: number | string;
     maxResellerPrice: number | string;
     hasStock: boolean;
+    q?: string
 }

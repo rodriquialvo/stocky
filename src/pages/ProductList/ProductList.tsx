@@ -7,11 +7,14 @@ import { ProductProps } from './interfaces';
 import IncreaseAndDiscountPricePanel from '../../components/IncreaseAndDiscountPricePanel/IncreaseAndDiscountPricePanel';
 import Pagination from '../../components/Pagination/Pagination';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
+import { ProductAction } from '../../store/product/actions';
+import { useLocation } from 'react-router-dom';
+import { ROUTES } from '../../constants/Routes';
 
 export const ProductList: React.FC<ProductProps> = (props) => {
   const { useController = useProductController } = props;
   const controller = useController();
-
+  
 
 
   // if (isSidebarExpanded && isMobile) {

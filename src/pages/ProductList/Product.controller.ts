@@ -6,32 +6,40 @@ import { Product } from '../../services/product/dtos/getProducts';
 import { ItemListProductProps } from '../../components/ItemListProduct/interfaces';
 import { useLocation } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
+import { initialStateFilters } from '../../components/FilterPanel/constants';
 
 export const useProductController =
   (): /* <--Dependency Injections  like services hooks */
     ProductController => {
-    const {getProducts, getProductDetailWhitStockInDropDown} = ProductAction()
+    const { getProducts, getProductDetailWhitStockInDropDown } = ProductAction()
     const products = useProductStore(state => state.products);
-    const {selectProduct, cleanProductsSelected, selectAllProducts, increasePricesOfProducts} = ProductAction();
+    const { selectProduct, cleanProductsSelected, selectAllProducts, increasePricesOfProducts } = ProductAction();
     const productsSelected = useProductStore(state => state.productsSelected);
     const [isAllproductsSelected, setIsAllProductsSelected] = useState(false)
-    const {pathname} = useLocation()
+    const { pathname } = useLocation()
     const [isOpenIncreaseAndDiscountPanel, setIsOpenIncreaseAndDiscountPanel] = useState(false)
     const [currentPage, setCurrentPage] = useState(1);
     const totalProducts = useProductStore(state => state.total);
     const status = useProductStore(state => state.status);
+    const isFocused = pathname === ROUTES.STOCK_LIST;
+    const { setProductsFiltersAction } = ProductAction();
+    const productFilters = useProductStore(state => state.productsFilters);
 
     useEffect(() => {
-      getProducts({page: currentPage, limit: 30});
-    },[currentPage]);
+      getProducts(productFilters);
+    }, [currentPage]);
 
     useEffect(() => {
-      setIsAllProductsSelected(!!productsSelected.length && productsSelected.length  === products.length)
-    },[productsSelected, products]);
+      setIsAllProductsSelected(!!productsSelected.length && productsSelected.length === products.length)
+    }, [productsSelected, products]);
 
     useEffect(() => {
       pathname === ROUTES.STOCK_LIST && cleanProductsSelected()
-    }, [pathname])
+    }, [pathname]);
+
+    useEffect(() => {
+      setProductsFiltersAction(initialStateFilters);
+    }, [isFocused]);
 
     const mapProductsViewModel = (product: Product): ItemListProductProps => {
       return {
@@ -57,7 +65,7 @@ export const useProductController =
     }
 
     const onSelectAllProducts = () => {
-      if(!!productsSelected.length) {
+      if (!!productsSelected.length) {
         cleanProductsSelected();
       } else {
         selectAllProducts()

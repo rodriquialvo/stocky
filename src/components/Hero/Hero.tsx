@@ -22,7 +22,7 @@ const Hero: React.FC<HeroProps> = ({ images }) => {
       <Image
         src={images[currentIndex]}
         alt={`Hero Image ${currentIndex + 1}`}
-        objectFit="cover"
+        // objectFit="cover"
         width="100%"
         height="100%"
         transition="opacity 0.5s ease-in-out"
@@ -34,7 +34,7 @@ const Hero: React.FC<HeroProps> = ({ images }) => {
         left="0"
         width="100%"
         height="100%"
-        backgroundColor="rgba(0, 0, 0, 0.5)" // Superposición oscura
+        // backgroundColor="rgba(0, 0, 0, 0.5)" // Superposición oscura
         transition="background-color 0.5s ease-in-out"
       />
       <Box
@@ -49,12 +49,12 @@ const Hero: React.FC<HeroProps> = ({ images }) => {
         transition="all 0.5s ease-in-out"
         width={useBreakpointValue({ base: '100%', md: '50%' })}
       >
-        <Text fontSize={useBreakpointValue({ base: 'xl', md: '3xl' })} fontWeight="bold">
+        {/* <Text fontSize={useBreakpointValue({ base: 'xl', md: '3xl' })} fontWeight="bold">
         Elegancia y Sensualidad en Cada Detalle.
         </Text>
         <Text fontSize={useBreakpointValue({ base: 'md', md: 'lg' })} mt={2}>
         Descubre nuestra exclusiva colección de lencería que resalta tu belleza y confianza. En Marilyn, cada prenda está diseñada para hacerte sentir única y poderosa.
-        </Text>
+        </Text> */}
       </Box>
     </Box>
   );
