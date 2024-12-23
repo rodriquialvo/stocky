@@ -43,6 +43,7 @@ export const useProductController =
 
     const mapProductsViewModel = (product: Product): ItemListProductProps => {
       return {
+        fullProduct: product,
         name: product?.name,
         brand: product?.attributes?.brand,
         code: product?.code,

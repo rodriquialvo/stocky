@@ -12,6 +12,8 @@ export interface Product {
     attributes: Attributes;
     pictures: Picture[];
     prices: Prices;
+    colors: string[],
+    sizeType: string;
     hasStock: boolean;
 }
 

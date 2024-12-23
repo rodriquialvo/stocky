@@ -1,82 +1,117 @@
 import { useEffect, useState } from 'react';
 import { ImageListType } from 'react-images-uploading';
-import { useLocation } from 'react-router-dom';
-import { ROUTES } from '../../constants/Routes';
 import { Category } from '../../services/categories/dtos/getCategories';
+import { ProductAttribute } from '../../services/product/dtos/getProductAtributes';
+import { Product } from '../../services/product/dtos/getProducts';
 import { useCategorytore } from '../../store/category/slice';
+import { getDefaultStatus } from '../../store/helper/statusStateFactory';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
-import { CreateNewProductController, ProductFormData } from './interfaces';
-import { initialStateProductformData } from './constants';
-import { getDefaultStatus } from '../../store/helper/statusStateFactory';
-import { ProductAttribute } from '../../services/product/dtos/getProductAtributes';
 import { roundUpTo100 } from '../../utils/functions';
-import { set } from 'react-datepicker/dist/date_utils';
+import { initialStateProductformData } from './constants';
+import { CreateNewProductController, ProductFormData } from './interfaces';
+import { useNavigate } from 'react-router-dom';
 
 export const useCreateNewProductController =
-  (): /* <--Dependency Injections  like services hooks */
+  ({ product }: { product?: Product }): /* <--Dependency Injections  like services hooks */
     CreateNewProductController => {
+    const navigate = useNavigate();
 
-    const [images, setImages] = useState<ImageListType>([]);
-    const { createNewProduct, clearCalculatePrices } = ProductAction();
+    const [images, setImages] = useState<ImageListType>(product?.pictures.map((picture) => ({ data_url: picture.url })) || []);
+    const { createNewProduct, clearCalculatePrices, updateProduct } = ProductAction();
 
     const calculatedPrices = useProductStore(state => state.calculatedPrices);
     const status = useProductStore(state => state.status)
-    const setStatus = useProductStore(state => state.setStatus)
+    const setStatus = useProductStore(state => state.setStatus);
+    const setUpdateProductStatus = useProductStore(state => state.setUpdateProductStatus);
+    const updateProductStatus = useProductStore(state => state.updateProductStatus);
 
     const allColors = useProductAtributesStore(state => state.allColors);
     const sizesTypes = useProductAtributesStore(state => state.sizesTypes);
     const allBrands = useProductAtributesStore(state => state.allBrands);
 
     const categories = useCategorytore(state => state.categories);
-    const location = useLocation();
 
+    const getFullCategoryPath = (categories, id, path = []) => {
+      for (const category of categories) {
+        const currentPath = [...path, category];
+        if (category.id === id) {
+          return currentPath;
+        }
+        if (category.children && category.children.length > 0) {
+          const result = getFullCategoryPath(category.children, id, currentPath);
+          if (result) {
+            return result;
+          }
+        }
+      }
+      return null;
+    }
 
-    const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
+    // const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
 
-    const [formData, setFormData] = useState<ProductFormData>(initialStateProductformData);
+    const [formData, setFormData] = useState<ProductFormData>(initialStateProductformData(product));
     const [selectedColors, setSelectedColors] = useState([]);
     const [currentCategories, setCurrentCategories] = useState<Category[]>(categories);
     const [selectedPath, setSelectedPath] = useState<Category[]>([]);
     const [categorySelected, setCategorySelected] = useState<Category | null>(null);
     const [isDisabledButtonSubmit, setIsDisabledButtonSubmit] = useState(true);
     const [showCategoriesTypesOptions, setShowCategoriesTypesOptions] = useState(false);
-    const [typesSizesByIds, setTypesSizesByIds] = useState(<ProductAttribute[]>[])
+    const [typesSizesByIds, setTypesSizesByIds] = useState([] as ProductAttribute[]);
+    const productCategory = getFullCategoryPath(categories, product?.categories[0].id);
 
     useEffect(() => {
+      if (updateProductStatus.success) {
+        setUpdateProductStatus(getDefaultStatus());
+        navigate('/stock/list');
+      }
+    }, [updateProductStatus])
+
+    useEffect(() => {
+      if (product) {
+        setSelectedPath(productCategory.slice(0, productCategory.length - 1) || []);
+        setCurrentCategories(productCategory[productCategory.length - 2].children);
+        setCategorySelected(productCategory[productCategory.length - 1]);
+        setSelectedColors(product?.colors || []);
+      }
       return () => {
         clearCalculatePrices();
       }
     }, []);
 
     useEffect(() => {
-      if (categorySelected?.sizeTypes.length > 1) {
-        setShowCategoriesTypesOptions(true);
-      } else {
-        setShowCategoriesTypesOptions(false);
-        setFormData({
-          ...formData,
-          sizeType: ""
-        })
-      }
-
-      let sizesTypesFilters = [];
-      sizesTypes.forEach(item => {
-        if (categorySelected?.sizeTypes.includes(item._id)) {
-          sizesTypesFilters.push(item);
+      if (sizesTypes.length) {
+        if (categorySelected?.sizeTypes.length > 1) {
+          setShowCategoriesTypesOptions(true);
+        } else {
+          setShowCategoriesTypesOptions(false);
+          setFormData({
+            ...formData,
+            // sizeType: ""
+          })
         }
-      })
-      setTypesSizesByIds(sizesTypesFilters);
-    }, [categorySelected?.sizeTypes])
+
+        let sizesTypesFilters = [];
+        sizesTypes.forEach(item => {
+          if (categorySelected?.sizeTypes.includes(item._id)) {
+            sizesTypesFilters.push(item);
+          }
+        })
+        setTypesSizesByIds(sizesTypesFilters);
+      }
+    }, [categorySelected?.sizeTypes, sizesTypes])
 
     useEffect(() => {
       if (status.success) {
         setStatus(getDefaultStatus());
-        setFormData(initialStateProductformData);
-        setImages([]);
-        setSelectedColors([]);
-        setCategorySelected(null);
+        setFormData(initialStateProductformData());
+        if (product) {
+          setSelectedPath(productCategory.slice(0, productCategory.length - 1) || []);
+          setCurrentCategories(productCategory[productCategory.length - 2].children);
+          setCategorySelected(productCategory[productCategory.length - 1]);
+          setSelectedColors(product?.colors || []);
+        }
       }
     }, [status.success])
 
@@ -85,16 +120,16 @@ export const useCreateNewProductController =
         ...formData,
         categories: [categorySelected?.id],
         colors: selectedColors,
-        pictures: images.map(image => image?.file),
+        pictures: images,
       })
     }, [categorySelected, selectedColors, images])
 
-    useEffect(() => {
-      if (isCurrentPage) {
-        setFormData(initialStateProductformData)
-        setImages([]);
-      }
-    }, [isCurrentPage])
+    // useEffect(() => {
+    //   if (isCurrentPage) {
+    //     setFormData(initialStateProductformData())
+    //     setImages([]);
+    //   }
+    // }, [isCurrentPage])
 
     useEffect(() => {
       setIsDisabledButtonSubmit(
@@ -110,7 +145,7 @@ export const useCreateNewProductController =
 
     useEffect(() => {
       if (!!formData.prices.cost && !!formData.percentages.reseller && !!formData.percentages.retail) {
-        let priceResellerWithoutRound =((parseFloat(formData.prices.cost.toString()) + (parseFloat(formData.prices.cost.toString()) * parseFloat(formData.percentages.reseller.toString()) / 100)));
+        let priceResellerWithoutRound = ((parseFloat(formData.prices.cost.toString()) + (parseFloat(formData.prices.cost.toString()) * parseFloat(formData.percentages.reseller.toString()) / 100)));
         setFormData({
           ...formData,
           prices: {
@@ -230,8 +265,11 @@ export const useCreateNewProductController =
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-      createNewProduct(formData)
-
+      if (!product) {
+        createNewProduct(formData)
+      } else {
+        updateProduct(product.id, formData)
+      }
     };
 
     const onPressedStartCategories = () => {

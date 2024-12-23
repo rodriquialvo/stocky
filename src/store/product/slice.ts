@@ -18,6 +18,7 @@ type State = {
   calculatedPrices: any
   productsSelected: Product[],
   productsFilters: FiltersState
+  updateProductStatus: Status
 };
 
 const initialState: State = {
@@ -29,7 +30,8 @@ const initialState: State = {
   productsByCodeOrName: [],
   calculatedPrices: {},
   productsSelected: [],
-  productsFilters: initialStateFilters
+  productsFilters: initialStateFilters,
+  updateProductStatus: getDefaultStatus()
 };
 
 type Action = {
@@ -42,7 +44,8 @@ type Action = {
   setCalculatedPrices: (calculatedPrices: any) => void
   setProductsSelected: (products: Product[]) => void
   setProductsFilters: (productsFilters: any) => void,
-  setTotalProducts: (total: number) => void
+  setTotalProducts: (total: number) => void,
+  setUpdateProductStatus: (status: Status) => void
 };
 
 // Create your store, which includes both state and (optionally) actions
@@ -60,6 +63,7 @@ export const useProductStore = create<State & Action>()(
       setProductsSelected: (products) => set({productsSelected: products}),
       setProductsFilters: (productsFilters) => set({productsFilters}),
       setTotalProducts: (total: number) => set({ total }),
+      setUpdateProductStatus: (status: Status) => set({ updateProductStatus: status }),
     }),
     {
       name: 'products-store', // nombre del key en localStorage

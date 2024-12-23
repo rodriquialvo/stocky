@@ -25,12 +25,21 @@ import { useCreateNewProductController } from './CreateNewProduct.controller';
 import ImageUploadGallery from '../../components/ImageUploadGallery/ImageUploadGallery';
 import CategoryList from '../../components/CategoryList/CategoryList';
 import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
+import { useLocation } from 'react-router-dom';
 
 const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
-  const controller = useCreateNewProductController();
+  const location = useLocation();
+  const product = location.state?.product;
+
+  const controller = useCreateNewProductController({ product });
   // Responsive padding and font sizes
   const padding = useBreakpointValue({ base: '4', md: '6' });
   const headingSize = useBreakpointValue({ base: 'lg', md: '2xl' });
+
+  const texts = {
+    title: product ? 'Editar Producto' : 'Crear producto',
+    button: product ? 'Guardar cambios' : 'Crear producto',
+  }
 
   return (
     <Box
@@ -48,7 +57,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
     >
       {/* Heading */}
       <Heading fontSize={headingSize} fontWeight="bold" mb={6} textAlign="center">
-        Nuevo Producto
+        {texts.title}
       </Heading>
 
       <VStack spacing={4}>
@@ -96,23 +105,23 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           </Breadcrumb>
           <CategoryList colorText='gray.100' categorySelected={controller.categorySelected?.id} categories={controller.currentCategories} onCategorySelect={controller.handleCategorySelect} />
         </FormControl>
-          <FormControl>
-            <Box>
-              <FormLabel htmlFor="sizes">Tipo de talle</FormLabel>
-              {controller.sizesTypes.map((sizetype) => (
-                <RadioGroup defaultValue=''>
-                  <Stack onClick={() => controller.onSelectSizeType(sizetype._id)} spacing={5}>
-                    <Radio
-                      isChecked={controller.formData.sizeType === sizetype._id}
-                      colorScheme='pink'
-                    >
-                      <Text>{capitalizeFirstLetter(sizetype.label || sizetype.value)}</Text>
-                    </Radio>
-                  </Stack>
-                </RadioGroup>
-              ))}
-            </Box>
-          </FormControl>
+        <FormControl>
+          <Box>
+            <FormLabel htmlFor="sizes">Tipo de talle</FormLabel>
+            {controller.sizesTypes.map((sizetype) => (
+              <RadioGroup defaultValue=''>
+                <Stack onClick={() => controller.onSelectSizeType(sizetype._id)} spacing={5}>
+                  <Radio
+                    isChecked={controller.formData.sizeType === sizetype._id}
+                    colorScheme='pink'
+                  >
+                    <Text>{capitalizeFirstLetter(sizetype.label || sizetype.value)}</Text>
+                  </Radio>
+                </Stack>
+              </RadioGroup>
+            ))}
+          </Box>
+        </FormControl>
         <FormControl>
           <Box>
             <FormLabel htmlFor="brands">Marca</FormLabel>
@@ -152,7 +161,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
           ><Text >Seleccionar todos</Text></Checkbox>
           <SimpleGrid columns={{ base: 2, md: 3 }} >
             {controller.colors.map(({ label, value }) => (
-              <Flex cursor={"pointer"} onClick={() => controller.handleColorChange(value)}  alignItems={"center"} gap={2} key={value}>
+              <Flex cursor={"pointer"} onClick={() => controller.handleColorChange(value)} alignItems={"center"} gap={2} key={value}>
                 <input
                   type='checkbox'
                   checked={controller.selectedColors.includes(value)}
@@ -187,7 +196,6 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
             value={controller.formData.percentages.reseller}
             onChange={controller.handleChangePercentageReseller}
             min={0}
-          // step="0.01"
           />
         </FormControl>
 
@@ -221,7 +229,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
 
         {/* Submit Button */}
         <Button isDisabled={controller.isDisabledButtonSubmit} type="submit" isLoading={controller.isLoading} colorScheme="blue" width="full" mt={4}>
-          Añadir Producto
+          {texts.button}
         </Button>
       </VStack>
 

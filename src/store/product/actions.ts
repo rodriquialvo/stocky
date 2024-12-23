@@ -1,4 +1,6 @@
+import toast from 'react-hot-toast';
 import { ProductFormData } from '../../pages/CreateNewProduct/interfaces';
+import { Product } from '../../services/product/dtos/getProducts';
 import { useAPIProductService } from '../../services/product/product.service';
 import {
   getErrorStatus,
@@ -7,14 +9,12 @@ import {
 } from '../helper/statusStateFactory';
 import { ImageAction } from '../image/actions';
 import { useProductStore } from './slice';
-import { Product } from '../../services/product/dtos/getProducts';
-import toast from 'react-hot-toast';
-import { get } from 'http';
 
 export const ProductAction = () => {
   const productService = useAPIProductService();
 
   const setStatus = useProductStore(state => state.setStatus);
+  const setUpdateProductStatus = useProductStore(state => state.setUpdateProductStatus);
   const setProducts = useProductStore(state => state.setProducts);
   const setProduct = useProductStore(state => state.setProduct);
   const setProductsWhitStocks = useProductStore(state => state.setProductsWhitStocks);
@@ -51,13 +51,13 @@ export const ProductAction = () => {
 
       const uploadedUrls = await Promise.all(
         body.pictures.map(element => createNewImageUrl(element))
-    );
+      );
 
       const response = await productService.postCreateNewProduct({ ...body, pictures: uploadedUrls.map(url => ({ url, alt_text: body.name + " " + body.code })) });
-      if (!response.product) {
-        setStatus(getErrorStatus('No response'));
-        return;
-      }
+      // if (!response.product) {
+      //   setStatus(getErrorStatus('No response'));
+      //   return;
+      // }
       setCalculatedPrices({});
       setStatus(getSuccessStatus());
       toast.success("Producto creado con éxito")
@@ -66,10 +66,37 @@ export const ProductAction = () => {
     }
   };
 
+  const updateProduct = async (id: string, body: ProductFormData) => {
+    setUpdateProductStatus(getStartStatus());
+    try {
+
+      const imagesStored = (body.pictures as any).filter(element => !element.file).map(element => ({ url: element.data_url}));
+      const imagesToUpload = (body.pictures as any).filter(element => !!element.file).map(element => element.file);
+
+      let uploadedUrls = await Promise.all(
+        imagesToUpload.map(element => createNewImageUrl(element))
+      );
+      uploadedUrls = uploadedUrls.map(url => ({ url }));
+
+      const images = [...imagesStored, ...uploadedUrls];
+
+      const response = await productService.updateProduct(id, { ...body, pictures: images.map(image => ({ url: image.url, alt_text: body.name + " " + body.code })) });
+      // if (!response.product) {
+      //   setUpdateProductStatus(getErrorStatus('No response'));
+      //   return;
+      // }
+      setCalculatedPrices({});
+      setUpdateProductStatus(getSuccessStatus());
+      toast.success("Producto creado con éxito")
+    } catch (e) {
+      setUpdateProductStatus(getErrorStatus(e as Error));
+    }
+  };
+
   const getProductDetail = async (id: string, param?: { by?: string }) => {
     setStatus(getStartStatus());
     try {
-      const response = await productService.getProductDetail(id, param );
+      const response = await productService.getProductDetail(id, param);
       if (!response.product) {
         setStatus(getErrorStatus('No response'));
         return;
@@ -147,9 +174,9 @@ export const ProductAction = () => {
   }
   const selectProduct = async (product: Product) => {
     setStatus(getStartStatus());
-    try{
-      if(!!productsSelected.find(prod => product.id === prod.id)){
-        setProductsSelected(productsSelected.filter(prod => prod.id !== product.id ))
+    try {
+      if (!!productsSelected.find(prod => product.id === prod.id)) {
+        setProductsSelected(productsSelected.filter(prod => prod.id !== product.id))
       } else {
         setProductsSelected([...productsSelected, product])
       }
@@ -195,6 +222,7 @@ export const ProductAction = () => {
   return {
     getProducts,
     createNewProduct,
+    updateProduct,
     getProductDetail,
     getProductDetailWhitStockInDropDown,
     getProductsByCodeOrName,

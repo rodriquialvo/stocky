@@ -62,6 +62,9 @@ export const ProductList: React.FC<ProductProps> = (props) => {
           <Heading color={"green.700"} fontSize="md" flex='1' textAlign='left'>
             Disponibilidad
           </Heading>
+          <Heading fontSize="md" flex='1' textAlign='left'>
+            Editar
+          </Heading>
         </AccordionItem>
         {
           controller.productsViewModel.map(item => {

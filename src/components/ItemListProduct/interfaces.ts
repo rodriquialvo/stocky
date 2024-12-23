@@ -1,4 +1,5 @@
 export interface ItemListProductProps {
+    fullProduct: any,
     name: string,
     id: string,
     code: string,

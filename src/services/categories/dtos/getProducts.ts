@@ -31,6 +31,7 @@ export interface Picture {
 }
 
 export interface Prices {
+    cost: number;
     retail: number;
     reseller: number;
 }

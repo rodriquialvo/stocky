@@ -19,13 +19,13 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
       [color.value]: color.label
     }
   }) : {};
-  
+
   const navigate = useNavigate();
   return (
     <AccordionItem px={0} onClick={props.onClick}>
       <AccordionButton px={2} py={3}>
         <Checkbox
-          onMouseDown ={props.onPressCheckbox}
+          onMouseDown={props.onPressCheckbox}
           isChecked={props.isChecked}
         />
         <Heading
@@ -56,6 +56,9 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
         <Heading color={props?.hasStock ? "green.700" : "red.500"} fontSize="md" flex='1' textAlign='left'>
           {props?.hasStock ? "DISPONIBLE" : "NO DISPONIBLE"}
         </Heading>
+        <Button flex='1' onClick={() => navigate(ROUTES.NEW_PRODUCT, { state: { product: props.fullProduct } })}>
+          Editar
+        </Button>
         <AccordionIcon />
       </AccordionButton>
       <AccordionPanel rounded={"md"} shadow="inner" bg={"gray.50"}
@@ -120,19 +123,19 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
                 columns={{ base: 2, md: 2, lg: 5 }}
               >
                 {productsWhitStocks[props.id]?.stocks.map(stock => {
-                 return (
-                  <Box
-                    gap={4}
-                    alignItems={"center"}
-                  >
-                    <Heading
-                      fontSize="md"
-                    >Color {colorsObj[stock.variant.color] || ''} / Talle {stock.variant.size}:</Heading>
-                    <Text fontSize="md" color="pink.600" >Cantidad: <Text as="span" color="gray.600">{stock.quantity} {stock.quantity > 1 ? "unidades" : "unidad"}</Text></Text>
-                    <Text fontSize="md" color="pink.600" >Precio de costo: <Text as="span" color="gray.600">{formattedNumberToMoney(stock.costPrice)}</Text></Text>
-                  </Box>
-                )
-                } )
+                  return (
+                    <Box
+                      gap={4}
+                      alignItems={"center"}
+                    >
+                      <Heading
+                        fontSize="md"
+                      >Color {colorsObj[stock.variant.color] || ''} / Talle {stock.variant.size}:</Heading>
+                      <Text fontSize="md" color="pink.600" >Cantidad: <Text as="span" color="gray.600">{stock.quantity} {stock.quantity > 1 ? "unidades" : "unidad"}</Text></Text>
+                      <Text fontSize="md" color="pink.600" >Precio de costo: <Text as="span" color="gray.600">{formattedNumberToMoney(stock.costPrice)}</Text></Text>
+                    </Box>
+                  )
+                })
                 }
               </SimpleGrid>
             </Box>

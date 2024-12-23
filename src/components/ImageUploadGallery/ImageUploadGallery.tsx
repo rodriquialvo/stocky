@@ -1,4 +1,4 @@
-import React, {  } from 'react';
+import React, { } from 'react';
 import { Box, Image, VStack, HStack, IconButton, Button, Text } from '@chakra-ui/react';
 import { ArrowBackIcon, ArrowForwardIcon, CloseIcon } from '@chakra-ui/icons';
 import ImageUploading, { ImageListType } from 'react-images-uploading';

@@ -28,4 +28,6 @@ export class ApiProductService implements ProductService {
   getCalculatePrices = (params: any) => this.http.get<GetProductAtributesResponse>('calculations/prices', params);
 
   putIncreasePricesOfProducts = (data: {productsIds: string[], percentageIncrease: number}) => this.http.put<GetProductAtributesResponse>('prices/increase', data);
+
+  updateProduct = (id: string, body: ProductFormData) => this.http.put<PostProductResponse>(id, body);
 }
