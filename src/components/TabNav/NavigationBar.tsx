@@ -20,6 +20,7 @@ import { images } from '../../constants/images';
 import SearchBar from '../SearchBar/SearchBar';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
+import { initialStateFilters } from '../FilterPanel/constants';
 
 const NavigationBar: React.FC<TabNavProps> = ({
 }) => {
@@ -57,7 +58,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
   }, [lastScrollY]);
 
   const onSearch = (query: string) => {
-    setProductsFiltersAction({ ...productsFilter, q: query });
+    setProductsFiltersAction({ ...initialStateFilters, q: query });
   };
 
   return (

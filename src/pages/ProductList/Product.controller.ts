@@ -27,7 +27,7 @@ export const useProductController =
 
     useEffect(() => {
       getProducts({ ...productFilters, page: currentPage });
-    }, [currentPage]);
+    }, [currentPage, productFilters]);
 
     useEffect(() => {
       setIsAllProductsSelected(!!productsSelected.length && productsSelected.length === products.length)
