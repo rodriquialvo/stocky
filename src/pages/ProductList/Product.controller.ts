@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { initialStateFilters } from '../../components/FilterPanel/constants';
+import { ItemListProductProps } from '../../components/ItemListProduct/interfaces';
+import { ROUTES } from '../../constants/Routes';
+import { Product } from '../../services/product/dtos/getProducts';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { ProductController } from './interfaces';
-import { Product } from '../../services/product/dtos/getProducts';
-import { ItemListProductProps } from '../../components/ItemListProduct/interfaces';
-import { useLocation } from 'react-router-dom';
-import { ROUTES } from '../../constants/Routes';
-import { initialStateFilters } from '../../components/FilterPanel/constants';
 
 export const useProductController =
   (): /* <--Dependency Injections  like services hooks */
@@ -26,7 +26,7 @@ export const useProductController =
     const productFilters = useProductStore(state => state.productsFilters);
 
     useEffect(() => {
-      getProducts(productFilters);
+      getProducts({ ...productFilters, page: currentPage });
     }, [currentPage]);
 
     useEffect(() => {

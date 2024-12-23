@@ -6,7 +6,7 @@ export const initialStateFilters: FiltersState = {
     size: [],
     sort: 'default',
     page: 1,
-    limit: "20",
+    limit: "30",
     minCostPrice: "0",
     maxCostPrices: "0",
     minQuantity: "0",
