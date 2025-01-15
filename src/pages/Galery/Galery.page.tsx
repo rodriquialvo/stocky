@@ -31,11 +31,11 @@ const GalleryPage: React.FC<GaleryProps> = props => {
       {
         isMobile ?
         <Hero
-          images={[images.heroNavidadMobile]}
+          images={[images.heroMobile]}
         />
         :
         <Hero
-          images={[images.heroNavidadDesktop]}
+          images={[images.heroDesktop]}
         />
 
       }
