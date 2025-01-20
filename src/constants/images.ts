@@ -3,7 +3,7 @@ export const images = {
   // errorRed: require('../assets/png/errorRed.png'),
   // userBlocked: require('../assets/png/userBlocked.png'),
   // userIcon: require('../assets/png/user.png'),
-  logo: require('../assets/png/marilynLogo.png'),
+  logo: require('../assets/png/marilynLogo.jpg'),
   heroDesktop: require('../assets/png/heroDesk.jpg'),
   heroMobile: require('../assets/png/heroMobile.jpg'),
 };

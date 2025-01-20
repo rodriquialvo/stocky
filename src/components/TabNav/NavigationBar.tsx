@@ -87,9 +87,9 @@ const NavigationBar: React.FC<TabNavProps> = ({
         <Image
           src={images.logo}
           alt="Logo"
-          height={"50px"}
-          width={"50px"}
-          borderRadius={100}
+          height={"70px"}
+          width={"70px"}
+          borderRadius={1000}
           onClick={() => window.location.href = "/"}
           cursor={"pointer"}
         />
