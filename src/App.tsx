@@ -21,6 +21,8 @@ import { ProductAtributesAction } from './store/product-atributes/actions';
 import { RoleAction } from './store/roles/actions';
 import { useProductStore } from './store/product/slice';
 import { initialStateFilters } from './components/FilterPanel/constants';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
 
 function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
@@ -40,8 +42,19 @@ function App() {
       setProductsFilters(initialStateFilters)
     }
   },[userIsAuthenticated])
+
+  const handleSuccess = (credentialResponse) => {
+    const decoded = jwtDecode(credentialResponse.credential);
+    console.log('Login Success:', decoded);
+    // Aquí puedes manejar la información del usuario.
+  };
   return (
-    <BrowserRouter basename="/">
+    <GoogleOAuthProvider clientId={"318321636416-2b8qvnqab4815thpf7schcojkv4h4di7.apps.googleusercontent.com"}>
+      <GoogleLogin
+          onSuccess={handleSuccess}
+          onError={console.log}
+        />
+      <BrowserRouter basename="/">
       {/* <Box display="flex"> */}
       {/* Contenido principal */}
       <ScrollToTop />
@@ -101,6 +114,9 @@ function App() {
 
       {/* </Box> */}
     </BrowserRouter >
+    </GoogleOAuthProvider>
+
+    
   );
 }
 
