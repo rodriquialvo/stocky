@@ -18,7 +18,7 @@ const Hero: React.FC<HeroProps> = ({ images }) => {
   }, []);
 
   return (
-    <Box position="relative" height="700px" overflow="hidden">
+    <Box position="relative" height="400" w={"auto"} overflow="hidden">
       <Image
         src={images[currentIndex]}
         alt={`Hero Image ${currentIndex + 1}`}

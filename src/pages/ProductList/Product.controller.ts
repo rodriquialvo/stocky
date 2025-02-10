@@ -34,11 +34,8 @@ export const useProductController =
     }, [productsSelected, products]);
 
     useEffect(() => {
-      pathname === ROUTES.STOCK_LIST && cleanProductsSelected()
-    }, [pathname]);
-
-    useEffect(() => {
       setProductsFiltersAction(initialStateFilters);
+      cleanProductsSelected()
     }, [isFocused]);
 
     const mapProductsViewModel = (product: Product): ItemListProductProps => {

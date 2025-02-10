@@ -33,8 +33,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <Box width={"100%"} maxW={{
-      base: "50%",
-      lg: "60%"
+      base: "40%",
+      lg: "40%"
     }}>
       <InputGroup>
         <InputLeftElement pointerEvents="none">
@@ -43,8 +43,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
         <Input
           placeholder={placeholder}
           variant="outline"
-          focusBorderColor="blue.500"
+          focusBorderColor="#ec0868"
           borderRadius="md"
+          borderWidth={.5}
           size="md"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

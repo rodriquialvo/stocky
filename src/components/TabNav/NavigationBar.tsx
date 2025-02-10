@@ -21,6 +21,12 @@ import SearchBar from '../SearchBar/SearchBar';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { initialStateFilters } from '../FilterPanel/constants';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../constants/Routes';
+import MenuProducts from './MenuProducts';
+import MenuResellers from './MenuResellers';
+import MenuSales from './MenuSales';
+import MenuMayor from './MenuMayor';
 
 const NavigationBar: React.FC<TabNavProps> = ({
 }) => {
@@ -33,7 +39,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const [isMobile] = useMediaQuery("(max-width: 768px)");
   const { getProducts, getProductDetailWhitStockInDropDown, setProductsFiltersAction } = ProductAction()
   const productsFilter = useProductStore(state => state.productsFilters);
-
+  const navigate = useNavigate();
   // Función para manejar el scroll y determinar la dirección
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
@@ -87,27 +93,35 @@ const NavigationBar: React.FC<TabNavProps> = ({
         <Image
           src={images.logo}
           alt="Logo"
-          height={"70px"}
-          width={"70px"}
+          height={"60px"}
+          width={"60px"}
           borderRadius={1000}
-          onClick={() => window.location.href = "/"}
+          // onClick={() => window.location.href = "/"}
+          onClick={() => navigate(ROUTES.LOGIN)}
           cursor={"pointer"}
         />
+        <Flex gap={20}>
+          <MenuProducts />
+          <MenuResellers />
+          <MenuSales/>
+          <MenuMayor/>
+        </Flex>
         <SearchBar
           onSearch={onSearch}
         />
         <Flex
           alignItems={"center"}
         >
-          <Button
-            leftIcon={<IoFilter />}
-            colorScheme="pink"
-            variant="solid"
+          <IconButton
+            aria-label="Filter"
+            icon={<IoFilter />}
+            variant="ghost"
             onClick={() => setIsOpenFilterPanel(true)}
-          // ml={4}
+            bg="transparent"
+            color="#ec0868"
           >
-            {!isMobile && "Filtros"}
-          </Button>
+            {/* {!isMobile && "Filtros"} */}
+          </IconButton>
           <Flex
             alignItems={"center"}
             flexDirection={{
@@ -119,7 +133,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
               aria-label="Cart"
               icon={<FiShoppingCart />}
               variant="ghost"
-              colorScheme="pink"
+              color="#ec0868"
               fontSize="1.5rem"
               ml={4}
               onClick={() => setIsOpenCartPanel(true)}

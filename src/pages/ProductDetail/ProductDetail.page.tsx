@@ -25,9 +25,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
       display={"flex"}
       flexDirection={"column"}
     >
-      <NavigationBar
-      // onClickFilterButton={onOpen}
-      />
+      <NavigationBar/>
       {
         controller.isLoading && (
           <LoadingOverlay />
@@ -56,9 +54,6 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             alignSelf={"center"}
             width={"100%"}
             height={500}
-
-          // bg="blue"
-
           >
             <Box
               overflow={"scroll"}
@@ -68,18 +63,15 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 md: "flex"
               }}
               flexDirection={"column"}
-              // px={10}
               css={{
-                /* Oculta el scroll en diferentes navegadores */
                 scrollbarWidth: 'none', /* Firefox */
                 '-ms-overflow-style': 'none', /* IE y Edge */
               }}
               sx={{
                 '::-webkit-scrollbar': {
-                  display: 'none', /* Chrome, Safari y Opera */
+                  display: 'none', 
                 },
               }}
-            // bg="yellow"
             >
               {
                 controller.productDetail?.pictures.map(image => {
@@ -87,7 +79,6 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                     <Box
                       borderWidth={controller.imageSelected === image.url ? 2 : 0}
                       borderColor={"black"}
-                      borderRadius={7}
                     >
                       <Image
                         height={60}
@@ -97,7 +88,6 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                         objectFit='cover'
                         px={0}
                         onClick={() => controller.setImageSelected(image.url)}
-                        borderRadius={5}
                         alt={image.alt_text}
                       />
                     </Box>)
@@ -201,6 +191,10 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             >{capitalizeFirstLetter(controller.productDetail?.attributes.brand)} - Artículo {controller.productDetail?.code}</Text>
             <Heading>{capitalizeFirstLetter(controller.productDetail?.name)}</Heading >
             <Heading>{formattedNumberToMoney(controller.productDetail?.prices.retail)}</Heading>
+            <Box>
+            <Text display="inline-block"  fontWeight={"bold"}  px={1} bg={"#ec0868"} color={"white"}  >-30% a partir de 2da pieza 🔥</Text>
+
+            </Box>
             <Divider
               my={5}
               display={{

@@ -38,6 +38,7 @@ export const ProductList: React.FC<ProductProps> = (props) => {
           />
           <Heading
             ml={5}
+            fontWeight={"bold"}
             fontSize="md" flex='1' textAlign='left'>
             Nombre
           </Heading>

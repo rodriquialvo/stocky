@@ -15,16 +15,16 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
   const [isMobile] = useMediaQuery("(max-width: 768px)");
+  const isAdminUser = useSessionStore(state => state.isAdminUser);
 
-
-  if (!userIsAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+  // if (!userIsAuthenticated) {
+  //   return <Navigate to="/" replace />;
+  // }
   return <>
     <Box
       as="main"
       flex="1"
-      ml={isSidebarExpanded ? "250px" : (isMobile ? 0 : "70px")} // Ajustamos el margen izquierdo dinámicamente
+      ml={isAdminUser ? (isSidebarExpanded ? "250px" : (isMobile ? 0 : "70px")) : 0} // Ajustamos el margen izquierdo dinámicamente
       p={4}
       transition="margin-left 0.3s ease"
       padding={0}
@@ -37,7 +37,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
       {children}
       {
         isMobile && (
-          <Box position="fixed" bottom="20px" right="20px" zIndex="1000">
+          <Box display={isAdminUser ? "block" : "none"} position="fixed" bottom="20px" right="20px" zIndex="1000">
             <IconButton
               aria-label="Toggle expand sidebar"
               icon={<HamburgerIcon />}
