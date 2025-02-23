@@ -1,5 +1,5 @@
 import { CreateUserDto, FilterGetResellersDto, Reseller } from '../../services/users/dtos/generic';
-import { registerBody } from '../../services/users/dtos/register.dt';
+import { registerBody } from '../../services/users/dtos/register.dto';
 import { useAPIUserService } from '../../services/users/user.service';
 import {
   getErrorStatus,

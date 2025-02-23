@@ -13,7 +13,8 @@ export const initialStateFilters: FiltersState = {
     maxQuantity: "0",
     minResellerPrice:"0",
     maxResellerPrice: "0",
-    hasStock: false
+    hasStock: false,
+    isWholesaler: false
 }
 
 export interface FiltersState {
@@ -32,5 +33,6 @@ export interface FiltersState {
     minResellerPrice: number | string;
     maxResellerPrice: number | string;
     hasStock: boolean;
-    q?: string
+    q?: string;
+    isWholesaler: boolean
 }
