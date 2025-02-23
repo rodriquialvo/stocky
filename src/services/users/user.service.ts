@@ -1,6 +1,6 @@
 import { ApiUserService } from './api-user.service';
 import { CreateUserDto, FilterGetResellersDto, GetResellerSingeResponseDto, GetResellersResponseDto, Reseller } from './dtos/generic';
-import { registerBody, ResponseRegisterDto } from './dtos/register.dt';
+import { registerBody, ResponseRegisterDto } from './dtos/register.dto';
 
 export interface UserService {
   getUsers: (filter: FilterGetResellersDto) => Promise<GetResellersResponseDto>,

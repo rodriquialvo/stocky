@@ -1,6 +1,6 @@
 import { Session } from '../../../src/tools/session/session';
 import Http from '../http';
-import { ResponseRegisterDto } from '../users/dtos/register.dt';
+import { ResponseRegisterDto } from '../users/dtos/register.dto';
 import { ResponseLoginDto } from './dtos/session.dto';
 import { SessionService } from './session.service';
 

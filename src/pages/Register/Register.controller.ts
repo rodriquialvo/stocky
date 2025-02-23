@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
 import { useUserStore } from '../../store/users/slice';
 import { UserAction } from '../../store/users/actions';
-import { registerBody } from '../../services/users/dtos/register.dt';
+import { registerBody } from '../../services/users/dtos/register.dto';
 
 export const useRegisterController =
   (): /* <--Dependency Injections  like services hooks */

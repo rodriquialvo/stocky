@@ -3,10 +3,9 @@ import {
   Box,
   Flex,
   IconButton,
-  Button,
   Text,
   Image,
-  useMediaQuery,
+  Switch,
 } from '@chakra-ui/react';
 import { FiShoppingCart } from 'react-icons/fi';
 import { IoFilter } from "react-icons/io5";
@@ -15,22 +14,14 @@ import { TabNavProps } from './interfaces';
 import FilterPanel from '../FilterPanel/FilterPanel';
 import CartPanel from '../CartPanel/CartPanel';
 import { useCartStore } from '../../store/shoppingcart/slice';
-import { formattedNumberToMoney } from '../../utils/functions';
 import { images } from '../../constants/images';
 import SearchBar from '../SearchBar/SearchBar';
 import { ProductAction } from '../../store/product/actions';
-import { useProductStore } from '../../store/product/slice';
 import { initialStateFilters } from '../FilterPanel/constants';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../constants/Routes';
-import MenuProducts from './MenuProducts';
-import MenuResellers from './MenuResellers';
-import MenuSales from './MenuSales';
-import MenuMayor from './MenuMayor';
 import MenuPanel from '../MenuPanel/MenuPanel';
-import MenuUser from './MenuUser';
-import { Hamburger01Icon } from 'hugeicons-react';
 import { HamburgerIcon } from '@chakra-ui/icons';
+import MenuUser from './MenuUser';
+import { useProductStore } from '../../store/product/slice';
 
 const NavigationBar: React.FC<TabNavProps> = ({
 }) => {
@@ -40,11 +31,8 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const [islopenMenuPanel, setIsOpenMenuPanel] = useState(false);
   const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
   const isOpenCartPanel = useCartStore(state => state.isOpenCartPanel);
-  const cart = useCartStore(state => state.cart);
-  const [isMobile] = useMediaQuery("(max-width: 768px)");
-  const { getProducts, getProductDetailWhitStockInDropDown, setProductsFiltersAction } = ProductAction()
-  const productsFilter = useProductStore(state => state.productsFilters);
-  const navigate = useNavigate();
+  const { setProductsFiltersAction } = ProductAction()
+  const productsFilters = useProductStore(state => state.productsFilters);
   // Función para manejar el scroll y determinar la dirección
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
@@ -70,6 +58,10 @@ const NavigationBar: React.FC<TabNavProps> = ({
 
   const onSearch = (query: string) => {
     setProductsFiltersAction({ ...initialStateFilters, q: query });
+  };
+
+  const onActivateWholesalerProducts = () => {
+    setProductsFiltersAction({ ...initialStateFilters, isWholesaler: !productsFilters.isWholesaler });
   };
 
   return (
@@ -104,8 +96,6 @@ const NavigationBar: React.FC<TabNavProps> = ({
             // onClick={() => navigate(ROUTES.LOGIN)}
             cursor={"pointer"}
           />
-
-
         </Flex>
         <IconButton
           aria-label="Cart"
@@ -116,6 +106,16 @@ const NavigationBar: React.FC<TabNavProps> = ({
           // ml={4}
           onClick={() => setIsOpenMenuPanel(true)}
         />
+        <Flex gap={2} alignItems={"center"}>
+          <Text>Ver solo mayotistas</Text>
+          <Switch
+            size="md"
+            colorScheme="pink"
+            id='enable-Wholesaler'
+            onChange={onActivateWholesalerProducts}
+            isChecked={productsFilters.isWholesaler}
+          />
+        </Flex>
         <SearchBar
           onSearch={onSearch}
         />

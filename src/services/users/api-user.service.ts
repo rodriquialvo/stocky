@@ -1,7 +1,7 @@
 import { useSessionStore } from '../../store/session/slice';
 import Http from '../http';
 import { CreateUserDto, FilterGetResellersDto, GetResellerSingeResponseDto, GetResellersResponseDto, Reseller } from './dtos/generic';
-import { registerBody, ResponseRegisterDto } from './dtos/register.dt';
+import { registerBody, ResponseRegisterDto } from './dtos/register.dto';
 import { UserService } from './user.service';
 
 export class ApiUserService implements UserService {

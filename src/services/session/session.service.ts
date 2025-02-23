@@ -1,6 +1,6 @@
 import { useLocalSession } from '../../../src/tools/session/session.hooks';
 import { ApiSessionService } from './api-session.service';
-import { ResponseRegisterDto } from '../users/dtos/register.dt';
+import { ResponseRegisterDto } from '../users/dtos/register.dto';
 import { ResponseLoginDto } from './dtos/session.dto';
 
 export interface SessionService {
