@@ -1,15 +1,11 @@
 import { Box, Accordion, AccordionItem, Heading, Checkbox, Button } from '@chakra-ui/react';
 
-import NavigationBar from '../../components/TabNav/NavigationBar';
 import ItemListProduct from '../../components/ItemListProduct/ItemListProduct';
 import { useProductController } from './Product.controller';
 import { ProductProps } from './interfaces';
 import IncreaseAndDiscountPricePanel from '../../components/IncreaseAndDiscountPricePanel/IncreaseAndDiscountPricePanel';
 import Pagination from '../../components/Pagination/Pagination';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
-import { ProductAction } from '../../store/product/actions';
-import { useLocation } from 'react-router-dom';
-import { ROUTES } from '../../constants/Routes';
 
 export const ProductList: React.FC<ProductProps> = (props) => {
   const { useController = useProductController } = props;
@@ -22,8 +18,6 @@ export const ProductList: React.FC<ProductProps> = (props) => {
   // }
   return (
     <Box className=" relative min-h-screen">
-      <NavigationBar
-      />
       {
         controller.isLoading && (
           <LoadingOverlay />

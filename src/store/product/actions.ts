@@ -40,7 +40,6 @@ export const ProductAction = () => {
       setProducts(data.products);
       setTotalProducts(data.total);
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };

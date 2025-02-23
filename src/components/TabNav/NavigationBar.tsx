@@ -27,12 +27,17 @@ import MenuProducts from './MenuProducts';
 import MenuResellers from './MenuResellers';
 import MenuSales from './MenuSales';
 import MenuMayor from './MenuMayor';
+import MenuPanel from '../MenuPanel/MenuPanel';
+import MenuUser from './MenuUser';
+import { Hamburger01Icon } from 'hugeicons-react';
+import { HamburgerIcon } from '@chakra-ui/icons';
 
 const NavigationBar: React.FC<TabNavProps> = ({
 }) => {
   const [showNavbar, setShowNavbar] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [islopenFilterPanel, setIsOpenFilterPanel] = useState(false);
+  const [islopenMenuPanel, setIsOpenMenuPanel] = useState(false);
   const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
   const isOpenCartPanel = useCartStore(state => state.isOpenCartPanel);
   const cart = useCartStore(state => state.cart);
@@ -73,10 +78,10 @@ const NavigationBar: React.FC<TabNavProps> = ({
       w="100%"
       bg="white"
       boxShadow="md"
-      p={4}
-
+      p={1}
+      pr={4}
       position="sticky"
-      top={showNavbar ? 0 : { base: "-150px", lg: 0 }} // Desaparece al hacer scroll hacia abajo
+      top={showNavbar ? 0 : -150} // Desaparece al hacer scroll hacia abajo
       transition="top 0.3s ease-in-out"
       zIndex={10}
     >
@@ -85,33 +90,36 @@ const NavigationBar: React.FC<TabNavProps> = ({
         mx="auto"
         justify="space-between"
         align="center"
-        wrap="wrap"
-      // bg={"red"}
-      // gap={4}
       >
-        {/* Barra de Búsqueda */}
-        <Image
-          src={images.logo}
-          alt="Logo"
-          height={"60px"}
-          width={"60px"}
-          borderRadius={1000}
-          // onClick={() => window.location.href = "/"}
-          onClick={() => navigate(ROUTES.LOGIN)}
-          cursor={"pointer"}
-        />
-        <Flex gap={20}>
-          <MenuProducts />
-          <MenuResellers />
-          <MenuSales/>
-          <MenuMayor/>
+        <Flex
+          align={"center"}
+        >
+          <Image
+            src={images.logo}
+            alt="Logo"
+            height={"60px"}
+            width={"60px"}
+            borderRadius={1000}
+            onClick={() => window.location.href = "/"}
+            // onClick={() => navigate(ROUTES.LOGIN)}
+            cursor={"pointer"}
+          />
+
+
         </Flex>
+        <IconButton
+          aria-label="Cart"
+          icon={<HamburgerIcon />}
+          variant="ghost"
+          color="#ec0868"
+          fontSize="1.5rem"
+          // ml={4}
+          onClick={() => setIsOpenMenuPanel(true)}
+        />
         <SearchBar
           onSearch={onSearch}
         />
-        <Flex
-          alignItems={"center"}
-        >
+        <Flex>
           <IconButton
             aria-label="Filter"
             icon={<IoFilter />}
@@ -119,31 +127,24 @@ const NavigationBar: React.FC<TabNavProps> = ({
             onClick={() => setIsOpenFilterPanel(true)}
             bg="transparent"
             color="#ec0868"
-          >
-            {/* {!isMobile && "Filtros"} */}
-          </IconButton>
-          <Flex
-            alignItems={"center"}
-            flexDirection={{
-              base: "column",
-              md: "row"
-            }}
-          >
-            <IconButton
-              aria-label="Cart"
-              icon={<FiShoppingCart />}
-              variant="ghost"
-              color="#ec0868"
-              fontSize="1.5rem"
-              ml={4}
-              onClick={() => setIsOpenCartPanel(true)}
-            />
-            {
+          />
+          <IconButton
+            aria-label="Cart"
+            icon={<FiShoppingCart />}
+            variant="ghost"
+            color="#ec0868"
+            fontSize="1.5rem"
+            // ml={4}
+            onClick={() => setIsOpenCartPanel(true)}
+          />
+
+        </Flex>
+
+        {/* {
               !!cart.items.length &&
               <Text display={{ base: "none", md: "block" }} color={"pink.600"} fontWeight={"bold"}>{formattedNumberToMoney(cart.total_reseller)} | {formattedNumberToMoney(cart.total_retail)}</Text>
-            }
-          </Flex>
-        </Flex>
+            } */}
+        <MenuUser />
       </Flex>
       <FilterPanel
         isOpen={islopenFilterPanel}
@@ -153,6 +154,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
         isOpen={isOpenCartPanel}
         onClose={() => setIsOpenCartPanel(false)}
       />
+      <MenuPanel onClose={() => setIsOpenMenuPanel(false)} isOpen={islopenMenuPanel} />
     </Box>
   );
 };

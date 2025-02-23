@@ -32,7 +32,6 @@ export const CartAction = () => {
         isClosable: true,
       });
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -101,7 +100,6 @@ export const CartAction = () => {
       setStatus(getSuccessStatus());
       setCart(response.cart);
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };
