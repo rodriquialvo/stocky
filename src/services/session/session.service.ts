@@ -1,5 +1,6 @@
 import { useLocalSession } from '../../../src/tools/session/session.hooks';
 import { ApiSessionService } from './api-session.service';
+import { ResponseRegisterDto } from '../users/dtos/register.dt';
 import { ResponseLoginDto } from './dtos/session.dto';
 
 export interface SessionService {
@@ -7,7 +8,6 @@ export interface SessionService {
     username: string;
     password: string;
   }) => Promise<ResponseLoginDto>;
-  // refreshToken: (params: {refreshToken: string}) => Promise<SessionResponse>;
 }
 
 export const useAPISessionService = (): SessionService => {

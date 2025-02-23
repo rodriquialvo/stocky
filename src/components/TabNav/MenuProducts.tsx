@@ -34,7 +34,8 @@ const MenuProducts = () => {
                     Ingreso
                 </MenuItem>
             </MenuList>
-        </Menu>)
+        </Menu>
+        )
 }
 
 export default MenuProducts

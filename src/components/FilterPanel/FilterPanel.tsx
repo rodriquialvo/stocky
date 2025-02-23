@@ -232,44 +232,6 @@ const FilterPanel: React.FC<FilterPanelProps> = ({ isOpen, onClose }) => {
           </Box>
         </>
       }
-
-      {/* Selección de talla */}
-      {/* <Box>
-        <FormLabel fontWeight={"bold"}>Tipos de talle</FormLabel>
-        {sizesTypes.map((sizetype) => (
-          <RadioGroup defaultValue=''>
-            <Stack spacing={5}>
-              <Radio onClick={() => onSelectSizeType(sizetype.value)} isChecked={typeSizeSelected === sizetype.value} colorScheme='pink'>
-                <Text >{capitalizeFirstLetter(sizetype.label)}</Text>
-              </Radio>
-            </Stack>
-          </RadioGroup>
-        ))}
-      </Box> */}
-      {/* {
-        !!typeSizeSelected.length &&
-        <Box >
-          <FormLabel fontWeight={"bold"}>Talles</FormLabel>
-          {statusProductAtributes.isFetching &&
-            <Spinner />
-          }
-          {statusProductAtributes.success && sizes.map((size) => (
-            <Box>
-              <Checkbox
-                key={size._id}
-                value={size.value}
-                name='size'
-                checked={filters.size.includes(size.value)}
-                isChecked={filters.size.includes(size.value)}
-                onChange={(e) => updateArrayField(e.target.name, e.target.value, e.target.checked ? 'add' : 'remove')}
-                colorScheme={"pink"}
-              >
-                <Text >{size.value}</Text>
-              </Checkbox>
-            </Box>
-          ))}
-        </Box>
-      } */}
       <Box >
         <FormLabel fontWeight={"bold"} htmlFor="category">Categoria</FormLabel>
         <Box

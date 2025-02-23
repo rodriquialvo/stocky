@@ -118,7 +118,6 @@ export const CreateNewResellerPage: FC<
       bg="gray.100"
       borderRadius="lg"
       boxShadow="lg"
-      height="100vh"
       display="flex"
       alignItems="center"
       justifyContent="center"

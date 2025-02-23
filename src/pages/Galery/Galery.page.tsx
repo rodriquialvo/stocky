@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, SimpleGrid, useMediaQuery } from '@chakra-ui/react';
-import NavigationBar from '../../components/TabNav/NavigationBar';
 import GalleryItem from '../../components/GalleryItem/GaleryItem';
 import Hero from '../../components/Hero/Hero';
 import { useGaleryController } from './Galery.controller';
@@ -35,8 +34,7 @@ const GalleryPage: React.FC<GaleryProps> = props => {
       }
       <WhatsAppButton />
 
-      <NavigationBar
-      />
+
       {
         controller.isLoading && (
           <LoadingOverlay />
