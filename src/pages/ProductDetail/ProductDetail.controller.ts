@@ -147,6 +147,6 @@ export const useProductDetailController =
       isLoading: statusProduct.isFetching || statusCart.isFetching,
       colorsProduct: allColors.filter(color => productDetail?.colors?.includes(color.value)).map(color => { return {label: color.label, value: color.value}}),
       handleNext,
-      handlePrev
+      handlePrev,
     };
   };

@@ -1,54 +1,51 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { Button, Link, Menu, MenuButton, MenuItem, MenuList, Text } from "@chakra-ui/react";
+import React from 'react';
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  useBreakpointValue,
+} from '@chakra-ui/react';
+import { FiUser } from 'react-icons/fi';
+import { useSessionStore } from '../../store/session/slice';
+import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '../../constants/Routes';
 
-import React from 'react'
-import { ROUTES } from "../../constants/Routes";
-import { useSessionStore } from "../../store/session/slice";
-import { useNavigate } from "react-router-dom";
-import { SessionAction } from "../../store/session/actions";
+const MenuUser: React.FC = () => {
+  const isAuthenticated = useSessionStore(state => state.isAuthenticated);
+  const userLogged = useSessionStore(state => state.userLogged);
+  const reset = useSessionStore(state => state.reset);
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  const navigate = useNavigate();
 
-const MenuUser = () => {
-    const isAuthenticated = useSessionStore(state => state.isAuthenticated);
-    const userLoged = useSessionStore(state => state.userLogged);
-    const navigate = useNavigate();
-    const onPressLink = () => {
-        if(!isAuthenticated) {
-            navigate(ROUTES.LOGIN);
-        }
-    }
-      const { logout } = SessionAction()
-    
-    return (
-        <Menu>
-            <MenuButton
-                as={Button}
-                // rightIcon={<ChevronDownIcon />}
-                variant="link"
-                _hover={{ color: "pink.600" }}
-                color={"#ec0868"}
-                fontWeight={"bold"}
-                fontSize={"lg"}
-                onClick={onPressLink}
-            >
-                {
-                    !!isAuthenticated ? (
-                        "Hola, " + userLoged.name
-                    ) :
-                        "Iniciar sesión / Registrarse"
-                }
-            </MenuButton>
-            {
-                !!isAuthenticated && (
-                    <MenuList>
-                        <MenuItem as={Button} variant={"link"} onClick={logout}>
-                            Cerrar Sesión
-                        </MenuItem>
-                    </MenuList>
-                )
-            }
+  const handleLogout = () => {
+    reset();
+  };
 
-        </Menu>
-    )
-}
+  const handleLogin = () => {
+    navigate(ROUTES.LOGIN);
+  };
 
-export default MenuUser
+  return (
+    <Menu>
+      <MenuButton
+        as={IconButton}
+        aria-label="User menu"
+        icon={<FiUser />}
+        variant="ghost"
+        color="#ec0868"
+        _hover={{ bg: "pink.50" }}
+      />
+      <MenuList>
+        {isAuthenticated ? (
+          <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+        ) : (
+          <MenuItem onClick={handleLogin}>Iniciar sesión</MenuItem>
+        )}
+      </MenuList>
+    </Menu>
+  );
+};
+
+export default MenuUser;

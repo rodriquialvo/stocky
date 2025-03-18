@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Stack, Text, Tooltip, Badge, HStack, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, useDisclosure } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import { useState } from "react";
 import QuantityPicker from "../../components/QuantityPicker/QuantityPicker";
@@ -9,20 +9,26 @@ import LoadingOverlay from "../../components/LoadingOverlay/LoadingOverlay";
 
 const ProductDetail: React.FC<ProductDetailProps> = props => {
   const [isHovered, setIsHovered] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { useController = useProductDetailController } = props;
   const controller = useController();
 
+  const currentImageIndex = controller.productDetail?.pictures.findIndex(img => img.url === controller.imageSelected) || 0;
+  const totalImages = controller.productDetail?.pictures.length || 0;
+
   return (
     <Box
       w="100%"
-      h="100%"
+      minH="100vh"
+      bg="white"
       position="relative"
       overflow="hidden"
       justifyContent="center"
       flex={1}
       display={"flex"}
       flexDirection={"column"}
+      py={0}
     >
       {
         controller.isLoading && (
@@ -35,10 +41,20 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
           base: "column",
           lg: "row"
         }}
-        borderWidth={1}
-        padding={10}
-        width={"90%"}
+        bg="white"
+        width="100%"
+        mx="auto"
         alignSelf={"center"}
+        px={{
+          base: 4,
+          md: 8,
+          lg: 10
+        }}
+        py={{
+          base: 4,
+          md: 8,
+          lg: 10
+        }}
       >
         <Box
           width={{
@@ -52,6 +68,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             alignSelf={"center"}
             width={"100%"}
             height={500}
+            position="relative"
           >
             <Box
               overflow={"scroll"}
@@ -62,33 +79,50 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
               }}
               flexDirection={"column"}
               css={{
-                scrollbarWidth: 'none', /* Firefox */
-                '-ms-overflow-style': 'none', /* IE y Edge */
+                scrollbarWidth: 'none',
+                '-ms-overflow-style': 'none',
               }}
               sx={{
                 '::-webkit-scrollbar': {
-                  display: 'none', 
+                  display: 'none',
                 },
               }}
             >
               {
-                controller.productDetail?.pictures.map(image => {
+                controller.productDetail?.pictures.map((image, index) => {
                   return (
-                    <Box
-                      borderWidth={controller.imageSelected === image.url ? 2 : 0}
-                      borderColor={"black"}
-                    >
-                      <Image
-                        height={60}
-                        width={"auto"}
-                        src={image.url}
-                        className="object-cover"
-                        objectFit='cover'
-                        px={0}
-                        onClick={() => controller.setImageSelected(image.url)}
-                        alt={image.alt_text}
-                      />
-                    </Box>)
+                    <Tooltip _hover={{ 
+                      transform: 'scale(1.05)',
+                      borderWidth: controller.imageSelected === image.url ? 2 : 1,
+                      borderColor: "pink.500"
+                    }} key={index} label={`Imagen ${index + 1} de ${totalImages}`}>
+                      <Box
+                        borderWidth={controller.imageSelected === image.url ? 2 : 0}
+                        borderColor={"pink.500"}
+                        cursor="pointer"
+                        transition="all 0.2s"
+                        
+                        sx={{
+                          '&:hover': {
+                            borderWidth: controller.imageSelected === image.url ? '2px !important' : '1px',
+                            borderColor: 'pink.500',
+                            borderStyle: 'solid'
+                          }
+                        }}
+                      >
+                        <Image
+                          height={60}
+                          width={"auto"}
+                          src={image.url}
+                          className="object-cover"
+                          objectFit='cover'
+                          px={0}
+                          onClick={() => controller.setImageSelected(image.url)}
+                          alt={image.alt_text}
+                        />
+                      </Box>
+                    </Tooltip>
+                  )
                 })
               }
             </Box>
@@ -98,9 +132,10 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
               justifyContent={"center"}
               alignItems={"center"}
               flexDirection={"column"}
-              onMouseEnter={() => setIsHovered(true)} // Activar zoom al pasar el cursor
-              onMouseLeave={() => setIsHovered(false)} // Desactivar zoom al salir
-              overflow="hidden" // Para evitar que la imagen se desborde
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              overflow="hidden"
+              position="relative"
             >
               <Image
                 height={"100%"}
@@ -108,23 +143,25 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 src={controller.imageSelected}
                 objectFit='cover'
                 px={0}
-                transform={isHovered ? 'scale(1.1)' : 'scale(1)'} // Aumentar tamaño cuando está en hover
-                transition="transform 0.3s ease" // Animación suave
+                transform={isHovered ? 'scale(1.1)' : 'scale(1)'}
+                transition="transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
+                onClick={onOpen}
+                cursor="pointer"
               />
               <Box position={"absolute"} w={'100%'} display={{
                 base: 'flex',
                 md: 'none'
               }} justifyContent={"space-between"}>
-
                 <Button
                   onClick={controller.handlePrev}
                   position="absolute"
                   left={2}
                   top="50%"
                   transform="translateY(-50%)"
-                  colorScheme="teal" // Personaliza el color del botón
+                  colorScheme="pink"
+                  borderRadius="full"
                 >
-                  &#8249; {/* Ícono de flecha izquierda */}
+                  ←
                 </Button>
                 <Button
                   onClick={controller.handleNext}
@@ -132,9 +169,10 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   right={2}
                   top="50%"
                   transform="translateY(-50%)"
-                  colorScheme="teal" // Personaliza el color del botón
+                  colorScheme="pink"
+                  borderRadius="full"
                 >
-                  &#8250; {/* Ícono de flecha derecha */}
+                  →
                 </Button>
               </Box>
             </Box>
@@ -153,13 +191,26 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             }}
             flexDirection={"column"}
             width={"100%"}
+            borderRadius="lg"
           >
-            <Text>Detalles del producto:</Text>
+            <Text fontWeight="bold">Detalles del producto:</Text>
             <Text>{capitalizeFirstLetter(controller.productDetail?.description)}</Text>
-            <Text>-Marca: {capitalizeFirstLetter(controller.productDetail?.attributes.brand)}</Text>
-            <Text>-Talles: {controller.productDetail?.sizes.join(", ")}</Text>
-            <Text>-Colores: {controller.colorsProduct.map(color => color.label).join(", ")}</Text>
-            <Text>-Artículo: {controller.productDetail?.code}</Text>
+            <HStack spacing={4}>
+              <Text fontWeight="bold">Marca:</Text>
+              <Text>{capitalizeFirstLetter(controller.productDetail?.attributes.brand)}</Text>
+            </HStack>
+            <HStack spacing={4}>
+              <Text fontWeight="bold">Talles:</Text>
+              <Text>{controller.productDetail?.sizes.join(", ")}</Text>
+            </HStack>
+            <HStack spacing={4}>
+              <Text fontWeight="bold">Colores:</Text>
+              <Text>{controller.colorsProduct.map(color => color.label).join(", ")}</Text>
+            </HStack>
+            <HStack spacing={4}>
+              <Text fontWeight="bold">Artículo:</Text>
+              <Text>{controller.productDetail?.code}</Text>
+            </HStack>
           </Box>
         </Box>
         <Box
@@ -184,14 +235,17 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             }}
             spacing={4}
           >
-            <Text
-              color={"GrayText"}
-            >{capitalizeFirstLetter(controller.productDetail?.attributes.brand)} - Artículo {controller.productDetail?.code}</Text>
-            <Heading>{capitalizeFirstLetter(controller.productDetail?.name)}</Heading >
-            <Heading>{formattedNumberToMoney(controller.productDetail?.prices.retail)}</Heading>
+            <Text color={"GrayText"}>
+              {capitalizeFirstLetter(controller.productDetail?.attributes.brand)} - Artículo {controller.productDetail?.code}
+            </Text>
+            <Heading>{capitalizeFirstLetter(controller.productDetail?.name)}</Heading>
             <Box>
-            <Text display="inline-block"  fontWeight={"bold"}  px={1} bg={"#ec0868"} color={"white"}  >-30% a partir de 2da pieza 🔥</Text>
-
+              <Heading color="pink.500" fontSize="2xl">
+                {formattedNumberToMoney(controller.productDetail?.prices.retail)}
+              </Heading>
+              <Badge colorScheme="red" fontSize="md" p={2} borderRadius="md">
+                -30% a partir de 2da pieza 🔥
+              </Badge>
             </Box>
             <Divider
               my={5}
@@ -214,13 +268,26 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
               }}
               flexDirection={"column"}
               width={"100%"}
+              borderRadius="lg"
             >
-              <Text>Detalles del producto:</Text>
+              <Text fontWeight="bold">Detalles del producto:</Text>
               <Text>{controller.productDetail?.description}</Text>
-              <Text>-Marca {controller.productDetail?.attributes.brand}</Text>
-              <Text>-Talles: {controller.productDetail?.sizes.join(", ")}</Text>
-              <Text>-Colores: {controller.colorsProduct.map(color => color.label).join(", ")}</Text>
-              <Text>-Artículo: {controller.productDetail?.code}</Text>
+              <HStack spacing={4}>
+                <Text fontWeight="bold">Marca:</Text>
+                <Text>{controller.productDetail?.attributes.brand}</Text>
+              </HStack>
+              <HStack spacing={4}>
+                <Text fontWeight="bold">Talles:</Text>
+                <Text>{controller.productDetail?.sizes.join(", ")}</Text>
+              </HStack>
+              <HStack spacing={4}>
+                <Text fontWeight="bold">Colores:</Text>
+                <Text>{controller.colorsProduct.map(color => color.label).join(", ")}</Text>
+              </HStack>
+              <HStack spacing={4}>
+                <Text fontWeight="bold">Artículo:</Text>
+                <Text>{controller.productDetail?.code}</Text>
+              </HStack>
             </Box>
             <Flex
               gap={8}
@@ -248,10 +315,10 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                     }}
                     onChange={controller.handleSelectColor}
                     isDisabled={!controller.productDetail?.hasStock}
+                    value={controller.colorsProduct?.find((color) => color.value === controller.color) || null}
                   />
                 </FormControl>
-                <FormControl
-                >
+                <FormControl>
                   <FormLabel htmlFor="brand">Talle</FormLabel>
                   <Select
                     isSearchable={false}
@@ -285,14 +352,41 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   isDisabled={controller.isDisabledButton}
                   w={"full"}
                   colorScheme={'pink'}
+                  size="lg"
                   onClick={() => controller.onAddToCartPressed({ size: controller.size, color: controller.color, quantity: controller.quantity })}
-                >Agregar al carrito</Button>
+                >
+                  Agregar al carrito
+                </Button>
               </Flex>
             </Flex>
-
           </Stack>
         </Box>
       </Box>
+      {/* Modal para zoom */}
+      <Modal isOpen={isOpen} onClose={onClose} size="full">
+        <ModalOverlay />
+        <ModalContent bg="rgba(0, 0, 0, 0.9)" margin={0} rounded="none">
+          <ModalCloseButton color="white" size="lg" />
+          <ModalBody 
+            display="flex" 
+            justifyContent="center" 
+            alignItems="center" 
+            p={{
+              base: 4,
+              md: 10
+            }}
+          >
+            <Image
+              src={controller.imageSelected}
+              maxH="90vh"
+              maxW="90vw"
+              objectFit="contain"
+              onClick={onClose}
+              cursor="pointer"
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   )
 }

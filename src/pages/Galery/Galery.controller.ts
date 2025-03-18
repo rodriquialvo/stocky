@@ -46,7 +46,8 @@ export const useGaleryController =
         price: formattedNumberToMoney(product?.prices?.retail),
         onClick: () => onPressProduct(product),
         brand: product.attributes.brand,
-        code: product.code
+        code: product.code,
+        isWholesale: product.wholesaleData.isWholesaler
       }
     }
 
@@ -54,10 +55,11 @@ export const useGaleryController =
       setProductsFiltersAction({
         ...productFilters,
         page: Number(page)
-      })
+      }) 
     }
 
     // Return state and events
+
     return {
       productsViewModel: products?.map(mapProductsViewModel),
       isLoading: status.isFetching,

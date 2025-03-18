@@ -1,7 +1,25 @@
-import { Box, Button, Checkbox, HStack, Input, List, ListItem, Text, VStack } from '@chakra-ui/react';
+import { 
+  Box,
+  Button,
+  IconButton,
+  Input,
+  List,
+  ListItem,
+  Text,
+  VStack,
+  useDisclosure,
+  ScaleFade,
+  Container,
+  Card,
+  CardBody,
+  CardHeader,
+  Heading,
+  SimpleGrid,
+  Tooltip,
+  useToast
+} from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { mapColors } from '../../constants/maps';
 import { ProductAction } from '../../store/product/actions';
 import { useProductStore } from '../../store/product/slice';
 import { StockAction } from '../../store/stock/actions';
@@ -9,18 +27,17 @@ import { useStockStore } from '../../store/stock/slice';
 import { getErrorMessage } from './errors';
 import { Select } from 'chakra-react-select';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
+import { motion } from 'framer-motion';
+import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+
+const MotionBox = motion(Box);
 
 export default function StockEntry() {
-  // states
-  // const [searchTerm, setSearchTerm] = useState('');
-  // const [showDropdown, setShowDropdown] = useState(false);
-  // const [selectedProduct, setSelectedProduct] = useState(null);
   const defaultStockEntries = [
     { product: null, quantity: '', cost: '', color: '', size: '', showDropdown: false, searchTerm: '' }
   ]
   const [stockEntries, setStockEntries] = useState(defaultStockEntries);
 
-  // actions stores
   const { getProductsByCodeOrName } = ProductAction();
   const { postStockMultiple } = StockAction();
   const productsByCodeOrName = useProductStore(state => state.productsByCodeOrName);
@@ -28,6 +45,7 @@ export default function StockEntry() {
   const postStockLoading = useStockStore(state => state.postStockLoading);
   const restoreStatusAndLoading = useStockStore(state => state.restoreStatusAndLoading);
   const allColors = useProductAtributesStore(state => state.allColors);
+  const chakraToast = useToast();
 
   // handlers
   const findProductById = (index, id: string) => {
@@ -126,108 +144,179 @@ export default function StockEntry() {
   };
 
   return (
-    <Box maxW="full" mt={10} p={8} boxShadow="lg" borderRadius="lg" bg="gray.50">
-      <Text fontSize="2xl" fontWeight="bold" mb={6}>Cargar Stocks</Text>
-      <form onSubmit={handleSubmit}>
-        <VStack spacing={6}>
-          {stockEntries.map((entry, index) => (
-            <Box display={"flex"} flexDirection={{ base: "column", lg: "row" }} alignItems={"center"} gap={5} key={index}  w="full">
-              <Text fontSize="md" mb={1}>{index + 1}</Text>
-              <Box position="relative" w="100%">
-                <Input
-                  size="lg"
-                  placeholder="Escribe para buscar..."
-                  value={entry.searchTerm}
-                  onChange={(e) => handleInputChange(index, 'searchTerm', e.target.value)}
-                  focusBorderColor="teal.400"
-                  onFocus={() => handleInputChange(index, 'showDropdown', true)}
-                />
+    <Container maxW="7xl" py={8}>
+      <Card>
+        <CardHeader>
+          <Heading size="lg" color="teal.600">Entrada de Stock</Heading>
+        </CardHeader>
+        <CardBody>
+          <form onSubmit={handleSubmit}>
+            <VStack spacing={6}>
+              {stockEntries.map((entry, index) => (
+                <ScaleFade in={true} key={index}>
+                  <Card variant="outline" w="full" borderColor="teal.100">
+                    <CardBody>
+                      <SimpleGrid columns={{ base: 1, md: 2, lg: 6 }} spacing={4} alignItems="start">
+                        <Box>
+                          <Text fontSize="sm" mb={2} color="gray.600">Producto #{index + 1}</Text>
+                          <Box position="relative">
+                            <Input
+                              size="md"
+                              placeholder="Buscar producto..."
+                              value={entry.searchTerm}
+                              onChange={(e) => handleInputChange(index, 'searchTerm', e.target.value)}
+                              focusBorderColor="teal.400"
+                              onFocus={() => handleInputChange(index, 'showDropdown', true)}
+                              bg="white"
+                              _hover={{ borderColor: 'teal.300' }}
+                            />
+                            {entry.showDropdown && productsByCodeOrName.length > 0 && (
+                              <List
+                                position="absolute"
+                                zIndex={1000}
+                                w="full"
+                                maxH="200px"
+                                overflowY="auto"
+                                mt={1}
+                                bg="white"
+                                boxShadow="lg"
+                                borderRadius="md"
+                                border="1px solid"
+                                borderColor="gray.200"
+                              >
+                                {productsByCodeOrName.map((product, indexP) => (
+                                  <ListItem
+                                    key={indexP}
+                                    px={4}
+                                    py={2}
+                                    cursor="pointer"
+                                    transition="all 0.2s"
+                                    _hover={{ bg: 'teal.50' }}
+                                    onClick={() => {
+                                      findProductById(index, product.id);
+                                      handleInputChange(index, 'searchTerm', `${product.name} (${product.code})`);
+                                      handleInputChange(index, 'showDropdown', false);
+                                      handleInputChange(index, 'cost', product.prices.cost);
+                                    }}
+                                  >
+                                    {product.name} ({product.code})
+                                  </ListItem>
+                                ))}
+                              </List>
+                            )}
+                          </Box>
+                        </Box>
 
-                {entry.showDropdown && productsByCodeOrName.length > 0 && (
-                  <List
-                    position="absolute"
-                    zIndex="dropdown"
-                    w="full"
-                    maxH="200px"
-                    overflowY="auto"
-                    mt={1}
-                    bg="white"
-                    boxShadow="md"
-                    borderRadius="md"
-                    border="1px solid"
-                    borderColor="gray.200"
-                  >
-                    {productsByCodeOrName
-                      .map((product, indexP) => (
-                        <ListItem
-                          key={indexP}
-                          px={4}
-                          py={2}
-                          cursor="pointer"
-                          _hover={{ bg: 'teal.100' }}
-                          onClick={() => {
-                            findProductById(index, product.id);
-                            handleInputChange(index, 'searchTerm', `${product.name} (${product.code})`);
-                            handleInputChange(index, 'showDropdown', false);
-                            handleInputChange(index, 'cost', product.prices.cost);
-                          }}
-                        >
-                          {product.name} ({product.code})
-                        </ListItem>
-                      ))}
-                  </List>
-                )}
-              </Box>
-              <Box position="relative" w="100%">
+                        <Box>
+                          <Text fontSize="sm" mb={2} color="gray.600">Color</Text>
+                          <Select
+                            isMulti
+                            placeholder="Seleccionar color"
+                            value={entry.color}
+                            onChange={(value) => handleInputChange(index, 'color', value)}
+                            options={entry.product?.colors.map(color => ({ value: color, label: allColors.find(c => c.value === color)?.label }))}
+                            size="md"
+                            chakraStyles={{
+                              container: (provided) => ({
+                                ...provided,
+                                bg: 'white',
+                              })
+                            }}
+                          />
+                        </Box>
 
-                <Select
-                  isMulti
-                  placeholder="Color"
-                  value={entry.color}
-                  onChange={(value) => handleInputChange(index, 'color', value)}
-                  options={entry.product?.colors.map(color => ({ value: color, label: allColors.find(c => c.value === color)?.label }))}
-                  size="lg"
-                  
-                />
-              </Box>
-              <Box position="relative" w="100%">
+                        <Box>
+                          <Text fontSize="sm" mb={2} color="gray.600">Talle</Text>
+                          <Select
+                            isMulti
+                            placeholder="Seleccionar talle"
+                            value={entry.size}
+                            onChange={(value) => handleInputChange(index, 'size', value)}
+                            options={entry.product?.sizes.map(size => ({ value: size, label: size }))}
+                            size="md"
+                            chakraStyles={{
+                              container: (provided) => ({
+                                ...provided,
+                                bg: 'white',
+                              })
+                            }}
+                          />
+                        </Box>
 
-                <Select
-                  isMulti
-                  placeholder="Talle"
-                  value={entry.size}
-                  onChange={(value) => handleInputChange(index, 'size', value)}
-                  size="lg"
-                  options={entry.product?.sizes.map(size => ({ value: size, label: size }))}
-                />
-              </Box>
-              <Input
-                type="number"
-                placeholder="Cantidad"
-                value={entry.quantity}
-                onChange={(e) => handleInputChange(index, 'quantity', e.target.value)}
-                size="lg"
-              />
-              <Input
-                type="number"
-                placeholder="Costo"
-                value={entry.cost}
-                onChange={(e) => handleInputChange(index, 'cost', e.target.value)}
-                size="lg"
-              />
-              <Button w={{ base: "100%", lg: "10%" }} colorScheme="red" size="lg" onClick={() => handleRemoveEntry(index)}>
-                X
+                        <Box>
+                          <Text fontSize="sm" mb={2} color="gray.600">Cantidad</Text>
+                          <Input
+                            type="number"
+                            placeholder="0"
+                            value={entry.quantity}
+                            onChange={(e) => handleInputChange(index, 'quantity', e.target.value)}
+                            size="md"
+                            bg="white"
+                            _hover={{ borderColor: 'teal.300' }}
+                          />
+                        </Box>
+
+                        <Box>
+                          <Text fontSize="sm" mb={2} color="gray.600">Costo</Text>
+                          <Input
+                            type="number"
+                            placeholder="$0.00"
+                            value={entry.cost}
+                            onChange={(e) => handleInputChange(index, 'cost', e.target.value)}
+                            size="md"
+                            bg="white"
+                            _hover={{ borderColor: 'teal.300' }}
+                          />
+                        </Box>
+
+                        <Box>
+                          <Text fontSize="sm" mb={2} color="gray.600">&nbsp;</Text>
+                          <Tooltip label="Eliminar entrada" placement="top">
+                            <IconButton
+                              aria-label="Eliminar entrada"
+                              icon={<DeleteIcon />}
+                              colorScheme="red"
+                              variant="ghost"
+                              onClick={() => handleRemoveEntry(index)}
+                              isDisabled={stockEntries.length === 1}
+                            />
+                          </Tooltip>
+                        </Box>
+                      </SimpleGrid>
+                    </CardBody>
+                  </Card>
+                </ScaleFade>
+              ))}
+
+              <Button
+                leftIcon={<AddIcon />}
+                colorScheme="teal"
+                onClick={handleAddEntry}
+                size="md"
+                w={{ base: "full", md: "auto" }}
+                isDisabled={!isRowComplete(stockEntries.length - 1)}
+                variant="outline"
+              >
+                Añadir producto
               </Button>
-            </Box>
-          ))}
-          <Button colorScheme="teal" onClick={handleAddEntry} size="lg" w="full" mt={4}>
-            Añadir otro producto
-          </Button>
-          <Button isLoading={postStockStatus.isFetching} isDisabled={postStockLoading || !isRowComplete(stockEntries.length - 1)} type="submit" colorScheme="blue" size="lg" w="full" mt={6}>
-            Guardar todos los stocks
-          </Button>
-        </VStack>
-      </form>
-    </Box>
+
+              <Button
+                colorScheme="blue"
+                size="lg"
+                w="full"
+                type="submit"
+                isLoading={postStockStatus.isFetching}
+                isDisabled={postStockLoading || !isRowComplete(stockEntries.length - 1)}
+                boxShadow="md"
+                _hover={{ transform: 'translateY(-2px)', boxShadow: 'lg' }}
+                transition="all 0.2s"
+              >
+                Guardar todos los stocks
+              </Button>
+            </VStack>
+          </form>
+        </CardBody>
+      </Card>
+    </Container>
   );
 }

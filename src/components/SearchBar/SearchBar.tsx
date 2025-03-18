@@ -1,65 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { Input, InputGroup, InputLeftElement, Box, Spinner, InputRightElement } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
+import React, { useState } from 'react';
+import {
+  Input,
+  InputGroup,
+  InputLeftElement,
+  useBreakpointValue,
+} from '@chakra-ui/react';
+import { FiSearch } from 'react-icons/fi';
 
 interface SearchBarProps {
-  onSearch: (query: string) => void; // Función que se ejecutará al buscar
-  placeholder?: string; // Placeholder personalizado
-  debounceTime?: number; // Tiempo de espera antes de buscar
+  onSearch: (query: string) => void;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({
-  onSearch,
-  placeholder = "Buscar...",
-  debounceTime = 1500,
-}) => {
-  const [searchTerm, setSearchTerm] = useState(""); // Valor del input
-  const [isLoading, setIsLoading] = useState(false); // Indicador de carga
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [query, setQuery] = useState('');
+  const inputSize = useBreakpointValue({ base: "sm", md: "md" });
+  const inputWidth = useBreakpointValue({ base: "100%", md: "40%" });
 
-  useEffect(() => {
-    if (searchTerm.length >= 3) {
-      setIsLoading(true);
-      const timeout = setTimeout(() => {
-        onSearch(searchTerm);
-        setIsLoading(false);
-      }, debounceTime);
-
-      return () => clearTimeout(timeout); // Limpiar el timeout si el usuario sigue escribiendo
-    } else if (searchTerm.length < 3) {
-      setIsLoading(false);
-      onSearch(""); // Llamar con una búsqueda vacía si no hay suficientes caracteres
-    }
-  }, [searchTerm, debounceTime]);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+    onSearch(value);
+  };
 
   return (
-    <Box width={"100%"} maxW={{
-      base: "40%",
-      lg: "40%"
-    }}>
-      <InputGroup>
-        <InputLeftElement pointerEvents="none">
-          <SearchIcon color="gray.400" />
-        </InputLeftElement>
-        <Input
-          placeholder={placeholder}
-          variant="outline"
-          focusBorderColor="#ec0868"
-          borderRadius="md"
-          borderWidth={.5}
-          size="md"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <InputRightElement onClick={() => setSearchTerm("")} cursor="pointer">
-          x
-        </InputRightElement>
-      </InputGroup>
-      {isLoading && (
-        <Box mt={2} textAlign="center">
-          <Spinner size="sm" color="blue.500" />
-        </Box>
-      )}
-    </Box>
+    <InputGroup size={inputSize} w={inputWidth}>
+      <InputLeftElement pointerEvents="none">
+        <FiSearch color="#ec0868" />
+      </InputLeftElement>
+      <Input
+        placeholder="Buscar productos..."
+        value={query}
+        onChange={handleChange}
+        borderColor="gray.300"
+        _hover={{ borderColor: "pink.300" }}
+        _focus={{ borderColor: "#ec0868" }}
+        borderRadius="full"
+      />
+    </InputGroup>
   );
 };
 

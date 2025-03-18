@@ -13,6 +13,7 @@ import SalesList from './pages/SalesList/SalesList';
 import ResellerList from './pages/ResellersList/ResellersList';
 import StockEntry from './pages/StockEntry/StockEntry';
 import SalesWeek from './pages/SalesWeek/SalesWeek.page';
+import SalesAnalyticsPage from './pages/SalesAnalytics/SalesAnalytics.page';
 import ScrollToTop from './hooks/ScrollToTop';
 import { useEffect } from 'react';
 import { CategoryAction } from './store/category/actions';
@@ -96,6 +97,11 @@ function App() {
           <Route path={ROUTES.SALES_WEEK} element={
             <ProtectedRoute >
               <SalesWeek />
+            </ProtectedRoute>
+          } />
+          <Route path={ROUTES.SALES_ANALYTICS} element={
+            <ProtectedRoute >
+              <SalesAnalyticsPage />
             </ProtectedRoute>
           } />
         </Routes>

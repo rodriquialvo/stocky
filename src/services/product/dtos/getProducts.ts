@@ -15,6 +15,12 @@ export interface Product {
     colors: string[],
     sizeType: string;
     hasStock: boolean;
+    wholesaleData: WholesaleData;
+}
+
+export interface WholesaleData {
+    isWholesaler: boolean;
+    minimumQuantity: number;
 }
 
 export interface Attributes {

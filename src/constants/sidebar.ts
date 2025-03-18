@@ -23,6 +23,7 @@ export const SIDEBAR_ITEMS = (isAdmin: boolean) => ({
         subItems: [
             { label: 'Lista', route: ROUTES.SALES_LIST },
             { label: 'Semana', route: ROUTES.SALES_WEEK },
+            { label: 'Análisis', route: ROUTES.SALES_ANALYTICS },
         ]
     }
 })

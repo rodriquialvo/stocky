@@ -1,3 +1,5 @@
+import { WholesaleData } from "./getProducts";
+
 export interface GetProductDetailResponse {
     product: ProductDetail;
 }
@@ -15,6 +17,7 @@ export interface ProductDetail {
     stocks?:      Stock[];
     sizes:       string[];
     colors:      string[];
+    wholesaleData: WholesaleData;
 }
 
 export interface Attributes {
