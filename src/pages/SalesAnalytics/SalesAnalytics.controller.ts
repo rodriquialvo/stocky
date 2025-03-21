@@ -1,4 +1,10 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useSalesStore } from '../../store/sales/slice';
+import { SalesService } from '../../services/sales/sales.service';
+import { ApiSalesService } from '../../services/sales/api-sales.service';
+import { getStartStatus, getSuccessStatus, getErrorStatus } from '../../store/helper/statusStateFactory';
+
+const salesService: SalesService = new ApiSalesService();
 
 interface Metrics {
   totalSales: number;
@@ -11,74 +17,63 @@ interface Metrics {
   ticketGrowth: number;
 }
 
-interface Month {
+export interface Month {
   value: string;
   label: string;
 }
 
+const generateMonths = (count: number = 12): Month[] => {
+  const months = [];
+  const currentDate = new Date();
+  const monthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+
+  for (let i = 0; i < count; i++) {
+    const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+    const monthValue = date.toISOString().slice(0, 7); // Formato YYYY-MM
+    const monthLabel = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+    months.push({ value: monthValue, label: monthLabel });
+  }
+
+  return months;
+};
+
 export const useSalesAnalyticsController = () => {
-  const [selectedMonth, setSelectedMonth] = useState('2024-03');
-
-  const months: Month[] = [
-    { value: '2024-03', label: 'Marzo 2024' },
-    { value: '2024-02', label: 'Febrero 2024' },
-    { value: '2024-01', label: 'Enero 2024' },
-    { value: '2023-12', label: 'Diciembre 2023' },
-  ];
-
-  const metrics: Metrics = {
-    totalSales: 45678,
-    salesGrowth: 23.5,
-    totalProducts: 1234,
-    productsGrowth: 15.8,
-    activeResellers: 45,
-    resellersGrowth: 12.3,
-    averageTicket: 89.99,
-    ticketGrowth: -2.5,
-  };
-
-  const dailySalesData = [
-    { date: '2024-03-01', sales: 1500 },
-    { date: '2024-03-02', sales: 1800 },
-    { date: '2024-03-03', sales: 1200 },
-    { date: '2024-03-04', sales: 2200 },
-    { date: '2024-03-05', sales: 1900 },
-    { date: '2024-03-06', sales: 2100 },
-    { date: '2024-03-07', sales: 2400 },
-  ];
-
-  const topSellersData = [
-    { name: 'María García', sales: 12500 },
-    { name: 'Juan Pérez', sales: 10800 },
-    { name: 'Ana Martínez', sales: 9200 },
-    { name: 'Carlos López', sales: 8500 },
-    { name: 'Laura Torres', sales: 7900 },
-  ];
-
-  const topProductsData = [
-    { name: 'Camiseta Básica', sales: 450 },
-    { name: 'Pantalón Vaquero', sales: 380 },
-    { name: 'Vestido Floral', sales: 320 },
-    { name: 'Sudadera', sales: 290 },
-    { name: 'Zapatillas', sales: 250 },
-  ];
-
-  const categorySalesData = [
-    { name: 'Ropa', sales: 25000 },
-    { name: 'Calzado', sales: 15000 },
-    { name: 'Accesorios', sales: 8000 },
-    { name: 'Deportivo', sales: 12000 },
-    { name: 'Otros', sales: 5000 },
-  ];
-
-  return {
+  const { 
+    status, 
+    analytics, 
     selectedMonth,
     setSelectedMonth,
-    months,
-    metrics,
-    dailySalesData,
-    topSellersData,
-    topProductsData,
-    categorySalesData,
+    setAnalytics,
+    setStatus 
+  } = useSalesStore();
+
+  const months = generateMonths(24); // Generar 24 meses (2 años)
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        setStatus(getStartStatus());
+        const data = await salesService.getSalesAnalytics(selectedMonth);
+        setAnalytics(data);
+        setStatus(getSuccessStatus());
+      } catch (error) {
+        console.error('Error fetching sales analytics:', error);
+        setStatus(getErrorStatus(error as Error));
+      }
+    };
+
+    fetchAnalytics();
+  }, [selectedMonth, setAnalytics, setStatus]);
+
+  console.log("analytics", analytics);
+  return {
+    status,
+    analytics,
+    selectedMonth,
+    setSelectedMonth,
+    months
   };
 }; 

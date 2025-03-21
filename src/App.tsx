@@ -31,6 +31,7 @@ function App() {
   const { getRoles } = RoleAction();
   const setProductsFilters = useProductStore(state => state.setProductsFilters);
   const isAuthenticated = useSessionStore(state => state.isAuthenticated);
+
   useEffect(() => {
     if (userIsAuthenticated) {
       getCategories();
@@ -45,10 +46,7 @@ function App() {
 
   return (
     <GoogleOAuthProvider clientId={"318321636416-2b8qvnqab4815thpf7schcojkv4h4di7.apps.googleusercontent.com"}>
-
       <BrowserRouter basename="/">
-        {/* <Box display="flex"> */}
-        {/* Contenido principal */}
         <ScrollToTop />
         <Routes>
           <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.GALLERY} />} />
@@ -105,12 +103,8 @@ function App() {
             </ProtectedRoute>
           } />
         </Routes>
-
-        {/* </Box> */}
-      </BrowserRouter >
+      </BrowserRouter>
     </GoogleOAuthProvider>
-
-
   );
 }
 

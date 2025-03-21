@@ -8,6 +8,8 @@ interface QuantityPickerProps {
   onIncrease: () => void;
   onDecrease: () => void;
   isDisabled?: boolean;
+  isWholesale?: boolean;
+  minimumQuantity?: number;
 }
 
 const QuantityPicker: React.FC<QuantityPickerProps> = ({
@@ -15,7 +17,9 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
     quantity,
     onIncrease,
     onDecrease,
-    isDisabled = false
+    isDisabled = false,
+    isWholesale = false,
+    minimumQuantity = 6
   }) => {
 
   const [isNearMax, setIsNearMax] = useState(false);
@@ -30,13 +34,31 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
     setIsNearMax(quantity >= stock * 0.8);
   }, [quantity, stock]);
 
+  const isValidQuantity = (qty: number) => {
+    if (!isWholesale) return true;
+    // Para venta mayorista, solo permitimos múltiplos de 12 o 6
+    return qty === 6 || qty % 12 === 0;
+  };
+
+  const getNextValidQuantity = (currentQty: number) => {
+    if (!isWholesale) return currentQty + 1;
+    if (currentQty === 6) return 12;
+    return currentQty + 12;
+  };
+
+  const getPrevValidQuantity = (currentQty: number) => {
+    if (!isWholesale) return currentQty - 1;
+    if (currentQty === 12) return 6;
+    return currentQty - 12;
+  };
+
   return (
     <Box>
       <HStack spacing={1} align="center">
         <Tooltip label="Disminuir cantidad" openDelay={500}>
           <Button 
             onClick={onDecrease} 
-            isDisabled={(quantity <= 1) || isDisabled}
+            isDisabled={(quantity <= minimumQuantity) || isDisabled}
             size="sm"
             borderRadius="md"
             bg={buttonBg}
@@ -84,6 +106,11 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
       {isNearMax && (
         <Text fontSize="xs" color={warningColor} mt={1}>
           Quedan solo {stock - quantity} disponibles
+        </Text>
+      )}
+      {isWholesale && (
+        <Text fontSize="xs" color="gray.500" mt={1}>
+          Cantidades disponibles: 6, 12, 24, 36, 48...
         </Text>
       )}
     </Box>

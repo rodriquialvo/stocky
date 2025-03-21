@@ -1,145 +1,154 @@
 import React from 'react';
 import {
   Box,
-  Container,
-  Grid,
-  Select,
-  Text,
+  SimpleGrid,
+  Card,
+  CardBody,
+  Heading,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
   StatArrow,
-  SimpleGrid,
-  Card,
-  CardBody,
-  Heading,
-  useColorModeValue,
+  Select,
+  FormControl,
+  FormLabel,
 } from '@chakra-ui/react';
 import { useSalesAnalyticsController } from './SalesAnalytics.controller';
-import { SalesChart } from '../../components/SalesChart/SalesChart';
-import { TopSellersChart } from '../../components/TopSellersChart/TopSellersChart';
 import { ProductsChart } from '../../components/ProductsChart/ProductsChart';
+import { DailySalesChart } from './components/DailySalesChart';
+import { TopSellersTable } from './components/TopSellersTable';
+import { SalesTable } from './components/SalesTable';
 
 const SalesAnalyticsPage: React.FC = () => {
   const controller = useSalesAnalyticsController();
-  const cardBg = useColorModeValue('white', 'gray.700');
-  const textColor = useColorModeValue('gray.600', 'gray.200');
+
+  if (controller.status.isFetching) {
+    return <Box>Cargando...</Box>;
+  }
+
+  if (controller.status.isError) {
+    return <Box>Error al cargar los datos</Box>;
+  }
 
   return (
-    <Container maxW="8xl" py={8}>
-      <Box mb={8}>
-        <Heading size="lg" mb={4}>Análisis de Ventas</Heading>
-        <Select
-          value={controller.selectedMonth}
-          onChange={(e) => controller.setSelectedMonth(e.target.value)}
-          maxW="300px"
-          mb={6}
-        >
-          {controller.months.map((month) => (
-            <option key={month.value} value={month.value}>
-              {month.label}
-            </option>
-          ))}
-        </Select>
-
-        {/* KPIs */}
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
-          <Card bg={cardBg}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Ventas Totales</StatLabel>
-                <StatNumber>€{controller.metrics.totalSales}</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="increase" />
-                  {controller.metrics.salesGrowth}%
-                </StatHelpText>
-              </Stat>
-            </CardBody>
-          </Card>
-
-          <Card bg={cardBg}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Productos Vendidos</StatLabel>
-                <StatNumber>{controller.metrics.totalProducts}</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="increase" />
-                  {controller.metrics.productsGrowth}%
-                </StatHelpText>
-              </Stat>
-            </CardBody>
-          </Card>
-
-          <Card bg={cardBg}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Revendedores Activos</StatLabel>
-                <StatNumber>{controller.metrics.activeResellers}</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="increase" />
-                  {controller.metrics.resellersGrowth}%
-                </StatHelpText>
-              </Stat>
-            </CardBody>
-          </Card>
-
-          <Card bg={cardBg}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Ticket Promedio</StatLabel>
-                <StatNumber>€{controller.metrics.averageTicket}</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="decrease" />
-                  {controller.metrics.ticketGrowth}%
-                </StatHelpText>
-              </Stat>
-            </CardBody>
-          </Card>
-        </SimpleGrid>
-
-        {/* Gráficos */}
-        <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={6}>
-          <Card bg={cardBg}>
-            <CardBody>
-              <Heading size="md" mb={4}>Ventas Diarias</Heading>
-              <Box h="400px">
-                <SalesChart data={controller.dailySalesData} />
-              </Box>
-            </CardBody>
-          </Card>
-
-          <Card bg={cardBg}>
-            <CardBody>
-              <Heading size="md" mb={4}>Top Revendedores</Heading>
-              <Box h="400px">
-                <TopSellersChart data={controller.topSellersData} />
-              </Box>
-            </CardBody>
-          </Card>
-        </Grid>
-
-        <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mt={6}>
-          <Card bg={cardBg}>
-            <CardBody>
-              <Heading size="md" mb={4}>Productos Más Vendidos</Heading>
-              <Box h="300px">
-                <ProductsChart data={controller.topProductsData} />
-              </Box>
-            </CardBody>
-          </Card>
-
-          <Card bg={cardBg}>
-            <CardBody>
-              <Heading size="md" mb={4}>Distribución de Ventas por Categoría</Heading>
-              <Box h="300px">
-                <ProductsChart data={controller.categorySalesData} />
-              </Box>
-            </CardBody>
-          </Card>
-        </SimpleGrid>
+    <Box p={6}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={6}>
+        <Heading size="lg">Análisis de Ventas</Heading>
+        <FormControl width="200px">
+          <FormLabel>Mes</FormLabel>
+          <Select
+            value={controller.selectedMonth}
+            onChange={(e) => controller.setSelectedMonth(e.target.value)}
+          >
+            {controller.months.map((month) => (
+              <option key={month.value} value={month.value}>
+                {month.label}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
-    </Container>
+
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={6}>
+        <Card>
+          <CardBody>
+            <Stat>
+              <StatLabel>Ventas Totales</StatLabel>
+              <StatNumber>€{controller.analytics.totalSales.toLocaleString()}</StatNumber>
+              <StatHelpText>
+                <StatArrow type={controller.analytics.salesGrowth >= 0 ? "increase" : "decrease"} />
+                {controller.analytics.salesGrowth}%
+              </StatHelpText>
+            </Stat>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardBody>
+            <Stat>
+              <StatLabel>Valor Promedio</StatLabel>
+              <StatNumber>€{controller.analytics.averageOrderValue.toLocaleString()}</StatNumber>
+              <StatHelpText>
+                <StatArrow type={controller.analytics.averageOrderValueGrowth >= 0 ? "increase" : "decrease"} />
+                {controller.analytics.averageOrderValueGrowth}%
+              </StatHelpText>
+            </Stat>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardBody>
+            <Stat>
+              <StatLabel>Total Órdenes</StatLabel>
+              <StatNumber>{controller.analytics.totalOrders.toLocaleString()}</StatNumber>
+              <StatHelpText>
+                <StatArrow type={controller.analytics.totalOrdersGrowth >= 0 ? "increase" : "decrease"} />
+                {controller.analytics.totalOrdersGrowth}%
+              </StatHelpText>
+            </Stat>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardBody>
+            <Stat>
+              <StatLabel>Tasa de Conversión</StatLabel>
+              <StatNumber>{(controller.analytics.conversionRate * 100).toFixed(1)}%</StatNumber>
+              <StatHelpText>
+                <StatArrow type={controller.analytics.conversionRateGrowth >= 0 ? "increase" : "decrease"} />
+                {controller.analytics.conversionRateGrowth}%
+              </StatHelpText>
+            </Stat>
+          </CardBody>
+        </Card>
+      </SimpleGrid>
+
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mb={6}>
+        <Card>
+          <CardBody>
+            <Heading size="md" mb={4}>Ventas Diarias</Heading>
+            <Box h="300px">
+              <DailySalesChart data={controller.analytics.dailySales} />
+            </Box>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardBody>
+            <Heading size="md" mb={4}>Top Vendedores</Heading>
+            <TopSellersTable data={controller.analytics.topSellers} />
+          </CardBody>
+        </Card>
+      </SimpleGrid>
+
+      <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6} mb={6}>
+        <Card>
+          <CardBody>
+            <Heading size="md" mb={4}>Productos Más Vendidos</Heading>
+            <Box h="300px">
+              <ProductsChart data={controller.analytics.topProducts} />
+            </Box>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardBody>
+            <Heading size="md" mb={4}>Ventas por Categoría</Heading>
+            <Box h="300px">
+              <ProductsChart data={controller.analytics.categorySales} />
+            </Box>
+          </CardBody>
+        </Card>
+      </SimpleGrid>
+
+      <Card>
+        <CardBody>
+          <Heading size="md" mb={4}>Lista de Ventas</Heading>
+          <SalesTable data={controller.analytics.sales} />
+        </CardBody>
+      </Card>
+    </Box>
   );
 };
 

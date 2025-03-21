@@ -1,5 +1,6 @@
 import { CreateSaleRequestDto, UpdateStatusRequestDto } from '../../services/sale/dtos/generic';
 import { useAPISaleService } from '../../services/sale/sale.service';
+import { ApiSalesService } from '../../services/sales/api-sales.service';
 import {
   getErrorStatus,
   getStartStatus,
@@ -8,7 +9,7 @@ import {
 import { ProductAction } from '../product/actions';
 import { CartAction } from '../shoppingcart/actions';
 import { useCartStore } from '../shoppingcart/slice';
-import { useSaleStore } from './slice';
+import { useSaleStore, useSalesStore } from './slice';
 
 export const SaleAction = () => {
   const saleService = useAPISaleService();
@@ -132,5 +133,26 @@ export const SaleAction = () => {
     findGroupedProductsInCurrentWeek,
     clearProductsInSales,
     postSale
+  };
+};
+
+export const SalesAction = () => {
+  const salesService = new ApiSalesService();
+  const setStatus = useSalesStore(state => state.setStatus);
+  const setAnalytics = useSalesStore(state => state.setAnalytics);
+
+  const getSalesAnalytics = async (month: string) => {
+    setStatus(getStartStatus());
+    try {
+      const data = await salesService.getSalesAnalytics(month);
+      setStatus(getSuccessStatus());
+      setAnalytics(data);
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  };
+
+  return {
+    getSalesAnalytics,
   };
 };
