@@ -18,11 +18,7 @@ const GalleryPage: React.FC<GaleryProps> = props => {
 
   return (
     <Box>
-      {isMobile ? (
-        <Hero images={[images.heroMobile]} />
-      ) : (
-        <Hero images={[images.heroDesktop]} />
-      )}
+      <Hero />
       
       <WhatsAppButton />
 
