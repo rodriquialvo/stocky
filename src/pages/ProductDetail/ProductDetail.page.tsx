@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Stack, Text, Tooltip, Badge, HStack, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, useDisclosure, Switch, VStack } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Stack, Text, Tooltip, Badge, HStack, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, useDisclosure, Switch, VStack, SimpleGrid } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import { useState } from "react";
 import QuantityPicker from "../../components/QuantityPicker/QuantityPicker";
@@ -179,39 +179,121 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             </Box>
           </Box>
           <Box
-            bg="gray.100"
-            my={10}
-            padding={{
-              base: 5,
-              lg: 10
-            }}
-            gap={4}
-            display={{
-              base: "none",
-              lg: "flex"
-            }}
-            flexDirection={"column"}
-            width={"100%"}
-            borderRadius="lg"
+            bg="white"
+            my={6}
+            p={6}
+            width="100%"
+            borderRadius="xl"
+            boxShadow="sm"
+            borderWidth="1px"
+            borderColor="gray.100"
           >
-            <Text fontWeight="bold">Detalles del producto:</Text>
-            <Text>{capitalizeFirstLetter(controller.productDetail?.description)}</Text>
-            <HStack spacing={4}>
-              <Text fontWeight="bold">Marca:</Text>
-              <Text>{capitalizeFirstLetter(controller.productDetail?.attributes.brand)}</Text>
-            </HStack>
-            <HStack spacing={4}>
-              <Text fontWeight="bold">Talles:</Text>
-              <Text>{controller.productDetail?.sizes.join(", ")}</Text>
-            </HStack>
-            <HStack spacing={4}>
-              <Text fontWeight="bold">Colores:</Text>
-              <Text>{controller.colorsProduct.map(color => color.label).join(", ")}</Text>
-            </HStack>
-            <HStack spacing={4}>
-              <Text fontWeight="bold">Artículo:</Text>
-              <Text>{controller.productDetail?.code}</Text>
-            </HStack>
+            <VStack spacing={6} align="stretch">
+              <Flex justify="space-between" align="center">
+                <Heading size="md" color="gray.700">Detalles del producto</Heading>
+                
+              </Flex>
+              
+              <SimpleGrid columns={{base: 1, sm: 2}} spacing={4}>
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={1}>
+                    Marca
+                  </Text>
+                  <Text color="gray.800" fontSize="md">
+                    {capitalizeFirstLetter(controller.productDetail?.attributes.brand)}
+                  </Text>
+                </Box>
+
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={1}>
+                    Talles disponibles
+                  </Text>
+                  <Flex gap={2} flexWrap="wrap">
+                    {controller.productDetail?.sizes.map((size, index) => (
+                      <Badge 
+                        key={index}
+                        colorScheme="gray"
+                        px={2}
+                        py={1}
+                        borderRadius="md"
+                      >
+                        {size}
+                      </Badge>
+                    ))}
+                  </Flex>
+                </Box>
+
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={1}>
+                    Colores disponibles
+                  </Text>
+                  <Flex gap={2} flexWrap="wrap">
+                    {controller.colorsProduct.map((color, index) => (
+                      <Badge 
+                        key={index}
+                        colorScheme="gray"
+                        px={2}
+                        py={1}
+                        borderRadius="md"
+                      >
+                        {color.label}
+                      </Badge>
+                    ))}
+                  </Flex>
+                </Box>
+
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={1}>
+                    Artículo
+                  </Text>
+                  <HStack spacing={2} mt={1}>
+                    <Badge colorScheme="pink" variant="subtle">
+                    {controller.productDetail?.code}
+                    </Badge>
+                  </HStack>
+                </Box>
+
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                  gridColumn={{base: "auto", sm: "1 / -1"}}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={2}>
+                    Características y descripción
+                  </Text>
+                  <Text color="gray.700" fontSize="md" mb={3} lineHeight="tall">
+                    {capitalizeFirstLetter(controller.productDetail?.description)}
+                  </Text>
+                </Box>
+              </SimpleGrid>
+            </VStack>
           </Box>
         </Box>
         <Box
@@ -296,41 +378,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 lg: "flex"
               }}
             />
-            <Box
-              bg="gray.100"
-              my={10}
-              padding={{
-                base: 5,
-                lg: 10
-              }}
-              gap={4}
-              display={{
-                base: "flex",
-                lg: "none"
-              }}
-              flexDirection={"column"}
-              width={"100%"}
-              borderRadius="lg"
-            >
-              <Text fontWeight="bold">Detalles del producto:</Text>
-              <Text>{controller.productDetail?.description}</Text>
-              <HStack spacing={4}>
-                <Text fontWeight="bold">Marca:</Text>
-                <Text>{controller.productDetail?.attributes.brand}</Text>
-              </HStack>
-              <HStack spacing={4}>
-                <Text fontWeight="bold">Talles:</Text>
-                <Text>{controller.productDetail?.sizes.join(", ")}</Text>
-              </HStack>
-              <HStack spacing={4}>
-                <Text fontWeight="bold">Colores:</Text>
-                <Text>{controller.colorsProduct.map(color => color.label).join(", ")}</Text>
-              </HStack>
-              <HStack spacing={4}>
-                <Text fontWeight="bold">Artículo:</Text>
-                <Text>{controller.productDetail?.code}</Text>
-              </HStack>
-            </Box>
+
             <Flex
               gap={8}
               flexDirection={"column"}
