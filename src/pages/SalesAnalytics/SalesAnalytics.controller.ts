@@ -68,7 +68,6 @@ export const useSalesAnalyticsController = () => {
     fetchAnalytics();
   }, [selectedMonth, setAnalytics, setStatus]);
 
-  console.log("analytics", analytics);
   return {
     status,
     analytics,

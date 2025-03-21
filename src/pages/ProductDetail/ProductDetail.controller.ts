@@ -216,7 +216,6 @@ export const useProductDetailController =
     //Ex. const increaseCount = () => {}
 
     // Return state and events
-
     return {
       productDetail,
       onAddToCartPressed,

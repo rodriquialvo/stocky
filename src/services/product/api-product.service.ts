@@ -88,12 +88,7 @@ export class ApiProductService implements ProductService {
 
   postCreateNewProduct = (body: ProductFormData) => this.http.post<PostProductResponse>('', body);
 
-  getProductDetail = async (id: string, param?: {by?:string} ): Promise<GetProductDetailWhitStocksResponse> => {
-    // Para pruebas, retornamos los datos mockeados
-    return {
-      product: mockProductDetail
-    };
-  };
+  getProductDetail = (id: string, param?: {by?:string} ) => this.http.get<GetProductDetailWhitStocksResponse>(`admin/${id}`, param);
 
   getProductsByCodeOrName = (q: string) => this.http.get<GetProductsResponse>('filter/products-by-code-or-name', {q});
 

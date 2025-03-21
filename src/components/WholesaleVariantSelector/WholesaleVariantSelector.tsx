@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, FormLabel, HStack, Input, Select, Text, VStack, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormLabel, HStack, Input, Select, Text, VStack, useColorModeValue, Stack } from "@chakra-ui/react";
 import { useState } from "react";
 
 interface Variant {
@@ -81,13 +81,18 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
             borderColor={borderColor}
             borderRadius="md"
           >
-            <HStack spacing={4}>
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              spacing={4}
+              align={{ base: "stretch", md: "flex-end" }}
+            >
               <FormControl>
                 <FormLabel>Color</FormLabel>
                 <Select
                   value={variant.color}
                   onChange={(e) => handleVariantChange(index, "color", e.target.value)}
                   isDisabled={isDisabled}
+                  size="sm"
                 >
                   <option value="">Seleccionar color</option>
                   {colors.map((color) => (
@@ -104,6 +109,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
                   value={variant.size}
                   onChange={(e) => handleVariantChange(index, "size", e.target.value)}
                   isDisabled={isDisabled || !variant.color}
+                  size="sm"
                 >
                   <option value="">Seleccionar talle</option>
                   {sizes.map((size) => (
@@ -123,6 +129,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
                   min={0}
                   max={variant.stock}
                   isDisabled={isDisabled || !variant.color || !variant.size}
+                  size="sm"
                 />
               </FormControl>
 
@@ -131,23 +138,36 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
                 variant="ghost"
                 onClick={() => handleRemoveVariant(index)}
                 isDisabled={isDisabled}
-                mt={8}
+                size="sm"
+                height="40px"
+                alignSelf={{ base: "flex-end", md: "flex-end" }}
               >
                 Eliminar
               </Button>
-            </HStack>
+            </Stack>
           </Box>
         ))}
 
-        <Flex justify="space-between" align="center">
+        <Flex 
+          direction={{ base: "column", sm: "row" }}
+          justify="space-between" 
+          align="center"
+          gap={4}
+        >
           <Button
             colorScheme="teal"
             onClick={handleAddVariant}
             isDisabled={isDisabled || remainingQuantity <= 0}
+            size="sm"
+            width={{ base: "100%", sm: "auto" }}
           >
             Agregar Variante
           </Button>
-          <Text color={remainingQuantity < 0 ? "red.500" : "gray.500"}>
+          <Text 
+            color={remainingQuantity < 0 ? "red.500" : "gray.500"}
+            fontSize="sm"
+            textAlign={{ base: "center", sm: "right" }}
+          >
             Cantidad restante: {remainingQuantity}
           </Text>
         </Flex>

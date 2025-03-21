@@ -241,7 +241,10 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             </Text>
             <Heading>{capitalizeFirstLetter(controller.productDetail?.name)}</Heading>
             <Box>
-              <HStack spacing={4} align="baseline">
+              <HStack spacing={4} align="baseline" flexDirection={{
+                base: "column",
+                md: "row"
+              }}>
                 <Heading color="pink.500" fontSize="2xl">
                   {formattedNumberToMoney(controller.productDetail?.prices.retail)}
                 </Heading>
