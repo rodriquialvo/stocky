@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { getDefaultStatus, Status } from '../helper/statusStateFactory';
 
 type State = {
@@ -21,17 +20,10 @@ type Action = {
   restoreStatusAndLoading: () => void
 };
 
-export const useStockStore = create<State & Action>()(
-  persist(
-    (set, get) => ({
-      ...initialState,
-      setStatus: (status: Status) => set({ status }),
-      setPostStockStatus: (status: Status) => set({ postStockStatus: status }),
-      setPostStockLoading: (loading: boolean) => set({ postStockLoading: loading }),
-      restoreStatusAndLoading: () => set({ postStockStatus: getDefaultStatus(), postStockLoading: false }),
-    }),
-    {
-      name: 'stock-store',
-    }
-  )
-);
+export const useStockStore = create<State & Action>()((set, get) => ({
+  ...initialState,
+  setStatus: (status: Status) => set({ status }),
+  setPostStockStatus: (status: Status) => set({ postStockStatus: status }),
+  setPostStockLoading: (loading: boolean) => set({ postStockLoading: loading }),
+  restoreStatusAndLoading: () => set({ postStockStatus: getDefaultStatus(), postStockLoading: false }),
+}));
