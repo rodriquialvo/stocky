@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { SalesListDto } from '../../services/sale/dtos/generic';
 import { Status, getDefaultStatus } from '../helper/statusStateFactory';
 
@@ -36,24 +35,16 @@ type Action = {
 };
 
 // Create your store, which includes both state and (optionally) actions
-export const useSaleStore = create<State & Action>()(
-  persist(
-    (set, get) => ({
-      ...initialState,
-      setStatus: (status: Status) => set({ status }),
-      getSales: () => get().list.sales,
-      setSales: (data) => set({ list: { sales: data.sales, total: data.total } }),
-      setUsersInSales: (users) => set({ usersInSales: users }),
-      getUsersInSales: () => get().usersInSales,
-      setProductsInSalesByUser: ({ userId, products }) => set({ productsInSalesByUser: { ...get().productsInSalesByUser, [userId]: products } }),
-      getProductsInSalesByUser: () => get().productsInSalesByUser,
-      setProductsInSales: (products) => set({ productsInSales: products }),
-      getProductsInSales: () => get().productsInSales,
-      clearSaleWeek: () => set({ usersInSales: [], productsInSalesByUser: {} })
-    }),
-    {
-      name: 'sales-store', // nombre del key en localStorage
-      // puedes incluir otras opciones aquí si lo deseas
-    }
-  )
-);
+export const useSaleStore = create<State & Action>()((set, get) => ({
+  ...initialState,
+  setStatus: (status: Status) => set({ status }),
+  getSales: () => get().list.sales,
+  setSales: (data) => set({ list: { sales: data.sales, total: data.total } }),
+  setUsersInSales: (users) => set({ usersInSales: users }),
+  getUsersInSales: () => get().usersInSales,
+  setProductsInSalesByUser: ({ userId, products }) => set({ productsInSalesByUser: { ...get().productsInSalesByUser, [userId]: products } }),
+  getProductsInSalesByUser: () => get().productsInSalesByUser,
+  setProductsInSales: (products) => set({ productsInSales: products }),
+  getProductsInSales: () => get().productsInSales,
+  clearSaleWeek: () => set({ usersInSales: [], productsInSalesByUser: {} })
+}));
