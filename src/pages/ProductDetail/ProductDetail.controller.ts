@@ -9,6 +9,7 @@ import { CartAction } from '../../store/shoppingcart/actions';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
+import { MOCK_WHOLESALE_PRODUCT } from './mockData';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
@@ -26,6 +27,7 @@ export const useProductDetailController =
     const statusCart = useCartStore(state => state.status)
     
     const productDetail = useProductStore(state => state.product);
+    // const productDetail = MOCK_WHOLESALE_PRODUCT;
     const statusProduct = useProductStore(state => state.status);
     
     const [isDisabledButton, setIsDisabledButton] = useState(false)
@@ -40,9 +42,9 @@ export const useProductDetailController =
     const [imageSelected, setImageSelected] = useState("");
     const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
     const allColors = useProductAtributesStore(state => state.allColors);
-
+    const [maximumQuantity, setMaximumQuantity] = useState(0);
     const isWholesale = (productDetail?.wholesaleData?.isWholesaler || false) && isWholesaleEnabled;
-    const minimumQuantity = productDetail?.wholesaleData?.minimumQuantity || 6;
+    const minimumQuantity = productDetail?.wholesaleData?.minimumQuantity || 0;
 
     const [variants, setVariants] = useState<{ color: string; size: string; quantity: number }[]>([]);
 
@@ -103,6 +105,12 @@ export const useProductDetailController =
         setAddToCartStatus(getStartStatus());
       }
     }, [addToCartstatus, navigate])
+
+    useEffect(() => {
+      if(!!size && !!color) {
+        setQuantity(0)
+      }
+    },[size, productDetail, color])
 
     const isValidWholesaleQuantity = (qty: number) => {
       if (!isWholesale) return true;
@@ -212,10 +220,16 @@ export const useProductDetailController =
       setQuantity(minimumQuantity);
     };
 
+    const getVariantSelected = () => {
+      return productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
+    }
+
     /* Private Methods */
     //Ex. const increaseCount = () => {}
 
+    console.log('variantSelected', getVariantSelected())
     // Return state and events
+    console.log('productDetail', productDetail)
     return {
       productDetail,
       onAddToCartPressed,
@@ -239,6 +253,9 @@ export const useProductDetailController =
       variants,
       handleVariantsChange,
       isWholesaleEnabled,
-      handleWholesaleToggle
+      handleWholesaleToggle,
+      variantSelected: getVariantSelected()
     };
   };
+
+  

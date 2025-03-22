@@ -1,4 +1,4 @@
-import { ProductDetail } from "../../services/product/dtos/getProductDetail";
+import { ProductDetail, Stock } from "../../services/product/dtos/getProductDetail";
 
 export interface ParamsOnAddToCartPressed {
   color: string,
@@ -27,6 +27,7 @@ export interface ProductDetailController {
   minimumQuantity: number,
   variants: Variant[],
   isWholesaleEnabled: boolean,
+  variantSelected: Stock | null,
   /* Events */
   onAddToCartPressed: (data: ParamsOnAddToCartPressed) => void,
   setImageSelected: (image: string) => void,
