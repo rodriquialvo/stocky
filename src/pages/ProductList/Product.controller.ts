@@ -73,6 +73,7 @@ export const useProductController =
       }
     }
 
+    console.log('products', products)
     return {
       productsViewModel: products.map(mapProductsViewModel),
       isOpenIncreaseAndDiscountPanel,
