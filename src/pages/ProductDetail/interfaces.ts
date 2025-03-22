@@ -6,6 +6,12 @@ export interface ParamsOnAddToCartPressed {
   quantity: number
 }
 
+export interface Variant {
+  color: string;
+  size: string;
+  quantity: number;
+}
+
 export interface ProductDetailController {
   /* State */
   productDetail: ProductDetail | null
@@ -17,6 +23,10 @@ export interface ProductDetailController {
   size: string, color: string,
   isLoading: boolean,
   colorsProduct: any[],
+  isWholesale: boolean,
+  minimumQuantity: number,
+  variants: Variant[],
+  isWholesaleEnabled: boolean,
   /* Events */
   onAddToCartPressed: (data: ParamsOnAddToCartPressed) => void,
   setImageSelected: (image: string) => void,
@@ -25,7 +35,9 @@ export interface ProductDetailController {
   onIncrease: () => void,
   onDecrease: () => void,
   handleNext: () => void,
-  handlePrev: () => void
+  handlePrev: () => void,
+  handleVariantsChange: (variants: Variant[]) => void,
+  handleWholesaleToggle: () => void
 }
 
 export interface ProductDetailProps {

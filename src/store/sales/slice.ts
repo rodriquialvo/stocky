@@ -1,59 +1,70 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { SalesListDto } from '../../services/sale/dtos/generic';
-import { Status, getDefaultStatus } from '../helper/statusStateFactory';
+import { SalesAnalytics } from '../../services/sales/sales.service';
+import { getDefaultStatus, Status } from '../helper/statusStateFactory';
 
 type State = {
   status: Status;
-  list: SalesListDto;
-  usersInSales: any,
-  productsInSalesByUser: any,
-  productsInSales: any
+  analytics: SalesAnalytics | null;
+  selectedMonth: string;
+  list: {
+    sales: any[];
+    total: number;
+  };
+  usersInSales: any[];
+  productsInSalesByUser: Record<string, any>;
+  productsInSales: Record<string, any>;
+  setStatus: (status: Status) => void;
+  setAnalytics: (analytics: SalesAnalytics) => void;
+  setSelectedMonth: (month: string) => void;
 };
 
 const initialState: State = {
   status: getDefaultStatus(),
+  analytics: null,
+  selectedMonth: new Date().toISOString().slice(0, 7), // Formato YYYY-MM
   list: {
     sales: [],
     total: 0
   },
   usersInSales: [],
   productsInSalesByUser: {},
-  productsInSales: {}
+  productsInSales: {},
+  setStatus: () => {},
+  setAnalytics: () => {},
+  setSelectedMonth: () => {}
 };
 
 type Action = {
-  setStatus: (status: Status) => void;
-  getSales: (params: {}) => void;
   setSales: (data: any) => void;
-  setUsersInSales: (data: any) => void;
-  getUsersInSales: () => any;
-  setProductsInSalesByUser: (data: any) => void;
-  getProductsInSalesByUser: () => any,
-  setProductsInSales: (data: any) => void,
-  getProductsInSales: () => any,
-  clearSaleWeek: () => void
+  setUsersInSales: (users: any[]) => void;
+  setProductsInSalesByUser: (data: { userId: string; products: any[] }) => void;
+  setProductsInSales: (products: Record<string, any>) => void;
+  clearSaleWeek: () => void;
 };
 
-// Create your store, which includes both state and (optionally) actions
-export const useSaleStore = create<State & Action>()(
+const store = create<State & Action>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
-      setStatus: (status: Status) => set({ status }),
-      getSales: () => get().list.sales,
+      setStatus: (status) => set({ status }),
+      setAnalytics: (data) => set({ analytics: data }),
       setSales: (data) => set({ list: { sales: data.sales, total: data.total } }),
       setUsersInSales: (users) => set({ usersInSales: users }),
-      getUsersInSales: () => get().usersInSales,
-      setProductsInSalesByUser: ({ userId, products }) => set({ productsInSalesByUser: { ...get().productsInSalesByUser, [userId]: products } }),
-      getProductsInSalesByUser: () => get().productsInSalesByUser,
+      setProductsInSalesByUser: ({ userId, products }) => 
+        set((state) => ({ 
+          productsInSalesByUser: { ...state.productsInSalesByUser, [userId]: products } 
+        })),
       setProductsInSales: (products) => set({ productsInSales: products }),
-      getProductsInSales: () => get().productsInSales,
-      clearSaleWeek: () => set({ usersInSales: [], productsInSalesByUser: {} })
+      clearSaleWeek: () => set({ usersInSales: [], productsInSalesByUser: {} }),
+      setSelectedMonth: (month) => set({ selectedMonth: month })
     }),
     {
-      name: 'sales-store', // nombre del key en localStorage
-      // puedes incluir otras opciones aquí si lo deseas
-    }
-  )
+      name: 'sales-store',
+    },
+  ),
 );
+
+// Exportamos ambos nombres para mantener compatibilidad
+export const useSalesStore = store;
+export const useSaleStore = store;

@@ -1,46 +1,103 @@
-# Getting Started with Create React App
+# Stocky 👕
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[English](#english) | [Español](#español)
 
-## Available Scripts
+# English
 
-In the project directory, you can run:
+## Overview
 
-### `npm start`
+Stocky is a modern e-commerce web application built with React and TypeScript, designed to help entrepreneurs manage and sell their lingerie and underwear products. The application features a beautiful and intuitive user interface powered by Chakra UI and Material UI components.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- 👗 Product catalog and management
+- 🛍️ Shopping cart functionality
+- 🔐 Google OAuth authentication
+- 📅 Order management and tracking
+- 📁 Product image upload capabilities
+- 🎨 Modern and responsive design
+- 🌐 Multi-language support
 
-### `npm test`
+## Getting Started
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerequisites
 
-### `npm run build`
+- Node.js (v14 or higher)
+- npm or yarn
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Installation
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Available Scripts
 
-### `npm run eject`
+- `npm start`: Run the app in development mode
+- `npm build`: Build the app for production
+- `npm test`: Launch the test runner
+- `npm run g`: Run the generator tool
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Technologies
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- React 18
+- TypeScript
+- Chakra UI
+- Material UI
+- Chart.js
+- Zustand (State Management)
+- React Router
+- And many more!
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+---
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+# Español
 
-## Learn More
+## Descripción General
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Stocky es una aplicación web de comercio electrónico moderna construida con React y TypeScript, diseñada para ayudar a emprendedores a gestionar y vender sus productos de lencería y ropa interior. La aplicación cuenta con una interfaz de usuario hermosa e intuitiva desarrollada con componentes de Chakra UI y Material UI.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Características
+
+- 👗 Catálogo y gestión de productos
+- 🛍️ Funcionalidad de carrito de compras
+- 🔐 Autenticación mediante Google OAuth
+- 📅 Gestión y seguimiento de pedidos
+- 📁 Capacidades de carga de imágenes de productos
+- 🎨 Diseño moderno y responsivo
+- 🌐 Soporte multiidioma
+
+## Comenzando
+
+### Prerrequisitos
+
+- Node.js (v14 o superior)
+- npm o yarn
+
+### Instalación
+
+1. Clona el repositorio
+2. Instala las dependencias:
+```bash
+npm install
+```
+
+### Scripts Disponibles
+
+- `npm start`: Ejecuta la aplicación en modo desarrollo
+- `npm build`: Construye la aplicación para producción
+- `npm test`: Inicia el ejecutor de pruebas
+- `npm run g`: Ejecuta la herramienta de generación
+
+## Tecnologías
+
+- React 18
+- TypeScript
+- Chakra UI
+- Material UI
+- Chart.js
+- Zustand (Gestión de Estado)
+- React Router
+- ¡Y muchas más!

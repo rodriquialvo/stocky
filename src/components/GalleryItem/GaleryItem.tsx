@@ -31,7 +31,7 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, im
     e.stopPropagation();
     setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
   };
-
+  
   const fadeIn = keyframes`
     from { opacity: 0; transform: scale(0.8); }
     to { opacity: 1; transform: scale(1); }

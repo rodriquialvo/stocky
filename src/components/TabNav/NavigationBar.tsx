@@ -241,6 +241,8 @@ const NavigationBar: React.FC<TabNavProps> = ({
       position="sticky"
       top={0}
       zIndex={10}
+      transform={showNavbar ? 'translateY(0)' : 'translateY(-100%)'}
+      transition="transform 0.3s ease-in-out"
     >
       <Flex
         maxW="100%"

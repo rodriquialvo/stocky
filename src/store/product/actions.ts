@@ -28,6 +28,7 @@ export const ProductAction = () => {
   const products = useProductStore(state => state.products);
   const setTotalProducts = useProductStore(state => state.setTotalProducts);
   const { createNewImageUrl } = ImageAction()
+
   const getProducts = async (filters) => {
     setStatus(getStartStatus());
     try {
@@ -62,6 +63,7 @@ export const ProductAction = () => {
       toast.success("Producto creado con éxito")
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
+      toast.error("Error al crear el producto")
     }
   };
 
