@@ -71,7 +71,7 @@ export const ProductAction = () => {
     try {
 
       const imagesStored = (body.pictures as any).filter(element => !element.file).map(element => ({ url: element.data_url}));
-      const imagesToUpload = (body.pictures as any).filter(element => !!element.file).map(element => element.file);
+      const imagesToUpload = (body.pictures as any).filter(element => !!element.file).map(element => element);
 
       let uploadedUrls = await Promise.all(
         imagesToUpload.map(element => createNewImageUrl(element))
