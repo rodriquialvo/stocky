@@ -5,7 +5,7 @@ export interface CartService {
   postCreateNewCart: (body: CreateNewCartRequestDto) => Promise<CartReponseDto>,
   postAddToCart: (item: AddToCartRequestDto) => Promise<CartReponseDto>,
   updateQuantity: (req: UpdateQuantityRequestDto) => Promise<CartReponseDto>,
-  removeFromCart: (data: RemoveFromCartRequestDto) => Promise<CartReponseDto>,
+  removeFromCart: (data: RemoveFromCartRequestDto, body?: any) => Promise<CartReponseDto>,
   getCart: (userId: string) => Promise<CartReponseDto>,
 }
 

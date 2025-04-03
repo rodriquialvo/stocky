@@ -9,7 +9,6 @@ import CreateNewProduct from './pages/CreateNewProduct/CreateNewProduct.page';
 import { CreateNewResellerPage } from './pages/CreateNewReseller/CreateNewReseller.page';
 import GalleryPage from './pages/Galery/Galery.page';
 import ProductDetailPage from './pages/ProductDetail/ProductDetail.page';
-import ShoppingCart from './pages/ShoppingCart/ShoppingCart';
 import SalesList from './pages/SalesList/SalesList';
 import ResellerList from './pages/ResellersList/ResellersList';
 import StockEntry from './pages/StockEntry/StockEntry';
@@ -47,11 +46,6 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path={ROUTES.HOME} element={userIsAuthenticated ? <Navigate to={ROUTES.GALLERY} /> : <LoginPage />} />
-        <Route path={ROUTES.SHOPPING_CART} element={
-          <ProtectedRoute >
-            <ShoppingCart />
-          </ProtectedRoute>
-        } />
         <Route path={ROUTES.STOCK_LIST} element={
           <ProtectedRoute >
             <ProductList />

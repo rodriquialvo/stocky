@@ -59,10 +59,10 @@ export const CartAction = () => {
     }
   };
 
-  const removeFromCart = async (cartId: string, variantId: string) => {
+  const removeFromCart = async (cartId: string, variantId: string, productId?: string, isWholesalePackage?: boolean) => {
     setStatus(getStartStatus());
     try {
-      const response = await cartService.removeFromCart({ cartId, variantId });
+      const response = await cartService.removeFromCart({ cartId, variantId }, { productId, isWholesalePackage });
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));
         return;
