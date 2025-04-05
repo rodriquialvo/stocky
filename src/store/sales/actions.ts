@@ -9,7 +9,7 @@ import {
 import { ProductAction } from '../product/actions';
 import { CartAction } from '../shoppingcart/actions';
 import { useCartStore } from '../shoppingcart/slice';
-import { useSaleStore, useSalesStore } from './slice';
+import { useSaleStore } from './slice';
 
 export const SaleAction = () => {
   const saleService = useAPISaleService();
@@ -138,8 +138,8 @@ export const SaleAction = () => {
 
 export const SalesAction = () => {
   const salesService = new ApiSalesService();
-  const setStatus = useSalesStore(state => state.setStatus);
-  const setAnalytics = useSalesStore(state => state.setAnalytics);
+  const setStatus = useSaleStore(state => state.setStatus);
+  const setAnalytics = useSaleStore(state => state.setAnalytics);
 
   const getSalesAnalytics = async (month: string) => {
     setStatus(getStartStatus());

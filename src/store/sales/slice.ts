@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { SalesAnalytics } from '../../services/sales/sales.service';
-import { getDefaultStatus, Status } from '../helper/statusStateFactory';
+import { SalesListDto } from '../../services/sale/dtos/generic';
+import { Status, getDefaultStatus } from '../helper/statusStateFactory';
 
 type State = {
   status: Status;
@@ -43,28 +43,19 @@ type Action = {
   clearSaleWeek: () => void;
 };
 
-const store = create<State & Action>()(
-  persist(
-    (set) => ({
-      ...initialState,
-      setStatus: (status) => set({ status }),
-      setAnalytics: (data) => set({ analytics: data }),
-      setSales: (data) => set({ list: { sales: data.sales, total: data.total } }),
-      setUsersInSales: (users) => set({ usersInSales: users }),
-      setProductsInSalesByUser: ({ userId, products }) => 
-        set((state) => ({ 
-          productsInSalesByUser: { ...state.productsInSalesByUser, [userId]: products } 
-        })),
-      setProductsInSales: (products) => set({ productsInSales: products }),
-      clearSaleWeek: () => set({ usersInSales: [], productsInSalesByUser: {} }),
-      setSelectedMonth: (month) => set({ selectedMonth: month })
-    }),
-    {
-      name: 'sales-store',
-    },
-  ),
-);
-
-// Exportamos ambos nombres para mantener compatibilidad
-export const useSalesStore = store;
-export const useSaleStore = store;
+// Create your store, which includes both state and (optionally) actions
+export const useSaleStore = create<State & Action>()((set, get) => ({
+  ...initialState,
+  setStatus: (status: Status) => set({ status }),
+  getSales: () => get().list.sales,
+  setSales: (data) => set({ list: { sales: data.sales, total: data.total } }),
+  setUsersInSales: (users) => set({ usersInSales: users }),
+  getUsersInSales: () => get().usersInSales,
+  setProductsInSalesByUser: ({ userId, products }) => set({ productsInSalesByUser: { ...get().productsInSalesByUser, [userId]: products } }),
+  getProductsInSalesByUser: () => get().productsInSalesByUser,
+  setProductsInSales: (products) => set({ productsInSales: products }),
+  getProductsInSales: () => get().productsInSales,
+  clearSaleWeek: () => set({ usersInSales: [], productsInSalesByUser: {} }),
+  setAnalytics: (data) => set({ analytics: data }),
+  setSelectedMonth: (month) => set({ selectedMonth: month })
+}));

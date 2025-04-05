@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useSalesStore } from '../../store/sales/slice';
 import { SalesService } from '../../services/sales/sales.service';
 import { ApiSalesService } from '../../services/sales/api-sales.service';
 import { getStartStatus, getSuccessStatus, getErrorStatus } from '../../store/helper/statusStateFactory';
+import { useSaleStore } from '../../store/sales/slice';
 
 const salesService: SalesService = new ApiSalesService();
 
@@ -48,7 +48,7 @@ export const useSalesAnalyticsController = () => {
     setSelectedMonth,
     setAnalytics,
     setStatus 
-  } = useSalesStore();
+  } = useSaleStore();
 
   const months = generateMonths(24); // Generar 24 meses (2 años)
 
