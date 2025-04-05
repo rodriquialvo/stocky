@@ -47,7 +47,7 @@ export const useGaleryController =
         onClick: () => onPressProduct(product),
         brand: product.attributes.brand,
         code: product.code,
-        isWholesale: product.wholesaleData.isWholesaler
+        isWholesale: product.wholesaleData?.isWholesaler
       }
     }
 

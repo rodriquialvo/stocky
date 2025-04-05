@@ -31,6 +31,10 @@ const SalesAnalyticsPage: React.FC = () => {
     return <Box>Error al cargar los datos</Box>;
   }
 
+  if (!controller.analytics) {
+    return <Box>No hay datos disponibles</Box>;
+  }
+
   return (
     <Box p={6}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={6}>

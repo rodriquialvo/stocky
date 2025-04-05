@@ -18,6 +18,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
   const currentImageIndex = controller.productDetail?.pictures.findIndex(img => img.url === controller.imageSelected) || 0;
   const totalImages = controller.productDetail?.pictures.length || 0;
 
+  console.log("controller", controller)
   return (
     <Box
       w="100%"
@@ -388,9 +389,9 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   <Box bg="purple.50" p={6} borderRadius="lg" borderWidth="1px" borderColor="purple.200">
                     <VStack align="stretch" spacing={4}>
                       <Box>
-                        <Text fontWeight="bold" mb={2}>Cantidad total (en docenas)</Text>
+                        <Text fontWeight="bold" mb={2}>Cantidad total (en docenas) <Text fontSize="sm" color="purple.700" mt={2}>{controller.totalDozens} docenas disponibles</Text></Text>
                         <QuantityPicker
-                          stock={100}
+                          stock={controller.totalDozens || 0}
                           quantity={controller.quantity}
                           onIncrease={controller.onIncrease}
                           onDecrease={controller.onDecrease}
@@ -399,7 +400,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                           minimumQuantity={controller.minimumQuantity}
                         />
                         <Text fontSize="sm" color="purple.700" mt={2}>
-                          Total: {controller.quantity} unidades
+                          Total: {controller.quantity * 12} unidades
                         </Text>
                       </Box>
                       <Box>
@@ -408,7 +409,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                           colors={controller.colorsProduct}
                           sizes={controller.sizes}
                           stocks={controller.productDetail?.stocks || []}
-                          totalQuantity={controller.quantity}
+                          totalQuantity={controller.quantity * 12}
                           onVariantsChange={controller.handleVariantsChange}
                           isDisabled={false}
                         />
@@ -418,7 +419,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                         w={"full"}
                         colorScheme={'purple'}
                         size="lg"
-                        onClick={() => controller.onAddToCartPressed({ size: controller.size, color: controller.color, quantity: controller.quantity })}
+                        onClick={controller.onAddToCartWholesalePressed}
                       >
                         Agregar al carrito mayorista
                       </Button>
@@ -478,7 +479,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                     <Box flex={1}>
                       <Text fontWeight="bold" mb={2}>Cantidad</Text>
                       <QuantityPicker
-                        stock={100}
+                        stock={controller.variantSelected?.quantity || 0}
                         quantity={controller.quantity}
                         onIncrease={controller.onIncrease}
                         onDecrease={controller.onDecrease}

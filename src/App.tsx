@@ -33,7 +33,6 @@ function App() {
   const isAuthenticated = useSessionStore(state => state.isAuthenticated);
 
   useEffect(() => {
-    if (userIsAuthenticated) {
       getCategories();
       getSizesTypes();
       getSizes();
@@ -41,8 +40,7 @@ function App() {
       getAllColors();
       getAllBrands();
       setProductsFilters(initialStateFilters)
-    }
-  }, [userIsAuthenticated])
+  }, [])
 
   return (
     <GoogleOAuthProvider clientId={"318321636416-2b8qvnqab4815thpf7schcojkv4h4di7.apps.googleusercontent.com"}>

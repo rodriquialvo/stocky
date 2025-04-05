@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, FormLabel, HStack, Input, Select, Text, VStack, useColorModeValue, Stack } from "@chakra-ui/react";
+import { Box, Button, Flex, FormControl, FormLabel, HStack, Input, Select, Text, VStack, useColorModeValue, Stack, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 
 interface Variant {
@@ -27,6 +27,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
 }) => {
   const [variants, setVariants] = useState<Variant[]>([]);
   const [remainingQuantity, setRemainingQuantity] = useState(totalQuantity);
+  const toast = useToast();
 
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
@@ -50,6 +51,27 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
         s => s.variant.color === newVariants[index].color && s.variant.size === newVariants[index].size
       );
       newVariants[index].stock = stock?.quantity || 0;
+
+      // Validar si la combinación de color y talle ya existe en otra variante
+      if (newVariants[index].color && newVariants[index].size) {
+        const isDuplicate = newVariants.some((variant, i) => 
+          i !== index && 
+          variant.color === newVariants[index].color && 
+          variant.size === newVariants[index].size
+        );
+
+        if (isDuplicate) {
+          toast({
+            title: "Variante duplicada",
+            description: "Esta combinación de color y talle ya ha sido seleccionada",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+          // Revertir los cambios
+          newVariants[index] = { ...variants[index] };
+        }
+      }
     }
 
     setVariants(newVariants);
@@ -157,7 +179,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
           <Button
             colorScheme="teal"
             onClick={handleAddVariant}
-            isDisabled={isDisabled || remainingQuantity <= 0}
+            // isDisabled={isDisabled || remainingQuantity <= 0}
             size="sm"
             width={{ base: "100%", sm: "auto" }}
           >

@@ -70,9 +70,8 @@ export const ProductAction = () => {
   const updateProduct = async (id: string, body: ProductFormData) => {
     setUpdateProductStatus(getStartStatus());
     try {
-
       const imagesStored = (body.pictures as any).filter(element => !element.file).map(element => ({ url: element.data_url}));
-      const imagesToUpload = (body.pictures as any).filter(element => !!element.file).map(element => element.file);
+      const imagesToUpload = (body.pictures as any).filter(element => !!element.file).map(element => element);
 
       let uploadedUrls = await Promise.all(
         imagesToUpload.map(element => createNewImageUrl(element))
@@ -90,6 +89,7 @@ export const ProductAction = () => {
       setUpdateProductStatus(getSuccessStatus());
       toast.success("Producto creado con éxito")
     } catch (e) {
+      toast.error("Ha ocurrido un error al editar el producto")
       setUpdateProductStatus(getErrorStatus(e as Error));
     }
   };

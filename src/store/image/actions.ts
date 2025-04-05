@@ -12,7 +12,7 @@ export const ImageAction = () => {
   const imageService = useAPIImageService()
 
   const base64ToBlob = (base64, mimeType) => {
-    const byteCharacters = atob(base64.split(',')[1]); // Eliminar el prefijo data:image/jpeg;base64,
+    const byteCharacters = atob(base64?.split(',')[1]); // Eliminar el prefijo data:image/jpeg;base64,
     const byteArrays = [];
   
     for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
@@ -29,11 +29,10 @@ export const ImageAction = () => {
   }
 
   const createNewImageUrl = async (body: any) => {
-
     setStatus(getStartStatus());
     
     const formData:any = new FormData();
-    await formData.append('file', base64ToBlob(body.data_url, body.file.type));
+    await formData.append('file', base64ToBlob(body.data_url, body?.file?.type));
     
     try {
       const response = await imageService.postCreateNewImageUrl(formData);

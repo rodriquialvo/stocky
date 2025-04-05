@@ -37,6 +37,7 @@ export const CartAction = () => {
   };
 
   const addToCart = async (item: AddToCartRequestDto) => {
+    console.log("addToCart", item)
     setStatus(getStartStatus());
     try {
       if (cart._id) {
@@ -46,6 +47,7 @@ export const CartAction = () => {
         item.cartId = respCart.cart._id;
       }
       const response = await cartService.postAddToCart(item);
+      console.log("RESPONSE EN ADD TO CART", response)
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));
         return;
@@ -54,21 +56,25 @@ export const CartAction = () => {
       setAddToCartStatus(getSuccessStatus());
       setCart(response.cart);
     } catch (e) {
+      console.log("ERRORRR EN ADD TO CART", e)
       setStatus(getErrorStatus(e as Error));
     }
   };
 
-  const removeFromCart = async (cartId: string, variantId: string) => {
+  const removeFromCart = async (cartId: string, variantId: string, productId: string, isWholesalePackage: boolean) => {
     setStatus(getStartStatus());
+    console.log("removeFromCart", cartId, variantId, productId, isWholesalePackage)
     try {
-      const response = await cartService.removeFromCart({ cartId, variantId });
+      const response = await cartService.removeFromCart({ cartId, variantId, productId, isWholesalePackage });
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));
         return;
       }
+      console.log("RESPONSE EN REMOVE FROM CART", response)
       setStatus(getSuccessStatus());
       setCart(response.cart);
     } catch (e) {
+      console.log("ERRORRR EN REMOVE FROM CART", e)
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -112,12 +118,27 @@ export const CartAction = () => {
     }
   };
 
+  const addToCartWholesale = async (items: AddToCartRequestDto[]) => {
+    setStatus(getStartStatus());
+    try {
+      await Promise.all(
+        items.map(element => addToCart(element))
+      );
+      setStatus(getSuccessStatus());
+      console.log("EXITO!!!!!", items)
+    } catch (e) {
+      console.log("ERRORRR", e)
+      setStatus(getErrorStatus(e as Error));
+    }
+  }
+
   return {
     createNewCart,
     addToCart,
     removeFromCart,
     updateQuantity,
     getCart,
-    clearCart
+    clearCart,
+    addToCartWholesale
   };
 };

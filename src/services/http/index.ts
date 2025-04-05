@@ -148,13 +148,18 @@ class Http {
     return this.processResponse<T>(response);
   };
 
-  delete = async <T>(url: string, params?: any) => {
+  delete = async <T>(url: string, params?: any, body?: any) => {
     console.info('DELETE', `${this.getUrl(url)}${this.getSearchParams(params)}`);
     const response = await fetch(
       `${this.getUrl(url)}${this.getSearchParams(params)}`,
       {
         method: 'DELETE',
-        headers: this.getAuthHeader(),
+        headers: {
+          ...this.getAuthHeader(),
+          'Content-Type': JSON_MIME_TYPE,
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(body),
       },
     );
     return this.processResponse<T>(response);

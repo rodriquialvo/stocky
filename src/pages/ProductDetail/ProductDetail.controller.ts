@@ -10,6 +10,7 @@ import { useCartStore } from '../../store/shoppingcart/slice';
 import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
 import { MOCK_WHOLESALE_PRODUCT } from './mockData';
+import { AddToCartRequestDto } from '../../services/shoppingcart/dtos/generic';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
@@ -20,16 +21,16 @@ export const useProductDetailController =
 
     const { getProductDetail } = ProductAction()
     // todo: ver si esto esta bien, estoy importand cartAction dentro del product controller
-    const { addToCart } = CartAction();
+    const { addToCart, addToCartWholesale } = CartAction();
 
     const addToCartstatus = useCartStore(state => state.addToCartStatus);
     const setAddToCartStatus = useCartStore(state => state.setAddToCartStatus);
     const statusCart = useCartStore(state => state.status)
-    
+
     const productDetail = useProductStore(state => state.product);
     // const productDetail = MOCK_WHOLESALE_PRODUCT;
     const statusProduct = useProductStore(state => state.status);
-    
+
     const [isDisabledButton, setIsDisabledButton] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isWholesaleEnabled, setIsWholesaleEnabled] = useState(false);
@@ -45,8 +46,10 @@ export const useProductDetailController =
     const [maximumQuantity, setMaximumQuantity] = useState(0);
     const isWholesale = (productDetail?.wholesaleData?.isWholesaler || false) && isWholesaleEnabled;
     const minimumQuantity = productDetail?.wholesaleData?.minimumQuantity || 0;
-
+    const [totalUnits, setTotalUnits] = useState(0)
     const [variants, setVariants] = useState<{ color: string; size: string; quantity: number }[]>([]);
+    const [totalDozens, setTotalDozens] = useState(0);
+    const cartItems = useCartStore(state => state.cart);
 
     useEffect(() => {
       if (isWholesale) {
@@ -64,7 +67,7 @@ export const useProductDetailController =
           productDetail?.stocks?.filter(stock => stock.variant.color === color).map(stock => ({ label: stock.variant.size, value: stock.variant.size }))
         );
       }
-      
+
       setSize("");
     }, [color, productDetail, isWholesale])
 
@@ -82,12 +85,14 @@ export const useProductDetailController =
       if (productDetail?.wholesaleData?.isWholesaler) {
         setQuantity(productDetail.wholesaleData.minimumQuantity);
       }
-    }, [productDetail])
-
-    /* Listeners */
+    }, [productDetail]);
 
     useEffect(() => {
-      getProductDetail(id, {by: 'variant'});
+      setTotalUnits(productDetail?.stocks.reduce((acc, stock) => acc + stock.quantity, 0) || 0)
+    }, [productDetail])
+
+    useEffect(() => {
+      getProductDetail(id, { by: 'variant' });
     }, [id]);
 
     useEffect(() => {
@@ -107,10 +112,14 @@ export const useProductDetailController =
     }, [addToCartstatus, navigate])
 
     useEffect(() => {
-      if(!!size && !!color) {
+      if (!!size && !!color) {
         setQuantity(0)
       }
-    },[size, productDetail, color])
+    }, [size, productDetail, color]);
+
+    useEffect(() => {
+      setTotalDozens(Math.floor(totalUnits / 12));
+    }, [totalUnits])
 
     const isValidWholesaleQuantity = (qty: number) => {
       if (!isWholesale) return true;
@@ -131,52 +140,45 @@ export const useProductDetailController =
 
     /* View Events */
     const onAddToCartPressed = ({ size, color, quantity }: ParamsOnAddToCartPressed) => {
-      if (isWholesale) {
-        // Validar que la suma de las cantidades sea igual a la cantidad total
-        const totalVariantsQuantity = variants.reduce((sum, v) => sum + v.quantity, 0);
-        if (totalVariantsQuantity !== quantity) {
-          return toast("La suma de las cantidades debe ser igual a la cantidad total");
-        }
-
-        // Validar stock para cada variante
-        for (const variant of variants) {
-          const stock = productDetail.stocks.find(
-            s => s.variant.size === variant.size && s.variant.color === variant.color
-          );
-          if (!stock || stock.quantity < variant.quantity) {
-            return toast(`No hay suficiente stock para la variante ${variant.color} - ${variant.size}`);
-          }
-        }
-
-        // Agregar cada variante al carrito
-        variants.forEach(variant => {
-          const stock = productDetail.stocks.find(
-            s => s.variant.size === variant.size && s.variant.color === variant.color
-          );
-          addToCart({
-            productId: productDetail.id,
-            variantId: stock.variant.id,
-            quantity: variant.quantity
-          });
-        });
-      } else {
-        if (quantity > productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color)?.quantity) {
-          return toast("No hay suficiente stock. Intenta con una cantidad menor")
-        }
-
-        if (isWholesale && !isValidWholesaleQuantity(quantity)) {
-          return toast("La cantidad debe ser 6 o múltiplo de 12")
-        }
-
-        // find stock with size and color
-        const stock = productDetail.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
-        addToCart({
-          productId: productDetail.id,
-          variantId: stock.variant.id,
-          quantity: quantity
-        })
+      if (quantity > productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color)?.quantity) {
+        return toast("No hay suficiente stock. Intenta con una cantidad menor")
       }
+      // find stock with size and color
+      const stock = productDetail.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
+      addToCart({
+        productId: productDetail.id,
+        variantId: stock.variant.id,
+        quantity: quantity
+      })
     };
+
+    const onAddToCartWholesalePressed = () => {
+      const items = transformVariantsToCartItems();
+      addToCartWholesale(items.map(element => ({
+        ...element,
+        isWholesalePackage: true,
+        predefinedQuantity: 12
+      })))
+    }
+
+    const transformVariantsToCartItems = () => {
+      return variants.map(variant => {
+        const stock = productDetail?.stocks.find(
+          s => s.variant.color === variant.color && s.variant.size === variant.size
+        );
+        console.log("stock", stock)
+        if (!stock?.variant.id) {
+          toast.error(`No se encontró la variante para color ${variant.color} y talle ${variant.size}`);
+          return null;
+        }
+
+        return {
+          productId: productDetail?.id || '',
+          variantId: stock.variant.id,
+          quantity: variant.quantity
+        };
+      }).filter(Boolean) as AddToCartRequestDto[];
+    }
 
     const handleSelectColor = (event) => {
       setColor(event.value);
@@ -187,16 +189,12 @@ export const useProductDetailController =
     };
 
     const onIncrease = () => {
-      const nextQuantity = getNextValidQuantity(quantity);
-      if (nextQuantity <= (productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color)?.quantity || 0)) {
-        setQuantity(nextQuantity);
-      }
+      setQuantity(quantity + 1);
     };
 
     const onDecrease = () => {
-      if (quantity > minimumQuantity) {
-        const prevQuantity = getPrevValidQuantity(quantity);
-        setQuantity(prevQuantity);
+      if (quantity > 1) {
+        setQuantity(quantity - 1);
       }
     };
 
@@ -204,7 +202,7 @@ export const useProductDetailController =
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % productDetail.pictures.length);
       setImageSelected(productDetail.pictures[currentImageIndex].url);
     };
-  
+
     const handlePrev = () => {
       setCurrentImageIndex((prevIndex) => (prevIndex - 1 + productDetail.pictures.length) % productDetail.pictures.length);
     };
@@ -224,12 +222,9 @@ export const useProductDetailController =
       return productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
     }
 
-    /* Private Methods */
-    //Ex. const increaseCount = () => {}
-
-    console.log('variantSelected', getVariantSelected())
-    // Return state and events
-    console.log('productDetail', productDetail)
+    // console.log("variants", variants)
+    console.log("colorsProduct", allColors)
+    console.log("productDetail", productDetail)
     return {
       productDetail,
       onAddToCartPressed,
@@ -245,7 +240,7 @@ export const useProductDetailController =
       size,
       color,
       isLoading: statusProduct.isFetching || statusCart.isFetching,
-      colorsProduct: allColors.filter(color => productDetail?.colors?.includes(color.value)).map(color => { return {label: color.label, value: color.value}}),
+      colorsProduct: allColors.filter(color => productDetail?.colors?.includes(color.value)).map(color => { return { label: color.label, value: color.value } }),
       handleNext,
       handlePrev,
       isWholesale,
@@ -254,8 +249,10 @@ export const useProductDetailController =
       handleVariantsChange,
       isWholesaleEnabled,
       handleWholesaleToggle,
-      variantSelected: getVariantSelected()
+      variantSelected: getVariantSelected(),
+      totalUnits,
+      totalDozens,
+      onAddToCartWholesalePressed
     };
   };
 
-  

@@ -1,4 +1,5 @@
 import { ProductDetail, Stock } from "../../services/product/dtos/getProductDetail";
+import { AddToCartRequestDto } from "../../services/shoppingcart/dtos/generic";
 
 export interface ParamsOnAddToCartPressed {
   color: string,
@@ -28,6 +29,8 @@ export interface ProductDetailController {
   variants: Variant[],
   isWholesaleEnabled: boolean,
   variantSelected: Stock | null,
+  totalUnits: number,
+  totalDozens: number,
   /* Events */
   onAddToCartPressed: (data: ParamsOnAddToCartPressed) => void,
   setImageSelected: (image: string) => void,
@@ -38,7 +41,8 @@ export interface ProductDetailController {
   handleNext: () => void,
   handlePrev: () => void,
   handleVariantsChange: (variants: Variant[]) => void,
-  handleWholesaleToggle: () => void
+  handleWholesaleToggle: () => void,
+  onAddToCartWholesalePressed: () => void
 }
 
 export interface ProductDetailProps {
