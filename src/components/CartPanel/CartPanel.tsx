@@ -134,7 +134,7 @@ const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuan
                   <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {variant.variant.size}</Text>
                   <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Color: {capitalizeFirstLetter(variant.variant.color)}</Text>
                 </Box>
-                <DeleteButton item={{ variant: variant.variant, product: item.product, isWholesalePackage: true }} onRemoveFromCartPressed={onRemoveFromCartPressed} />
+                <DeleteButton item={{ variant: variant.variant, product: item.product, is_wholesale_package: true }} onRemoveFromCartPressed={onRemoveFromCartPressed} />
               </Flex>
 
               <QuantityPicker
@@ -230,7 +230,7 @@ const CartPanel: FC<CartPanelProps> = props => {
 
   }, [cart]);
 
-
+  console.log('cart', cart)
   return (
     <>
       <>

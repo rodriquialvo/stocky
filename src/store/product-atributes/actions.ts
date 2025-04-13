@@ -57,7 +57,6 @@ export const ProductAtributesAction = () => {
 
 
   const getAllColors = async () => {
-    console.log("getAllColors")
     setStatus(getStartStatus());
     try {
       const data = await productAtributesService.getProductAtributes({ type: "color" });

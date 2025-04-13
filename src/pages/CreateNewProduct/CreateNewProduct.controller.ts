@@ -241,6 +241,54 @@ export const useCreateNewProductController =
       setFormData(data);
     };
 
+    const handleWholesaleToggle = (isWholesale: boolean) => {
+      setFormData({
+        ...formData,
+        wholesaleData: {
+          ...formData.wholesaleData,
+          isWholesaler: isWholesale ? "true" : "false"
+        }
+      });
+    };
+
+    const handlePackageTypeChange = (packageType: string) => {
+      setFormData({
+        ...formData,
+        wholesaleData: {
+          ...formData.wholesaleData,
+          packageType: packageType as 'simple' | 'complex'
+        }
+      });
+    };
+
+    const handleWholesalePercentageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value, dataset } = e.target;
+      const type = dataset.type as 'half_dozen' | 'dozen';
+      
+      setFormData({
+        ...formData,
+        percentages: {
+          ...formData.percentages,
+          wholesale: {
+            ...formData.percentages.wholesale,
+            [type]: parseFloat(value)
+          }
+        }
+      });
+    };
+
+    const calculateWholesalePrice = (type: 'half_dozen' | 'dozen'): number => {
+      if (!formData.percentages.wholesale || !formData.prices.cost) {
+        return 0;
+      }
+      
+      const percentage = formData.percentages.wholesale[type];
+      const costPrice = parseFloat(formData.prices.cost.toString());
+      
+      // Calculamos el precio mayorista como: precio de costo + (precio de costo * porcentaje / 100)
+      return roundUpTo100(costPrice + (costPrice * percentage / 100));
+    };
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setFormData((prev) => ({ ...prev, photos: e.target.files }));
     };
@@ -330,6 +378,10 @@ export const useCreateNewProductController =
       sizesTypes: typesSizesByIds,
       onSelectSizeType,
       allBrands,
-      showCategoriesTypesOptions
+      showCategoriesTypesOptions,
+      handleWholesaleToggle,
+      handlePackageTypeChange,
+      handleWholesalePercentageChange,
+      calculateWholesalePrice
     };
   };

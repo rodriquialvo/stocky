@@ -18,7 +18,6 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
   const currentImageIndex = controller.productDetail?.pictures.findIndex(img => img.url === controller.imageSelected) || 0;
   const totalImages = controller.productDetail?.pictures.length || 0;
 
-  console.log("controller", controller)
   return (
     <Box
       w="100%"

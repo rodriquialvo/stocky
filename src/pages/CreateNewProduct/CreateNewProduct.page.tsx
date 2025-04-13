@@ -398,6 +398,108 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
                 </CardBody>
               </Card>
 
+              {/* Nueva sección de Mayorista */}
+              <Card bg={cardBgColor} borderRadius="lg" boxShadow="md">
+                <CardBody>
+                  <Flex justify="space-between" align="center" mb={4}>
+                    <Heading size="md">Configuración Mayorista</Heading>
+                    <Checkbox
+                      isChecked={controller.formData.wholesaleData?.isWholesaler === "true"}
+                      onChange={(e) => controller.handleWholesaleToggle(e.target.checked)}
+                      colorScheme="blue"
+                      size="lg"
+                    >
+                      <Text fontWeight="medium">Activar modo mayorista</Text>
+                    </Checkbox>
+                  </Flex>
+
+                  {controller.formData.wholesaleData?.isWholesaler === "true" && (
+                    <VStack spacing={6} align="stretch">
+                      <Box>
+                        <FormLabel htmlFor="packageType">Tipo de Empaque</FormLabel>
+                        <RadioGroup 
+                          value={controller.formData.wholesaleData?.packageType || "simple"} 
+                          onChange={(value) => controller.handlePackageTypeChange(value)}
+                        >
+                          <Stack direction="row" spacing={5}>
+                            <Radio value="simple" colorScheme="blue">
+                              <Text>Simple</Text>
+                            </Radio>
+                            <Radio value="complex" colorScheme="blue">
+                              <Text>Complejo</Text>
+                            </Radio>
+                          </Stack>
+                        </RadioGroup>
+                        <Text fontSize="xs" color="gray.500" mt={1}>
+                          {controller.formData.wholesaleData?.packageType === "simple" 
+                            ? "Empaque simple: solo permite compras por cantidad" 
+                            : "Empaque complejo: permite configurar diferentes precios según cantidad"}
+                        </Text>
+                      </Box>
+
+                      <Divider />
+
+                      <Box>
+                        <Heading size="sm" mb={4}>Porcentajes Mayoristas</Heading>
+                        <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
+                          <GridItem>
+                            <FormControl>
+                              <FormLabel htmlFor="percentageHalfDozen">
+                                % Media Docena
+                              </FormLabel>
+                              <InputGroup>
+                                <Input
+                                  type="number"
+                                  id="percentageHalfDozen"
+                                  name="percentageHalfDozen"
+                                  value={controller.formData.percentages.wholesale?.half_dozen || 0}
+                                  onChange={controller.handleWholesalePercentageChange}
+                                  data-type="half_dozen"
+                                  min={0}
+                                  placeholder="0"
+                                />
+                                <InputRightElement>
+                                  <Text color="gray.500">%</Text>
+                                </InputRightElement>
+                              </InputGroup>
+                              <Text fontSize="xs" color="gray.500" mt={1}>
+                                Porcentaje de descuento para compras de 6 unidades
+                              </Text>
+                            </FormControl>
+                          </GridItem>
+                          
+                          <GridItem>
+                            <FormControl>
+                              <FormLabel htmlFor="percentageDozen">
+                                % Docena
+                              </FormLabel>
+                              <InputGroup>
+                                <Input
+                                  type="number"
+                                  id="percentageDozen"
+                                  name="percentageDozen"
+                                  value={controller.formData.percentages.wholesale?.dozen || 0}
+                                  onChange={controller.handleWholesalePercentageChange}
+                                  data-type="dozen"
+                                  min={0}
+                                  placeholder="0"
+                                />
+                                <InputRightElement>
+                                  <Text color="gray.500">%</Text>
+                                </InputRightElement>
+                              </InputGroup>
+                              <Text fontSize="xs" color="gray.500" mt={1}>
+                                Porcentaje de descuento para compras de 12 unidades
+                              </Text>
+                            </FormControl>
+                          </GridItem>
+                        </Grid>
+                      </Box>
+                    </VStack>
+                  )}
+                </CardBody>
+              </Card>
+
               <Card bg={cardBgColor} borderRadius="lg" boxShadow="md">
                 <CardBody>
                   <Heading size="md" mb={4}>Resumen de Precios</Heading>
@@ -423,6 +525,34 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
                       </StatHelpText>
                     </Stat>
                   </SimpleGrid>
+
+                  {/* Mostrar precios mayoristas si está activado */}
+                  {controller.formData.wholesaleData?.isWholesaler === "true" && (
+                    <Box mt={6}>
+                      <Heading size="sm" mb={4}>Precios Mayoristas</Heading>
+                      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                        <Stat p={4} bg="blue.50" borderRadius="md" borderWidth="1px" borderColor="blue.200">
+                          <StatLabel color="blue.700">Precio Media Docena</StatLabel>
+                          <StatNumber color="blue.600" fontSize="2xl">
+                            {formattedNumberToMoney(controller.calculateWholesalePrice('half_dozen') || 0)}
+                          </StatNumber>
+                          <StatHelpText color="blue.500">
+                            Precio por unidad en compras de 6 (basado en costo + %)
+                          </StatHelpText>
+                        </Stat>
+                        
+                        <Stat p={4} bg="purple.50" borderRadius="md" borderWidth="1px" borderColor="purple.200">
+                          <StatLabel color="purple.700">Precio Docena</StatLabel>
+                          <StatNumber color="purple.600" fontSize="2xl">
+                            {formattedNumberToMoney(controller.calculateWholesalePrice('dozen') || 0)}
+                          </StatNumber>
+                          <StatHelpText color="purple.500">
+                            Precio por unidad en compras de 12 (basado en costo + %)
+                          </StatHelpText>
+                        </Stat>
+                      </SimpleGrid>
+                    </Box>
+                  )}
                 </CardBody>
               </Card>
             </VStack>

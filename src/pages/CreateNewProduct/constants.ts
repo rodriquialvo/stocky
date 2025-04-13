@@ -16,8 +16,21 @@ export const initialStateProductformData: (product?: Product) => ProductFormData
     },
     percentages: {
       retail: 30,
-      reseller: 80
+      reseller: 80,
+      wholesale: {
+        half_dozen: 10,
+        dozen: 15
+      }
     },
     colors: product?.colors || [],
-    sizeType: product?.sizeType || ""
+    sizeType: product?.sizeType || "",
+    wholesaleData: product?.wholesaleData ? {
+      isWholesaler: product.wholesaleData.isWholesaler ? "true" : "false",
+      packageType: "simple",
+      minimumQuantity: product.wholesaleData.minimumQuantity || 6
+    } : {
+      isWholesaler: "false",
+      packageType: "simple",
+      minimumQuantity: 6
+    }
   })

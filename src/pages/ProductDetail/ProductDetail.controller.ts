@@ -166,7 +166,6 @@ export const useProductDetailController =
         const stock = productDetail?.stocks.find(
           s => s.variant.color === variant.color && s.variant.size === variant.size
         );
-        console.log("stock", stock)
         if (!stock?.variant.id) {
           toast.error(`No se encontró la variante para color ${variant.color} y talle ${variant.size}`);
           return null;
@@ -223,8 +222,8 @@ export const useProductDetailController =
     }
 
     // console.log("variants", variants)
-    console.log("colorsProduct", allColors)
-    console.log("productDetail", productDetail)
+    // console.log("colorsProduct", allColors)
+    // console.log("productDetail", productDetail)
     return {
       productDetail,
       onAddToCartPressed,
