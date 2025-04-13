@@ -10,7 +10,7 @@ import { useCartStore } from '../../store/shoppingcart/slice';
 import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
 import { MOCK_WHOLESALE_PRODUCT } from './mockData';
-import { AddToCartRequestDto } from '../../services/shoppingcart/dtos/generic';
+import { AddToCartRequestDto, Item } from '../../services/shoppingcart/dtos/generic';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
@@ -49,7 +49,8 @@ export const useProductDetailController =
     const [totalUnits, setTotalUnits] = useState(0)
     const [variants, setVariants] = useState<{ color: string; size: string; quantity: number }[]>([]);
     const [totalDozens, setTotalDozens] = useState(0);
-    const cartItems = useCartStore(state => state.cart);
+    const cart = useCartStore(state => state.cart);
+    const [productItemCart, setProductItemCart] = useState<Item | null>(null);
 
     useEffect(() => {
       if (isWholesale) {
@@ -69,7 +70,7 @@ export const useProductDetailController =
       }
 
       setSize("");
-    }, [color, productDetail, isWholesale])
+    }, [color, productDetail, isWholesale]);
 
     useEffect(() => {
       setImageSelected(productDetail?.pictures[currentImageIndex].url);
@@ -79,7 +80,16 @@ export const useProductDetailController =
       if (productDetail?.pictures.length > 0) {
         setImageSelected(productDetail.pictures[0].url)
       }
-    }, [productDetail])
+    }, [productDetail]);
+
+    useEffect(() => {
+      const findProductInCart = cart?.items?.find(item => item.product._id === productDetail?.id);
+      if (findProductInCart) {
+        setProductItemCart(findProductInCart);
+      } else {
+        setProductItemCart(null);
+      }
+    }, [cart, productDetail])
 
     useEffect(() => {
       if (productDetail?.wholesaleData?.isWholesaler) {
@@ -221,9 +231,16 @@ export const useProductDetailController =
       return productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
     }
 
+    const onCloseModalWholeSale = () => {
+      setIsWholesaleEnabled(false);
+      setVariants([]);
+      setQuantity(minimumQuantity);
+    }
+
     // console.log("variants", variants)
     // console.log("colorsProduct", allColors)
-    // console.log("productDetail", productDetail)
+    console.log("productDetail", productDetail)
+    console.log("quantity", quantity)
     return {
       productDetail,
       onAddToCartPressed,
@@ -251,7 +268,9 @@ export const useProductDetailController =
       variantSelected: getVariantSelected(),
       totalUnits,
       totalDozens,
-      onAddToCartWholesalePressed
+      onAddToCartWholesalePressed,
+      onCloseModalWholeSale,
+      productItemCart
     };
   };
 

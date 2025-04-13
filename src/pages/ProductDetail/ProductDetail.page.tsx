@@ -7,10 +7,12 @@ import { capitalizeFirstLetter, formattedNumberToMoney } from "../../utils/funct
 import { useProductDetailController } from "./ProductDetail.controller";
 import { ProductDetailProps } from "./interfaces";
 import LoadingOverlay from "../../components/LoadingOverlay/LoadingOverlay";
+import WholesaleModal from "../../components/WholesaleModal/WholesaleModal";
 
 const ProductDetail: React.FC<ProductDetailProps> = props => {
   const [isHovered, setIsHovered] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isWholesaleModalOpen, setIsWholesaleModalOpen] = useState(false);
 
   const { useController = useProductDetailController } = props;
   const controller = useController();
@@ -418,7 +420,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                         w={"full"}
                         colorScheme={'purple'}
                         size="lg"
-                        onClick={controller.onAddToCartWholesalePressed}
+                        onClick={() => setIsWholesaleModalOpen(true)}
                       >
                         Agregar al carrito mayorista
                       </Button>
@@ -528,6 +530,11 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
           </ModalBody>
         </ModalContent>
       </Modal>
+      <WholesaleModal
+        isOpen={controller.isWholesaleEnabled}
+        onClose={controller.onCloseModalWholeSale}
+        itemCart={controller.productItemCart}
+      />
     </Box>
   )
 }

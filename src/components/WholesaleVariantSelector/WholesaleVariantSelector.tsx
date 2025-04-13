@@ -15,6 +15,7 @@ interface WholesaleVariantSelectorProps {
   totalQuantity: number;
   onVariantsChange: (variants: Variant[]) => void;
   isDisabled?: boolean;
+  initialVariants?: { color: string; size: string; quantity: number }[];
 }
 
 const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
@@ -23,9 +24,20 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
   stocks,
   totalQuantity,
   onVariantsChange,
-  isDisabled = false
+  isDisabled = false,
+  initialVariants = []
 }) => {
-  const [variants, setVariants] = useState<Variant[]>([]);
+  const getAvailableStock = (color: string, size: string) => {
+    const stock = stocks.find(
+      s => s.variant.color === color && s.variant.size === size
+    );
+    return stock?.quantity || 0;
+  };
+
+  const [variants, setVariants] = useState<Variant[]>(initialVariants.map(variant => ({
+    ...variant,
+    stock: getAvailableStock(variant.color, variant.size)
+  })));
   const [remainingQuantity, setRemainingQuantity] = useState(totalQuantity);
   const toast = useToast();
 
@@ -82,13 +94,6 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
     const total = currentVariants.reduce((sum, variant) => sum + variant.quantity, 0);
     setRemainingQuantity(totalQuantity - total);
     onVariantsChange(currentVariants);
-  };
-
-  const getAvailableStock = (color: string, size: string) => {
-    const stock = stocks.find(
-      s => s.variant.color === color && s.variant.size === size
-    );
-    return stock?.quantity || 0;
   };
 
   return (

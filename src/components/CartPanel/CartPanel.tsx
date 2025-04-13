@@ -1,4 +1,4 @@
-import { DeleteIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
 import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Heading, IconButton, Image, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 import { useSessionStore } from '../../store/session/slice';
@@ -10,14 +10,20 @@ import { CartPanelProps } from './interfaces';
 import { SaleAction } from '../../store/sales/actions';
 import { useSaleStore } from '../../store/sales/slice';
 import toast from 'react-hot-toast';
+import WholesaleModal from '../WholesaleModal/WholesaleModal';
+import { Item } from '../../services/shoppingcart/dtos/generic';
+import { ProductAction } from '../../store/product/actions';
 
-const ProductHeader = ({ children }: any) => {
+const ProductHeader = ({ children, item, onEditPressed }: any) => {
   return (
     <Flex
       alignItems={"center"}
       justify={"space-between"}
     >
       {children}
+      {!item.variant && (
+        <EditButton item={item} onEditPressed={onEditPressed} />
+      )}
     </Flex>
   )
 }
@@ -116,6 +122,18 @@ const QuantityPickerVariant = ({ item, variantsQuantity, handleQuantityChange, s
   )
 }
 
+const EditButton = ({ item, onEditPressed }: any) => {
+  return (
+    <IconButton
+      aria-label='Edit'
+      color={"blue.600"}
+      icon={<EditIcon />}
+      onClick={() => onEditPressed(item)}
+      variant='ghost'
+    />
+  )
+}
+
 const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuantity, onRemoveFromCartPressed }: any) => {
   return (
     <Accordion allowMultiple>
@@ -165,7 +183,9 @@ const CartPanel: FC<CartPanelProps> = props => {
   const { postSale } = SaleAction()
   const [variantsQuantity, setVariantsQuantity] = useState({});
   const status = useSaleStore(state => state.status)
-
+  const [isWholesaleModalOpen, setIsWholesaleModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+  const { getProductDetail } = ProductAction()
   const { updateQuantity, removeFromCart, getCart } = CartAction();
 
   const handleQuantityChange = (id: string, value: number, productId: string, isWholesalePackage?: boolean, predefinedQuantity?: number) => {
@@ -192,6 +212,12 @@ const CartPanel: FC<CartPanelProps> = props => {
       }
     })
   };
+
+  const onEditPressed = (item: Item) => {
+    setSelectedItem(item);
+    setIsWholesaleModalOpen(true);
+    getProductDetail(item.product._id)
+  }
 
   const onRemoveFromCartPressed = async (variantId: string, productId?: string, isWholesalePackage?: boolean) => {
     await removeFromCart(cart._id, variantId, productId, isWholesalePackage)
@@ -231,6 +257,7 @@ const CartPanel: FC<CartPanelProps> = props => {
   }, [cart]);
 
   console.log('cart', cart)
+  console.log("selectedItem",selectedItem)
   return (
     <>
       <>
@@ -281,7 +308,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                             flexDirection={"column"}
                             width={"100%"}
                           >
-                            <ProductHeader>
+                            <ProductHeader item={item} onEditPressed={onEditPressed}>
                               <HeadingProduct item={item} />
                               <DeleteButton item={item} onRemoveFromCartPressed={onRemoveFromCartPressed}/>
                             </ProductHeader>
@@ -327,6 +354,14 @@ const CartPanel: FC<CartPanelProps> = props => {
           </DrawerContent>
         </Drawer>
       </>
+      <WholesaleModal 
+        isOpen={isWholesaleModalOpen} 
+        onClose={() => {
+          setIsWholesaleModalOpen(false);
+          setSelectedItem(null);
+        }}
+        itemCart={selectedItem}
+      />
     </>
   );
 };
