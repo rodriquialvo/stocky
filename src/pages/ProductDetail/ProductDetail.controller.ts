@@ -34,43 +34,55 @@ export const useProductDetailController =
     const [isDisabledButton, setIsDisabledButton] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isWholesaleEnabled, setIsWholesaleEnabled] = useState(false);
-
-    const navigate = useNavigate();
-    const [sizes, setSizes] = useState<{ label: string, value: string }[]>([]);
-    const [size, setSize] = useState("");
-    const [color, setColor] = useState("");
-    const [quantity, setQuantity] = useState(1);
-    const [imageSelected, setImageSelected] = useState("");
-    const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
-    const allColors = useProductAtributesStore(state => state.allColors);
-    const [maximumQuantity, setMaximumQuantity] = useState(0);
-    const isWholesale = (productDetail?.wholesaleData?.isWholesaler || false) && isWholesaleEnabled;
-    const minimumQuantity = productDetail?.wholesaleData?.minimumQuantity || 0;
+    const [wholesaleMultiplier, setWholesaleMultiplier] = useState(1);
     const [totalUnits, setTotalUnits] = useState(0)
     const [variants, setVariants] = useState<{ color: string; size: string; quantity: number }[]>([]);
     const [totalDozens, setTotalDozens] = useState(0);
     const cart = useCartStore(state => state.cart);
     const [productItemCart, setProductItemCart] = useState<Item | null>(null);
+    const [selectedColor, setSelectedColor] = useState<string | null>(null);
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const isSimpleWholesale = productDetail?.wholesaleData?.isWholesaler && productDetail?.wholesaleData?.packageType === "simple";
+    const isWholesale = (productDetail?.wholesaleData?.isWholesaler || false) && isWholesaleEnabled;
+    const minimumQuantity = productDetail?.wholesaleData?.minimumQuantity || 0;
+
+    const navigate = useNavigate();
+    const [sizes, setSizes] = useState<{ label: string, value: string }[]>([]);
+    const [quantity, setQuantity] = useState(1);
+    const [imageSelected, setImageSelected] = useState("");
+    const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
+    const allColors = useProductAtributesStore(state => state.allColors);
+    const [maximumQuantity, setMaximumQuantity] = useState(0);
 
     useEffect(() => {
-      if (isWholesale) {
-        // En modo mayorista, mostrar todos los talles disponibles
-        const allSizes = productDetail?.stocks?.reduce((acc, stock) => {
-          if (!acc.includes(stock.variant.size)) {
-            acc.push(stock.variant.size);
-          }
-          return acc;
-        }, [] as string[]) || [];
-        setSizes(allSizes.map(size => ({ label: size, value: size })));
-      } else {
-        // En modo normal, filtrar por color seleccionado
-        setSizes(
-          productDetail?.stocks?.filter(stock => stock.variant.color === color).map(stock => ({ label: stock.variant.size, value: stock.variant.size }))
-        );
+      if (productDetail) {
+        // En modo mayorista, mostrar todos los tamaños disponibles
+        if (isWholesale) {
+          setSizes(
+            productDetail.stocks.map(stock => ({ label: stock.variant.size, value: stock.variant.size }))
+          );
+        } else {
+          // En modo normal, filtrar por color seleccionado
+          setSizes(
+            productDetail.stocks
+              .filter(stock => stock.variant.color === selectedColor)
+              .map(stock => ({ label: stock.variant.size, value: stock.variant.size }))
+          );
+        }
       }
+    }, [productDetail, isWholesale, selectedColor]);
 
-      setSize("");
-    }, [color, productDetail, isWholesale]);
+    useEffect(() => {
+      if (productDetail) {
+        const stock = productDetail.stocks.find(
+          s => s.variant.color === selectedColor && s.variant.size === selectedSize
+        );
+        setMaximumQuantity(stock?.quantity || 0);
+      }
+    }, [productDetail, selectedColor, selectedSize]);
 
     useEffect(() => {
       setImageSelected(productDetail?.pictures[currentImageIndex].url);
@@ -92,8 +104,9 @@ export const useProductDetailController =
     }, [cart, productDetail])
 
     useEffect(() => {
-      if (productDetail?.wholesaleData?.isWholesaler) {
-        setQuantity(productDetail.wholesaleData.minimumQuantity);
+      if (productDetail?.wholesaleData?.isWholesaler && productDetail?.wholesaleData?.packageType === "simple") {
+        // Inicializar con 0 para productos mayoristas simples
+        setQuantity(0);
       }
     }, [productDetail]);
 
@@ -108,10 +121,10 @@ export const useProductDetailController =
     useEffect(() => {
       setIsDisabledButton(
         !productDetail?.hasStock ||
-        (!isWholesale && (!color.length || !size.length || !quantity)) ||
+        (!isWholesale && (!selectedColor || !selectedSize || !quantity)) ||
         (isWholesale && (!variants.length || variants.some(v => !v.color || !v.size || !v.quantity)))
       )
-    }, [productDetail, color, size, quantity, isWholesale, variants])
+    }, [productDetail, selectedColor, selectedSize, quantity, isWholesale, variants])
 
     useEffect(() => {
       if (addToCartstatus.success) {
@@ -122,10 +135,10 @@ export const useProductDetailController =
     }, [addToCartstatus, navigate])
 
     useEffect(() => {
-      if (!!size && !!color) {
+      if (!!selectedSize && !!selectedColor) {
         setQuantity(0)
       }
-    }, [size, productDetail, color]);
+    }, [selectedSize, productDetail, selectedColor]);
 
     useEffect(() => {
       setTotalDozens(Math.floor(totalUnits / 12));
@@ -158,7 +171,8 @@ export const useProductDetailController =
       addToCart({
         productId: productDetail.id,
         variantId: stock.variant.id,
-        quantity: quantity
+        quantity: isSimpleWholesale ? quantity * wholesaleMultiplier : quantity,
+        isWholesalePackage: isSimpleWholesale
       })
     };
 
@@ -190,19 +204,32 @@ export const useProductDetailController =
     }
 
     const handleSelectColor = (event) => {
-      setColor(event.value);
+      setSelectedColor(event.value);
+      setSelectedSize(null);
     };
 
     const handleSelectSize = (event) => {
-      setSize(event.value);
+      setSelectedSize(event.value);
     };
 
     const onIncrease = () => {
-      setQuantity(quantity + 1);
+      if (isSimpleWholesale) {
+        const validValues = [0, 6, 12, 24, 36, 48];
+        const currentIndex = validValues.indexOf(quantity);
+        const nextIndex = currentIndex < validValues.length - 1 ? currentIndex + 1 : currentIndex;
+        setQuantity(validValues[nextIndex]);
+      } else {
+        setQuantity(quantity + 1);
+      }
     };
 
     const onDecrease = () => {
-      if (quantity > 1) {
+      if (isSimpleWholesale) {
+        const validValues = [0, 6, 12, 24, 36, 48];
+        const currentIndex = validValues.indexOf(quantity);
+        const prevIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
+        setQuantity(validValues[prevIndex]);
+      } else if (quantity > 1) {
         setQuantity(quantity - 1);
       }
     };
@@ -228,7 +255,7 @@ export const useProductDetailController =
     };
 
     const getVariantSelected = () => {
-      return productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
+      return productDetail?.stocks.find(stock => stock.variant.size === selectedSize && stock.variant.color === selectedColor);
     }
 
     const onCloseModalWholeSale = () => {
@@ -237,12 +264,22 @@ export const useProductDetailController =
       setQuantity(minimumQuantity);
     }
 
+    const handleWholesaleMultiplierChange = (multiplier: number) => {
+      setWholesaleMultiplier(multiplier);
+    };
+
+    const getWholesaleMultipliers = () => {
+      return [1, 2, 4, 6, 8, 10].map(m => ({ label: `${m * 6} unidades`, value: m }));
+    };
+
     // console.log("variants", variants)
     // console.log("colorsProduct", allColors)
     console.log("productDetail", productDetail)
     console.log("quantity", quantity)
     return {
       productDetail,
+      statusProduct,
+      statusCart,
       onAddToCartPressed,
       isDisabledButton,
       sizes,
@@ -253,8 +290,10 @@ export const useProductDetailController =
       onIncrease,
       onDecrease,
       quantity,
-      size,
-      color,
+      selectedSize,
+      selectedColor,
+      color: selectedColor || '',
+      size: selectedSize || '',
       isLoading: statusProduct.isFetching || statusCart.isFetching,
       colorsProduct: allColors.filter(color => productDetail?.colors?.includes(color.value)).map(color => { return { label: color.label, value: color.value } }),
       handleNext,
@@ -270,7 +309,12 @@ export const useProductDetailController =
       totalDozens,
       onAddToCartWholesalePressed,
       onCloseModalWholeSale,
-      productItemCart
+      productItemCart,
+      isSimpleWholesale,
+      wholesaleMultiplier,
+      handleWholesaleMultiplierChange,
+      getWholesaleMultipliers,
+      maximumQuantity
     };
   };
 

@@ -21,6 +21,7 @@ export interface Product {
 export interface WholesaleData {
     isWholesaler: boolean;
     minimumQuantity: number;
+    packageType?: 'simple' | 'complex';
 }
 
 export interface Attributes {

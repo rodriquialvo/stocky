@@ -342,7 +342,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   </Badge>
                 )}
               </HStack>
-              {controller.productDetail?.wholesaleData?.isWholesaler && (
+              {controller.productDetail?.wholesaleData?.isWholesaler && controller.productDetail?.wholesaleData?.packageType !== "simple" && (
                 <Box mt={4} p={4} bg="purple.50" borderRadius="lg" borderWidth="1px" borderColor="purple.200">
                   <HStack spacing={4} align="center" mb={2}>
                     <Switch
@@ -370,6 +370,14 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                       Activa el modo mayorista para acceder a precios especiales por volumen
                     </Text>
                   )}
+                </Box>
+              )}
+              {controller.productDetail?.wholesaleData?.isWholesaler && controller.productDetail?.wholesaleData?.packageType === "simple" && (
+                <Box mt={4} p={4} bg="purple.50" borderRadius="lg" borderWidth="1px" borderColor="purple.200">
+                  <Text fontWeight="bold" fontSize="lg" color="purple.700">Producto Mayorista Simple</Text>
+                  <Text color="purple.700" mt={2}>
+                    Este producto se vende exclusivamente al precio mayorista
+                  </Text>
                 </Box>
               )}
             </Box>
@@ -449,9 +457,9 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                           base: "sm",
                           lg: "md"
                         }}
-                        onChange={controller.handleSelectColor}
+                        onChange={(option) => controller.handleSelectColor(option)}
                         isDisabled={!controller.productDetail?.hasStock}
-                        value={controller.colorsProduct?.find((color) => color.value === controller.color) || null}
+                        value={controller.colorsProduct?.find((color) => color.value === controller.selectedColor) || null}
                       />
                     </FormControl>
                     <FormControl>
@@ -464,9 +472,9 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                           base: "sm",
                           lg: "md"
                         }}
-                        onChange={controller.handleSelectSize}
+                        onChange={(option) => controller.handleSelectSize(option)}
                         isDisabled={!controller.productDetail?.hasStock}
-                        value={controller.sizes?.find((size) => size.value === controller.size) || null}
+                        value={controller.sizes?.find((size) => size.value === controller.selectedSize) || null}
                       />
                     </FormControl>
                   </Box>
@@ -479,6 +487,11 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   >
                     <Box flex={1}>
                       <Text fontWeight="bold" mb={2}>Cantidad</Text>
+                      {!controller.isSimpleWholesale && (
+                        <Text color="gray.500" fontSize="sm" mb={2}>
+                          {controller.variantSelected?.quantity ? `Quedan solo ${controller.variantSelected.quantity} disponibles` : 'No hay stock disponible'}
+                        </Text>
+                      )}
                       <QuantityPicker
                         stock={controller.variantSelected?.quantity || 0}
                         quantity={controller.quantity}
@@ -487,6 +500,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                         isDisabled={false}
                         isWholesale={controller.isWholesale}
                         minimumQuantity={controller.minimumQuantity}
+                        isSimpleWholesale={controller.isSimpleWholesale}
                       />
                     </Box>
                     <Button
@@ -494,7 +508,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                       w={"full"}
                       colorScheme={'pink'}
                       size="lg"
-                      onClick={() => controller.onAddToCartPressed({ size: controller.size, color: controller.color, quantity: controller.quantity })}
+                      onClick={() => controller.onAddToCartPressed({ size: controller.selectedSize, color: controller.selectedColor, quantity: controller.quantity })}
                     >
                       Agregar al carrito
                     </Button>

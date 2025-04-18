@@ -1,4 +1,3 @@
-
 export interface CartItem {
     cartId: string,
     productId: string,
@@ -38,6 +37,7 @@ export interface Product {
     code:     string;
     prices:   Prices;
     pictures: Picture[];
+    wholesale_data?: WholesaleData;
 }
 
 export interface Picture {
@@ -95,6 +95,7 @@ export interface AddToCartRequestDto {
     variantId: string
     quantity: number
     cartId?: string,
+    isWholesalePackage?: boolean
 }
 
 export interface RemoveFromCartRequestDto {
@@ -119,4 +120,10 @@ export interface UpdateQuantityRequestDto {
 
 export interface CartReponseDto {
     cart: Cart
+}
+
+export interface WholesaleData {
+    is_wholesaler: boolean;
+    minimum_quantity: number;
+    package_type?: 'simple' | 'complex';
 }

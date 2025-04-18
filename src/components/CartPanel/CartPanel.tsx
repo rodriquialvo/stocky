@@ -1,18 +1,18 @@
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Heading, IconButton, Image, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Heading, IconButton, Image, Text } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Item } from '../../services/shoppingcart/dtos/generic';
+import { ProductAction } from '../../store/product/actions';
+import { SaleAction } from '../../store/sales/actions';
+import { useSaleStore } from '../../store/sales/slice';
 import { useSessionStore } from '../../store/session/slice';
 import { CartAction } from '../../store/shoppingcart/actions';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 import QuantityPicker from '../QuantityPicker/QuantityPicker';
-import { CartPanelProps } from './interfaces';
-import { SaleAction } from '../../store/sales/actions';
-import { useSaleStore } from '../../store/sales/slice';
-import toast from 'react-hot-toast';
 import WholesaleModal from '../WholesaleModal/WholesaleModal';
-import { Item } from '../../services/shoppingcart/dtos/generic';
-import { ProductAction } from '../../store/product/actions';
+import { CartPanelProps } from './interfaces';
 
 const ProductHeader = ({ children, item, onEditPressed }: any) => {
   return (
@@ -114,9 +114,11 @@ const QuantityPickerVariant = ({ item, variantsQuantity, handleQuantityChange, s
       <QuantityPicker
         stock={item?.stock?.quantity}
         quantity={variantsQuantity[item.variant._id + item.product._id]}
-        onIncrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id] + 1, item.product._id)}
-        onDecrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id] - 1, item.product._id)}
+        onIncrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id], item.product._id, 'increase', item.is_wholesale_package)}
+        onDecrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id], item.product._id, 'decrease', item.is_wholesale_package)}
         isDisabled={statusCart.isFetching}
+        isSimpleWholesale={item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type === "simple"}
+        isWholesale={item.product.wholesale_data?.is_wholesaler}
       />
     </Box>
   )
@@ -158,9 +160,11 @@ const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuan
               <QuantityPicker
                 stock={variant.stock?.quantity}
                 quantity={variant.quantity}
-                onIncrease={() => handleQuantityChange(variant.variant._id, variantsQuantity[variant.variant._id + item.product._id] + 1, item.product._id, true, item.predefined_quantity)}
-                onDecrease={() => handleQuantityChange(variant.variant._id, variantsQuantity[variant.variant._id + item.product._id] - 1, item.product._id, true, item.predefined_quantity)}
+                onIncrease={() => handleQuantityChange(variant.variant._id, variantsQuantity[variant.variant._id + item.product._id], item.product._id, 'increase', true, item.predefined_quantity)}
+                onDecrease={() => handleQuantityChange(variant.variant._id, variantsQuantity[variant.variant._id + item.product._id], item.product._id, 'decrease', true, item.predefined_quantity)}
                 isDisabled={statusCart.isFetching}
+                isSimpleWholesale={item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type === "simple"}
+                isWholesale={item.product.wholesale_data?.is_wholesaler}
               />
             </Box>
           ))}
@@ -188,13 +192,35 @@ const CartPanel: FC<CartPanelProps> = props => {
   const { getProductDetail } = ProductAction()
   const { updateQuantity, removeFromCart, getCart } = CartAction();
 
-  const handleQuantityChange = (id: string, value: number, productId: string, isWholesalePackage?: boolean, predefinedQuantity?: number) => {
+  const handleQuantityChange = (id: string, value: number, productId: string, operation: 'increase' | 'decrease', isWholesalePackage?: boolean, predefinedQuantity?: number) => {
     if (value < 0) {
       return;
     }
-    setVariantsQuantity({ ...variantsQuantity, [id + productId]: value });
-    if (value >= 1) {
-      onUpdateQuantityPressed(id, value, productId, isWholesalePackage, predefinedQuantity);
+
+    // Encontrar el producto en el carrito
+    const product = cart.items.find(item => item.product._id === productId);
+    const isSimpleWholesale = product?.product.wholesale_data?.is_wholesaler && product?.product.wholesale_data?.package_type === "simple";
+
+    // Si es un producto simple mayorista, validar que el valor sea válido
+    if (isSimpleWholesale) {
+      const validValues = [0, 6, 12, 24, 36, 48];
+      const currentIndex = validValues.indexOf(value);
+      if (currentIndex === -1) {
+        // Si el valor no es válido, encontrar el valor válido más cercano
+        const nearestValue = validValues.reduce((prev, curr) => {
+          return Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev;
+        });
+        value = nearestValue;
+      }
+      setVariantsQuantity({ ...variantsQuantity, [id + productId]: operation === 'increase' ? validValues[currentIndex + 1] : validValues[currentIndex - 1] });
+      if (value >= 0) {
+        onUpdateQuantityPressed(id, operation === 'increase' ? validValues[currentIndex + 1] : validValues[currentIndex - 1], productId, isWholesalePackage, predefinedQuantity);
+      }
+    } else {
+      setVariantsQuantity({ ...variantsQuantity, [id + productId]: operation === 'increase' ? value + 1 : value - 1 });
+      if (value >= 0) {
+        onUpdateQuantityPressed(id, operation === 'increase' ? value + 1 : value - 1, productId, isWholesalePackage, predefinedQuantity);
+      }
     }
   };
 
