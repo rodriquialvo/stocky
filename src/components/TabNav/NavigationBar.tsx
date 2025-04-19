@@ -83,28 +83,6 @@ const NavigationBar: React.FC<TabNavProps> = ({
 
   const NavItems = () => (
     <Flex gap={4} alignItems="center">
-      <Tooltip label="Menú principal">
-        <IconButton
-          aria-label="Menu"
-          icon={<HamburgerIcon />}
-          variant="ghost"
-          onClick={() => setIsOpenMenuPanel(true)}
-          bg="transparent"
-          color="#ec0868"
-          _hover={{ bg: "pink.50" }}
-        />
-      </Tooltip>
-      <Tooltip label="Filtrar productos">
-        <IconButton
-          aria-label="Filter"
-          icon={<IoFilter />}
-          variant="ghost"
-          onClick={() => setIsOpenFilterPanel(true)}
-          bg="transparent"
-          color="#ec0868"
-          _hover={{ bg: "pink.50" }}
-        />
-      </Tooltip>
       <Tooltip label="Carrito de compras">
         <IconButton
           aria-label="Cart"
@@ -252,6 +230,18 @@ const NavigationBar: React.FC<TabNavProps> = ({
         px={4}
       >
         <Flex align="center" gap={4}>
+          <Tooltip label="Menú principal">
+            <IconButton
+              aria-label="Menu"
+              icon={<HamburgerIcon />}
+              variant="solid"
+              onClick={() => setIsOpenMenuPanel(true)}
+              bg="#ec0868"
+              color="white"
+              _hover={{ bg: "pink.600" }}
+              size="lg"
+            />
+          </Tooltip>
           <Image
             src={images.logo}
             alt="Logo"
