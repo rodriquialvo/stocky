@@ -1,11 +1,10 @@
-import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Heading, IconButton, Input, InputGroup, InputLeftElement, InputRightElement, SimpleGrid, Text, VStack, useToast } from '@chakra-ui/react';
+import { Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Heading, IconButton, Input, InputGroup, InputLeftElement, SimpleGrid, Text, VStack, useToast } from '@chakra-ui/react';
 import { FC, useState } from 'react';
+import { FaPercent, FaTrash } from 'react-icons/fa';
+import { ProductAction } from '../../store/product/actions';
+import { useProductStore } from '../../store/product/slice';
 import { capitalizeFirstLetter, formattedNumberToMoney, roundUpTo100 } from '../../utils/functions';
 import { IncreaseAndDiscountPricePanelProps } from './interfaces';
-import { useProductStore } from '../../store/product/slice';
-import { DeleteIcon } from '@chakra-ui/icons';
-import { ProductAction } from '../../store/product/actions';
-import { FaPercent, FaTrash } from 'react-icons/fa';
 
 const IncreaseAndDiscountPricePanel: FC<IncreaseAndDiscountPricePanelProps> = props => {
   const productsSelected = useProductStore(state => state.productsSelected);
