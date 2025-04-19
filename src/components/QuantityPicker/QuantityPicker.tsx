@@ -11,6 +11,7 @@ interface QuantityPickerProps {
   isWholesale?: boolean;
   minimumQuantity?: number;
   isSimpleWholesale?: boolean;
+  disableButtons?: boolean;
 }
 
 const QuantityPicker: React.FC<QuantityPickerProps> = ({
@@ -21,7 +22,8 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
     isDisabled = false,
     isWholesale = false,
     minimumQuantity = 6,
-    isSimpleWholesale = false
+    isSimpleWholesale = false,
+    disableButtons = false
   }) => {
 
   const [isNearMax, setIsNearMax] = useState(false);
@@ -70,7 +72,7 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
         <Tooltip label="Disminuir cantidad" openDelay={500}>
           <Button 
             onClick={handleDecrease} 
-            isDisabled={(quantity <= 0) || isDisabled}
+            isDisabled={(quantity <= 0) || isDisabled || disableButtons}
             size="sm"
             borderRadius="md"
             bg={buttonBg}
@@ -102,7 +104,7 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
         <Tooltip label={quantity >= stock ? "Stock máximo alcanzado" : "Aumentar cantidad"} openDelay={500}>
           <Button 
             onClick={handleIncrease} 
-            isDisabled={(quantity >= stock) || isDisabled}
+            isDisabled={(quantity >= stock) || isDisabled || disableButtons}
             size="sm"
             borderRadius="md"
             bg={buttonBg}

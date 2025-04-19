@@ -11,6 +11,7 @@ import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces'
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
 import { MOCK_WHOLESALE_PRODUCT } from './mockData';
 import { AddToCartRequestDto, Item } from '../../services/shoppingcart/dtos/generic';
+import { AddComplexWholesaleProductToCartDTO } from '../../services/shoppingcart/cart.service';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
@@ -178,11 +179,14 @@ export const useProductDetailController =
 
     const onAddToCartWholesalePressed = () => {
       const items = transformVariantsToCartItems();
-      addToCartWholesale(items.map(element => ({
-        ...element,
-        isWholesalePackage: true,
-        predefinedQuantity: 12
-      })))
+      if (items.length > 0) {
+        addToCartWholesale({
+          cartId: cart._id,
+          productId: productDetail?.id || '',
+          predefinedQuantity: 12,
+          variants: items
+        } as AddComplexWholesaleProductToCartDTO);
+      }
     }
 
     const transformVariantsToCartItems = () => {

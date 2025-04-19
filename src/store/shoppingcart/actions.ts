@@ -9,6 +9,16 @@ import { Toast } from '@chakra-ui/react';
 import { AddToCartRequestDto, Cart, CreateNewCartRequestDto, UpdateQuantityRequestDto } from '../../services/shoppingcart/dtos/generic';
 import { sleep } from '../../utils/functions';
 
+interface AddComplexWholesaleProductToCartDTO {
+  cartId: string;
+  productId: string;
+  predefinedQuantity: number;
+  variants: {
+    variantId: string;
+    quantity: number;
+  }[];
+}
+
 export const CartAction = () => {
   const cartService = useAPICartService();
   const setStatus = useCartStore(state => state.setStatus);
@@ -116,19 +126,23 @@ export const CartAction = () => {
     }
   };
 
-  const addToCartWholesale = async (items: AddToCartRequestDto[]) => {
-
+  const addToCartWholesale = async (data: AddComplexWholesaleProductToCartDTO) => {
     setStatus(getStartStatus());
     try {
-      for (const item of items) {
-        await addToCart(item);
-        await sleep(500);
+      const response = await cartService.addComplexWholesaleProduct(data);
+      if (!response.cart) {
+        setStatus(getErrorStatus('No response'));
+        throw new Error('No response from server');
       }
       setStatus(getSuccessStatus());
-      console.log("EXITO!!!!!", items)
+      setCart(response.cart);
+      setAddToCartStatus(getSuccessStatus());
+      console.log("EXITO!!!!!", data);
+      return response;
     } catch (e) {
-      console.log("ERRORRR", e)
+      console.log("ERRORRR", e);
       setStatus(getErrorStatus(e as Error));
+      throw e;
     }
   }
 

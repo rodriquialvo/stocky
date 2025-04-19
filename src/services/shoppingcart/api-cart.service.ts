@@ -1,6 +1,6 @@
 import { useSessionStore } from '../../store/session/slice';
 import Http from '../http';
-import { CartService } from './cart.service';
+import { CartService, AddComplexWholesaleProductToCartDTO } from './cart.service';
 import { AddToCartRequestDto, CartReponseDto, CreateNewCartRequestDto, RemoveFromCartRequestDto, UpdateQuantityRequestDto } from './dtos/generic';
 
 export class ApiCartService implements CartService {
@@ -21,4 +21,6 @@ export class ApiCartService implements CartService {
   removeFromCart = ({ cartId, variantId, isWholesalePackage, productId }: RemoveFromCartRequestDto) => this.http.delete<CartReponseDto>(`${cartId}/remove-product/${variantId}`, {}, {productId, isWholesalePackage});
 
   getCart = (userId: string) => this.http.get<CartReponseDto>(`user/${userId}`);
+  
+  addComplexWholesaleProduct = (data: AddComplexWholesaleProductToCartDTO) => this.http.post<CartReponseDto>(`add-product/complex`, data);
 }

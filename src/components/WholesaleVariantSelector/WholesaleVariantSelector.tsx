@@ -34,6 +34,16 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
     return stock?.quantity || 0;
   };
 
+  // Filtrar colores que tienen stock disponible
+  const availableColors = colors.filter(color => 
+    sizes.some(size => getAvailableStock(color.value, size.value) > 0)
+  );
+
+  // Filtrar talles que tienen stock disponible para un color específico
+  const getAvailableSizes = (color: string) => {
+    return sizes.filter(size => getAvailableStock(color, size.value) > 0);
+  };
+
   const [variants, setVariants] = useState<Variant[]>(initialVariants.map(variant => ({
     ...variant,
     stock: getAvailableStock(variant.color, variant.size)
@@ -84,6 +94,19 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
           newVariants[index] = { ...variants[index] };
         }
       }
+    } else if (field === "quantity") {
+      // Validar si la cantidad excede el stock disponible
+      if (newVariants[index].quantity > newVariants[index].stock) {
+        toast({
+          title: "Stock insuficiente",
+          description: `Solo hay ${newVariants[index].stock} unidades disponibles para esta variante`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        // Ajustar la cantidad al stock disponible
+        newVariants[index].quantity = newVariants[index].stock;
+      }
     }
 
     setVariants(newVariants);
@@ -122,7 +145,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
                   size="sm"
                 >
                   <option value="">Seleccionar color</option>
-                  {colors.map((color) => (
+                  {availableColors.map((color) => (
                     <option key={color.value} value={color.value}>
                       {color.label}
                     </option>
@@ -139,7 +162,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
                   size="sm"
                 >
                   <option value="">Seleccionar talle</option>
-                  {sizes.map((size) => (
+                  {getAvailableSizes(variant.color).map((size) => (
                     <option key={size.value} value={size.value}>
                       {size.label}
                     </option>
@@ -184,7 +207,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
           <Button
             colorScheme="teal"
             onClick={handleAddVariant}
-            // isDisabled={isDisabled || remainingQuantity <= 0}
+            isDisabled={isDisabled || remainingQuantity <= 0}
             size="sm"
             width={{ base: "100%", sm: "auto" }}
           >

@@ -1,5 +1,5 @@
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Heading, IconButton, Image, Text } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Heading, IconButton, Image, Text, HStack } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Item } from '../../services/shoppingcart/dtos/generic';
@@ -14,16 +14,22 @@ import QuantityPicker from '../QuantityPicker/QuantityPicker';
 import WholesaleModal from '../WholesaleModal/WholesaleModal';
 import { CartPanelProps } from './interfaces';
 
-const ProductHeader = ({ children, item, onEditPressed }: any) => {
+const ProductHeader = ({ children, item, onEditPressed, onRemoveFromCartPressed }: any) => {
+  const isComplexWholesale = item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type !== "simple";
+
   return (
     <Flex
       alignItems={"center"}
-      justify={"space-between"}
+      justify={isComplexWholesale ? "space-between" : "flex-start"}
+      width="100%"
     >
       {children}
-      {!item.variant && (
-        <EditButton item={item} onEditPressed={onEditPressed} />
-      )}
+      <HStack spacing={2} ml={isComplexWholesale ? 0 : "auto"}>
+        {!item.variant && (
+          <EditButton item={item} onEditPressed={onEditPressed} />
+        )}
+        <DeleteButton item={item} onRemoveFromCartPressed={onRemoveFromCartPressed} />
+      </HStack>
     </Flex>
   )
 }
@@ -162,11 +168,12 @@ const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuan
               <QuantityPicker
                 stock={variant.stock?.quantity}
                 quantity={variant.quantity}
-                onIncrease={() => handleQuantityChange(variant.variant._id, variantsQuantity[variant.variant._id + item.product._id], item.product._id, 'increase', true, item.predefined_quantity)}
-                onDecrease={() => handleQuantityChange(variant.variant._id, variantsQuantity[variant.variant._id + item.product._id], item.product._id, 'decrease', true, item.predefined_quantity)}
+                onIncrease={() => handleQuantityChange(variant.variant._id, variantsQuantity[variant.variant._id + item.product._id], item.product._id, 'increase', true, variant.predefined_quantity)}
+                onDecrease={() => handleQuantityChange(variant.variant._id, variantsQuantity[variant.variant._id + item.product._id], item.product._id, 'decrease', true, variant.predefined_quantity)}
                 isDisabled={statusCart.isFetching}
                 isSimpleWholesale={item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type === "simple"}
                 isWholesale={item.product.wholesale_data?.is_wholesaler}
+                disableButtons={item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type !== "simple"}
               />
             </Box>
           ))}
@@ -241,10 +248,10 @@ const CartPanel: FC<CartPanelProps> = props => {
     })
   };
 
-  const onEditPressed = (item: Item) => {
+  const onEditPressed = async (item: Item) => {
     setSelectedItem(item);
+    await getProductDetail(item.product._id);
     setIsWholesaleModalOpen(true);
-    getProductDetail(item.product._id)
   }
 
   const onRemoveFromCartPressed = async (variantId: string, productId?: string, isWholesalePackage?: boolean) => {
@@ -257,6 +264,33 @@ const CartPanel: FC<CartPanelProps> = props => {
       setShowItemError(true);
       return
     }
+
+    // Verificar si hay productos complejos mayoristas sin variantes o con cantidad incorrecta
+    const incompleteProducts = cart.items.filter(item => {
+      const isComplexWholesale = item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type !== "simple";
+      
+      if (!isComplexWholesale) return false;
+      
+      // Verificar que existan variantes
+      const hasVariants = item.wholesale_variants && item.wholesale_variants.length > 0;
+      if (!hasVariants) return true;
+      
+      // Verificar que la cantidad de variantes sea igual a la cantidad predefinida
+      // Para productos complejos mayoristas, la cantidad predefinida es la cantidad total del producto;
+      const variantsQuantity = item.wholesale_variants.reduce((total, variant) => total + variant.quantity, 0);
+      
+      return variantsQuantity !== item.predefined_quantity;
+    });
+
+    if (incompleteProducts.length > 0) {
+      const product = incompleteProducts[0];
+      const variantsQuantity = product.wholesale_variants ? 
+        product.wholesale_variants.reduce((total, variant) => total + variant.quantity, 0) : 0;
+      
+      toast.error(`${product.product.name} requiere ${product.predefined_quantity} variantes y se proporcionaron ${variantsQuantity}`);
+      return;
+    }
+
     postSale({ cartId: cart._id })
   }
 
@@ -336,9 +370,12 @@ const CartPanel: FC<CartPanelProps> = props => {
                             flexDirection={"column"}
                             width={"100%"}
                           >
-                            <ProductHeader item={item} onEditPressed={onEditPressed}>
+                            <ProductHeader 
+                              item={item} 
+                              onEditPressed={onEditPressed}
+                              onRemoveFromCartPressed={onRemoveFromCartPressed}
+                            >
                               <HeadingProduct item={item} />
-                              <DeleteButton item={item} onRemoveFromCartPressed={onRemoveFromCartPressed}/>
                             </ProductHeader>
 
                             <Box>
@@ -387,6 +424,9 @@ const CartPanel: FC<CartPanelProps> = props => {
         onClose={() => {
           setIsWholesaleModalOpen(false);
           setSelectedItem(null);
+          if (userLogged?.id) {
+            getCart(userLogged.id);
+          }
         }}
         itemCart={selectedItem}
       />
