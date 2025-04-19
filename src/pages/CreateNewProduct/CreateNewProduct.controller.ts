@@ -111,6 +111,8 @@ export const useCreateNewProductController =
           setCurrentCategories(productCategory[productCategory.length - 2].children);
           setCategorySelected(productCategory[productCategory.length - 1]);
           setSelectedColors(product?.colors || []);
+        } else {
+          navigate('/stock/list');
         }
       }
     }, [status.success])

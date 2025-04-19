@@ -173,7 +173,8 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
                 <CardBody>
                   <Heading size="md" mb={4}>Categoría</Heading>
                   <FormControl color="white" isRequired>
-                    <FormLabel htmlFor="category">
+                    
+                    <FormLabel color="black" htmlFor="category">
                       Categoría <Badge colorScheme="red" ml={1}>Requerida</Badge>
                     </FormLabel>
                     <Box p={4} bg="gray.700" borderRadius="md" mb={4}>
@@ -198,7 +199,7 @@ const CreateNewProduct: FC<CreateNewProductProps> = (props) => {
                       </Breadcrumb>
                     </Box>
                     <CategoryList 
-                      colorText='gray.100' 
+                      colorText='black' 
                       categorySelected={controller.categorySelected?.id} 
                       categories={controller.currentCategories} 
                       onCategorySelect={controller.handleCategorySelect} 

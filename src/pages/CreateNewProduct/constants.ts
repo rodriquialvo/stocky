@@ -26,7 +26,7 @@ export const initialStateProductformData: (product?: Product) => ProductFormData
     sizeType: product?.sizeType || "",
     wholesaleData: product?.wholesaleData ? {
       isWholesaler: product.wholesaleData.isWholesaler ? "true" : "false",
-      packageType: "simple",
+      packageType: product.wholesaleData.packageType || "simple",
       minimumQuantity: product.wholesaleData.minimumQuantity || 6
     } : {
       isWholesaler: "false",
