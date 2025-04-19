@@ -129,6 +129,12 @@ export const CartAction = () => {
   const addToCartWholesale = async (data: AddComplexWholesaleProductToCartDTO) => {
     setStatus(getStartStatus());
     try {
+      if (cart._id) {
+        data.cartId = cart._id;
+      } else {
+        const respCart = await cartService.postCreateNewCart({});
+        data.cartId = respCart.cart._id;
+      }
       const response = await cartService.addComplexWholesaleProduct(data);
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));

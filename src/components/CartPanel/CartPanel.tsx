@@ -267,26 +267,26 @@ const CartPanel: FC<CartPanelProps> = props => {
 
     // Verificar si hay productos complejos mayoristas sin variantes o con cantidad incorrecta
     const incompleteProducts = cart.items.filter(item => {
-      const isComplexWholesale = item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type !== "simple";
-      
+      const isComplexWholesale = item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type === "complex" && item.is_wholesale_package;
+
       if (!isComplexWholesale) return false;
-      
+
       // Verificar que existan variantes
       const hasVariants = item.wholesale_variants && item.wholesale_variants.length > 0;
       if (!hasVariants) return true;
-      
+
       // Verificar que la cantidad de variantes sea igual a la cantidad predefinida
       // Para productos complejos mayoristas, la cantidad predefinida es la cantidad total del producto;
       const variantsQuantity = item.wholesale_variants.reduce((total, variant) => total + variant.quantity, 0);
-      
+
       return variantsQuantity !== item.predefined_quantity;
     });
 
     if (incompleteProducts.length > 0) {
       const product = incompleteProducts[0];
-      const variantsQuantity = product.wholesale_variants ? 
+      const variantsQuantity = product.wholesale_variants ?
         product.wholesale_variants.reduce((total, variant) => total + variant.quantity, 0) : 0;
-      
+
       toast.error(`${product.product.name} requiere ${product.predefined_quantity} variantes y se proporcionaron ${variantsQuantity}`);
       return;
     }
@@ -319,7 +319,7 @@ const CartPanel: FC<CartPanelProps> = props => {
   }, [cart]);
 
   console.log('cart', cart)
-  console.log("selectedItem",selectedItem)
+  console.log("selectedItem", selectedItem)
   return (
     <>
       <>
@@ -370,8 +370,8 @@ const CartPanel: FC<CartPanelProps> = props => {
                             flexDirection={"column"}
                             width={"100%"}
                           >
-                            <ProductHeader 
-                              item={item} 
+                            <ProductHeader
+                              item={item}
                               onEditPressed={onEditPressed}
                               onRemoveFromCartPressed={onRemoveFromCartPressed}
                             >
@@ -386,7 +386,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                                   <QuantityPickerVariant item={item} variantsQuantity={variantsQuantity} handleQuantityChange={handleQuantityChange} statusCart={statusCart} />
                                 </>
                               ) : (
-                                <VariantAccordion 
+                                <VariantAccordion
                                   item={item}
                                   handleQuantityChange={handleQuantityChange}
                                   statusCart={statusCart}
@@ -419,8 +419,8 @@ const CartPanel: FC<CartPanelProps> = props => {
           </DrawerContent>
         </Drawer>
       </>
-      <WholesaleModal 
-        isOpen={isWholesaleModalOpen} 
+      <WholesaleModal
+        isOpen={isWholesaleModalOpen}
         onClose={() => {
           setIsWholesaleModalOpen(false);
           setSelectedItem(null);
