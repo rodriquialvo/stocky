@@ -33,6 +33,10 @@ export interface Prices {
     cost?:     number;
     retail:   number;
     reseller: number;
+    wholesale: {
+        half_dozen: number;
+        dozen: number;
+    }
 }
 
 export interface GetProductDetailWhitStocksResponse {

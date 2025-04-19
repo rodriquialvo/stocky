@@ -78,7 +78,9 @@ const ProductPrices = ({ item }: any) => {
       <ProductPriceContainer>
         <ProductDetail color={"orange"} price={item.product.prices.retail} text={"P/u Cliente"} />
       </ProductPriceContainer>
-
+      <ProductPriceContainer>
+        <ProductDetail color={"purple"} price={item.quantity > 6 ? item.product.prices.wholesale.half_dozen : item.product.prices.wholesale.dozen} text={"P/u Mayorista"} />
+      </ProductPriceContainer>
     </Box>
   )
 }

@@ -333,9 +333,14 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   {formattedNumberToMoney(controller.productDetail?.prices.retail)}
                 </Heading>
                 {controller.productDetail?.wholesaleData?.isWholesaler ? (
+                  <>
+                    <Badge colorScheme="purple" fontSize="md" p={2} borderRadius="md">
+                      Precio 6 unidades: {formattedNumberToMoney(controller.productDetail?.prices.wholesale.half_dozen)}
+                    </Badge>
                   <Badge colorScheme="purple" fontSize="md" p={2} borderRadius="md">
-                    Precio Mayorista: {formattedNumberToMoney(controller.productDetail?.prices.reseller)}
-                  </Badge>
+                      Precio +6 unidades: {formattedNumberToMoney(controller.productDetail?.prices.wholesale.dozen)}
+                    </Badge>
+                  </>
                 ) : (
                   <Badge colorScheme="red" fontSize="md" p={2} borderRadius="md">
                     -30% a partir de 2da pieza 🔥

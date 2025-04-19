@@ -19,7 +19,11 @@ export const MOCK_WHOLESALE_PRODUCT: ProductDetail = {
   prices: {
     retail: 1500,
     reseller: 1200,
-    cost: 800
+    cost: 800,
+    wholesale: {
+      half_dozen: 1000,
+      dozen: 1200
+    }
   },
   hasStock: true,
   wholesaleData: {
