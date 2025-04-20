@@ -78,6 +78,15 @@ class Http {
     throw {message, status: response.status, response: result};
   };
 
+  processBlobResponse = async (response: Response): Promise<Blob> => {
+    if (response.ok) {
+      return response.blob();
+    }
+
+    const errorText = await response.text();
+    throw new Error(`Error downloading file: ${response.status} ${response.statusText} - ${errorText}`);
+  };
+
   get = async <T>(url: string, params?: any): Promise<T> => {
     console.info(
       'GET',
@@ -94,6 +103,25 @@ class Http {
     );
     console.log(this.getUrl(url));
     return this.processResponse<T>(response);
+  };
+
+  downloadBlob = async (url: string, params?: any, filename?: string): Promise<Blob> => {
+    console.info(
+      'GET BLOB',
+      `${this.getUrl(url)}${this.getSearchParams(params)}`,
+    );
+    
+    const response = await fetch(
+      `${this.getUrl(url)}${this.getSearchParams(params)}`,
+      {
+        headers: {
+          ...this.getAuthHeader(),
+          Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+      },
+    );
+    
+    return this.processBlobResponse(response);
   };
 
   post = async <T>(url: string, data: any, params?: any) => {

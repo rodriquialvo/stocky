@@ -1,11 +1,12 @@
 import { create } from 'zustand';
-import { SalesAnalytics } from '../../services/sales/sales.service';
+import { SalesAnalytics, MonthlyStats } from '../../services/sale-analytics/dtos/generic';
 import { SalesListDto } from '../../services/sale/dtos/generic';
 import { Status, getDefaultStatus } from '../helper/statusStateFactory';
 
 type State = {
   status: Status;
   analytics: SalesAnalytics | null;
+  monthlyStats: MonthlyStats | null;
   selectedMonth: string;
   list: {
     sales: any[];
@@ -16,30 +17,33 @@ type State = {
   productsInSales: Record<string, any>;
   setStatus: (status: Status) => void;
   setAnalytics: (analytics: SalesAnalytics) => void;
+  setMonthlyStats: (stats: MonthlyStats) => void;
   setSelectedMonth: (month: string) => void;
 };
 
 const initialState: State = {
   status: getDefaultStatus(),
   analytics: null,
-  selectedMonth: new Date().toISOString().slice(0, 7), // Formato YYYY-MM
+  monthlyStats: null,
+  selectedMonth: '',
   list: {
     sales: [],
-    total: 0
+    total: 0,
   },
   usersInSales: [],
   productsInSalesByUser: {},
   productsInSales: {},
   setStatus: () => {},
   setAnalytics: () => {},
-  setSelectedMonth: () => {}
+  setMonthlyStats: () => {},
+  setSelectedMonth: () => {},
 };
 
 type Action = {
-  setSales: (data: any) => void;
+  setSales: (data: SalesListDto) => void;
   setUsersInSales: (users: any[]) => void;
   setProductsInSalesByUser: (data: { userId: string; products: any[] }) => void;
-  setProductsInSales: (products: Record<string, any>) => void;
+  setProductsInSales: (products: any) => void;
   clearSaleWeek: () => void;
 };
 
@@ -57,5 +61,6 @@ export const useSaleStore = create<State & Action>()((set, get) => ({
   getProductsInSales: () => get().productsInSales,
   clearSaleWeek: () => set({ usersInSales: [], productsInSalesByUser: {} }),
   setAnalytics: (data) => set({ analytics: data }),
+  setMonthlyStats: (stats) => set({ monthlyStats: stats }),
   setSelectedMonth: (month) => set({ selectedMonth: month })
 }));

@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { SalesService } from '../../services/sales/sales.service';
-import { ApiSalesService } from '../../services/sales/api-sales.service';
+import { SaleAnalyticsService } from '../../services/sale-analytics/sale-analytics.service';
+import { ApiSalesAnalyticsService } from '../../services/sale-analytics/api-sales-analytics.service';
 import { getStartStatus, getSuccessStatus, getErrorStatus } from '../../store/helper/statusStateFactory';
 import { useSaleStore } from '../../store/sales/slice';
 
-const salesService: SalesService = new ApiSalesService();
+const salesService: SaleAnalyticsService = new ApiSalesAnalyticsService();
 
 interface Metrics {
   totalSales: number;

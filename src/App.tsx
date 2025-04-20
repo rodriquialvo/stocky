@@ -23,6 +23,7 @@ import { useProductStore } from './store/product/slice';
 import { initialStateFilters } from './components/FilterPanel/constants';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { RegisterPage } from './pages/Register/Register.page';
+import MonthlySalesSummary from './pages/MonthlySalesSummary/MonthlySalesSummary.page';
 
 function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
@@ -90,7 +91,7 @@ function App() {
               <SalesList />
             </ProtectedRoute>
           } />
-          <Route path={ROUTES.SALES_WEEK} element={
+          {/* <Route path={ROUTES.SALES_WEEK} element={
             <ProtectedRoute >
               <SalesWeek />
             </ProtectedRoute>
@@ -98,6 +99,11 @@ function App() {
           <Route path={ROUTES.SALES_ANALYTICS} element={
             <ProtectedRoute >
               <SalesAnalyticsPage />
+            </ProtectedRoute>
+          } /> */}
+          <Route path={ROUTES.SALES_MONTHLY} element={
+            <ProtectedRoute >
+              <MonthlySalesSummary />
             </ProtectedRoute>
           } />
         </Routes>

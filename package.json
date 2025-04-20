@@ -17,6 +17,7 @@
     "@types/date-fns": "^2.6.0",
     "@types/jest": "^27.5.2",
     "@types/recharts": "^1.8.29",
+    "axios": "^1.8.4",
     "chakra-react-select": "^4.9.2",
     "chart.js": "^4.4.1",
     "class-transformer": "^0.5.1",

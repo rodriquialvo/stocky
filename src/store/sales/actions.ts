@@ -1,6 +1,6 @@
 import { CreateSaleRequestDto, UpdateStatusRequestDto } from '../../services/sale/dtos/generic';
 import { useAPISaleService } from '../../services/sale/sale.service';
-import { ApiSalesService } from '../../services/sales/api-sales.service';
+import { useAPISaleAnalyticsService } from '../../services/sale-analytics/sale-analytics.service';
 import {
   getErrorStatus,
   getStartStatus,
@@ -137,9 +137,10 @@ export const SaleAction = () => {
 };
 
 export const SalesAction = () => {
-  const salesService = new ApiSalesService();
+  const salesService = useAPISaleAnalyticsService();
   const setStatus = useSaleStore(state => state.setStatus);
   const setAnalytics = useSaleStore(state => state.setAnalytics);
+  const setMonthlyStats = useSaleStore(state => state.setMonthlyStats);
 
   const getSalesAnalytics = async (month: string) => {
     setStatus(getStartStatus());
@@ -152,7 +153,45 @@ export const SalesAction = () => {
     }
   };
 
+  const getMonthlyStats = async (month: number, year: number) => {
+    setStatus(getStartStatus());
+    try {
+      const data = await salesService.getMonthlyStats(month, year);
+      setStatus(getSuccessStatus());
+      setMonthlyStats(data);
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  };
+
+  const downloadMonthlyDetail = async (month: number, year: number) => {
+    setStatus(getStartStatus());
+    try {
+      const blob = await salesService.downloadMonthlyDetail(month, year);
+      
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `detalle-ventas-${year}-${month}.xlsx`;
+      
+      document.body.appendChild(a);
+      a.click();
+      
+      setTimeout(() => {
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }, 100);
+      
+      setStatus(getSuccessStatus());
+    } catch (e) {
+      console.error('Action: Error downloading file:', e);
+      setStatus(getErrorStatus(e as Error));
+    }
+  };
+
   return {
     getSalesAnalytics,
+    getMonthlyStats,
+    downloadMonthlyDetail,
   };
 };

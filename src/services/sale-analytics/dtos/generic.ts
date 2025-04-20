@@ -1,5 +1,3 @@
-import { ApiSalesService } from './api-sales.service';
-
 export interface Sale {
   id: string;
   date: string;
@@ -8,6 +6,16 @@ export interface Sale {
   quantity: number;
   total: number;
   status: 'completed' | 'pending' | 'cancelled';
+}
+
+export interface MonthlyStats {
+  totalProductsSold: number;
+  totalCosts: number;
+  totalSales: number;
+  totalTransactions: number;
+  totalProfit: number;
+  averageSaleAmount: number;
+  averageProfitPerTransaction: number;
 }
 
 export interface SalesAnalytics {
@@ -37,8 +45,4 @@ export interface SalesAnalytics {
     growth: number;
   }>;
   sales: Sale[];
-}
-
-export interface SalesService {
-  getSalesAnalytics(month: string): Promise<SalesAnalytics>;
 } 

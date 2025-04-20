@@ -22,8 +22,9 @@ export const SIDEBAR_ITEMS = (isAdmin: boolean) => ({
         label: 'Ventas',
         subItems: [
             { label: 'Lista', route: ROUTES.SALES_LIST },
-            { label: 'Semana', route: ROUTES.SALES_WEEK },
-            { label: 'Análisis', route: ROUTES.SALES_ANALYTICS },
+            // { label: 'Semana', route: ROUTES.SALES_WEEK },
+            // { label: 'Análisis', route: ROUTES.SALES_ANALYTICS },
+            { label: 'Resumen mensual', route: ROUTES.SALES_MONTHLY },
         ]
     }
 })

@@ -10,7 +10,7 @@ import {
   Badge,
   Text,
 } from '@chakra-ui/react';
-import { Sale } from '../../../services/sales/sales.service';
+import { Sale } from '../../../services/sale-analytics/dtos/generic';
 
 interface SalesTableProps {
   data: Sale[];

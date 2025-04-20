@@ -13,6 +13,7 @@ export const  ROUTES = {
     SALES_LIST: '/sales/list',
     SALES_WEEK: '/sales/week',
     SALES_ANALYTICS: '/sales/analytics',
+    SALES_MONTHLY: '/sales/monthly',
     STOCK_ENTRY: '/stock/entry',
     PRODUCT_DETAILS: (id: string) =>  `/product/${id}`
 }
