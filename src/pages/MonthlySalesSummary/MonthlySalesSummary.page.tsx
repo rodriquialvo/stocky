@@ -126,7 +126,7 @@ const MonthlySalesSummary: FC = () => {
                   ${monthlyStats.totalProfit.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                 </StatNumber>
                 <StatHelpText>
-                  {((monthlyStats.totalProfit / monthlyStats.totalSales) * 100).toFixed(1)}% margen
+                  {((monthlyStats.totalProfit / monthlyStats.totalCosts) * 100).toFixed(1)}% margen
                 </StatHelpText>
               </Stat>
             </CardBody>

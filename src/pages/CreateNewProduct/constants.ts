@@ -15,9 +15,9 @@ export const initialStateProductformData: (product?: Product) => ProductFormData
       reseller: product?.prices.reseller || 0
     },
     percentages: {
-      retail: 30,
-      reseller: 80,
-      wholesale: {
+      retail: product?.percentages?.retail || 30,
+      reseller: product?.percentages?.reseller || 80,
+      wholesale: product?.percentages?.wholesale || {
         half_dozen: 10,
         dozen: 15
       }

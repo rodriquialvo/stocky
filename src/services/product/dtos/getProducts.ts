@@ -16,6 +16,14 @@ export interface Product {
     sizeType: string;
     hasStock: boolean;
     wholesaleData: WholesaleData;
+    percentages?: {
+        retail: number;
+        reseller: number;
+        wholesale: {
+            half_dozen: number;
+            dozen: number;
+        }
+    };
 }
 
 export interface WholesaleData {

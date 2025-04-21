@@ -26,6 +26,8 @@ export const useCreateNewProductController =
     const setStatus = useProductStore(state => state.setStatus);
     const setUpdateProductStatus = useProductStore(state => state.setUpdateProductStatus);
     const updateProductStatus = useProductStore(state => state.updateProductStatus);
+    const createProductStatus = useProductStore(state => state.createProductStatus);
+    const setCreateProductStatus = useProductStore(state => state.setCreateProductStatus);
 
     const allColors = useProductAtributesStore(state => state.allColors);
     const sizesTypes = useProductAtributesStore(state => state.sizesTypes);
@@ -49,8 +51,6 @@ export const useCreateNewProductController =
       return null;
     }
 
-    // const isCurrentPage = location.pathname === ROUTES.NEW_PRODUCT;
-
     const [formData, setFormData] = useState<ProductFormData>(initialStateProductformData(product));
     const [selectedColors, setSelectedColors] = useState([]);
     const [currentCategories, setCurrentCategories] = useState<Category[]>(categories);
@@ -60,14 +60,26 @@ export const useCreateNewProductController =
     const [showCategoriesTypesOptions, setShowCategoriesTypesOptions] = useState(false);
     const [typesSizesByIds, setTypesSizesByIds] = useState([] as ProductAttribute[]);
     const productCategory = getFullCategoryPath(categories, product?.categories[0].id);
+    
+    // Bandera para controlar si estamos en modo creación o edición
+    const [isCreating, setIsCreating] = useState(!product);
 
+    // Efecto para manejar la redirección después de una operación exitosa
     useEffect(() => {
+      // Si es una actualización exitosa
       if (updateProductStatus.success) {
         setUpdateProductStatus(getDefaultStatus());
         navigate('/stock/list');
       }
-    }, [updateProductStatus])
+      // Si es una creación exitosa
+      else if (createProductStatus.success) {
+        setCreateProductStatus(getDefaultStatus());
+        setFormData(initialStateProductformData());
+        navigate('/stock/list');
+      }
+    }, [updateProductStatus.success, createProductStatus.success]);
 
+    // Efecto para inicializar el formulario con datos del producto existente
     useEffect(() => {
       if (product) {
         setSelectedPath(productCategory.slice(0, productCategory.length - 1) || []);
@@ -103,21 +115,6 @@ export const useCreateNewProductController =
     }, [categorySelected?.sizeTypes, sizesTypes])
 
     useEffect(() => {
-      if (status.success) {
-        setStatus(getDefaultStatus());
-        setFormData(initialStateProductformData());
-        if (product) {
-          setSelectedPath(productCategory.slice(0, productCategory.length - 1) || []);
-          setCurrentCategories(productCategory[productCategory.length - 2].children);
-          setCategorySelected(productCategory[productCategory.length - 1]);
-          setSelectedColors(product?.colors || []);
-        } else {
-          navigate('/stock/list');
-        }
-      }
-    }, [status.success])
-
-    useEffect(() => {
       setFormData({
         ...formData,
         categories: [categorySelected?.id],
@@ -125,13 +122,6 @@ export const useCreateNewProductController =
         pictures: images,
       })
     }, [categorySelected, selectedColors, images])
-
-    // useEffect(() => {
-    //   if (isCurrentPage) {
-    //     setFormData(initialStateProductformData())
-    //     setImages([]);
-    //   }
-    // }, [isCurrentPage])
 
     useEffect(() => {
       setIsDisabledButtonSubmit(
