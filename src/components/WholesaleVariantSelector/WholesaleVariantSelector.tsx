@@ -28,10 +28,13 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
   initialVariants = []
 }) => {
   const getAvailableStock = (color: string, size: string) => {
-    const stock = stocks.find(
-      s => s.variant.color === color && s.variant.size === size
-    );
-    return stock?.quantity || 0;
+    const total = stocks.reduce((total, item) => {
+      if (item.variant.color === color && item.variant.size === size) {
+        return total + item.quantity;
+      }
+      return total;
+    }, 0);
+    return total;
   };
 
   // Filtrar colores que tienen stock disponible

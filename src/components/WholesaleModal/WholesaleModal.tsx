@@ -41,18 +41,18 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
   const targetQuantity = isHalfDozen ? 6 : quantity * 12;
   const isQuantityExceeded = totalSelectedQuantity > targetQuantity;
 
-    useEffect(() => {
-      if (productDetail) {
-        setTotalUnits(productDetail.stocks.reduce((acc, stock) => acc + stock.quantity, 0) || 0);
-        const allSizes = productDetail.stocks?.reduce((acc, stock) => {
-          if (!acc.includes(stock.variant.size)) {
-            acc.push(stock.variant.size);
-          }
-          return acc;
-        }, [] as string[]) || [];
-        setSizes(allSizes.map(size => ({ label: size, value: size })));
-      }
-    }, [productDetail]);
+  useEffect(() => {
+    if (productDetail) {
+      setTotalUnits(productDetail.stocks.reduce((acc, stock) => acc + stock.quantity, 0) || 0);
+      const allSizes = productDetail.stocks?.reduce((acc, stock) => {
+        if (!acc.includes(stock.variant.size)) {
+          acc.push(stock.variant.size);
+        }
+        return acc;
+      }, [] as string[]) || [];
+      setSizes(allSizes.map(size => ({ label: size, value: size })));
+    }
+  }, [productDetail]);
 
   useEffect(() => {
     setTotalDozens(Math.floor(totalUnits / 12));
@@ -76,10 +76,13 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
   const onVariantsChange = (newVariants: { color: string; size: string; quantity: number }[]) => {
     // Verificar stock para cada variante
     const hasInsufficientStock = newVariants.some(variant => {
-      const stock = productDetail?.stocks.find(
-        s => s.variant.color === variant.color && s.variant.size === variant.size
-      );
-      return variant.quantity > 0 && (!stock || variant.quantity > stock.quantity);
+      const stock = productDetail?.stocks.reduce((total, item) => {
+        if (item.variant.color === variant.color && item.variant.size === variant.size) {
+          return total + item.quantity;
+        }
+        return total;
+      }, 0);
+      return variant.quantity > stock;
     });
 
     if (hasInsufficientStock) {
@@ -101,10 +104,10 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
           predefinedQuantity: isHalfDozen ? 6 : quantity * 12,
           variants: items
         } as AddComplexWholesaleProductToCartDTO);
-        
+
         // Cerrar el modal después de agregar al carrito exitosamente
         onClose();
-        
+
         // Mostrar mensaje de éxito
         toast.success("Producto agregado al carrito correctamente");
       } catch (error) {
@@ -157,11 +160,11 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalCloseButton 
-          position="absolute" 
-          right="10px" 
-          top="10px" 
-          zIndex="10" 
+        <ModalCloseButton
+          position="absolute"
+          right="10px"
+          top="10px"
+          zIndex="10"
           color="gray.500"
           bg="white"
           borderRadius="full"
@@ -212,7 +215,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
                 isLoading={isLoading}
                 loadingText="Agregando al carrito..."
               >
-                {isQuantityExceeded 
+                {isQuantityExceeded
                   ? `Cantidad total (${totalSelectedQuantity}) excede el límite (${targetQuantity})`
                   : 'Agregar al carrito mayorista'
                 }
