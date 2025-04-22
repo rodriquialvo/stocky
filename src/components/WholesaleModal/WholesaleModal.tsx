@@ -183,7 +183,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
                 </Text>
                 <QuantityPicker
                   stock={totalDozens || 0}
-                  quantity={isHalfDozen ? 1 : quantity}
+                  quantity={isHalfDozen ? 1/2 : quantity}
                   onIncrease={onIncrease}
                   onDecrease={onDecrease}
                   isDisabled={false}
@@ -200,7 +200,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
                   colors={colors}
                   sizes={sizes}
                   stocks={productDetail?.stocks || []}
-                  totalQuantity={quantity * 12}
+                  totalQuantity={isHalfDozen ? 6 : quantity * 12}
                   onVariantsChange={onVariantsChange}
                   isDisabled={false}
                   initialVariants={variants}
@@ -211,7 +211,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
                 colorScheme={'purple'}
                 size="lg"
                 onClick={onAddToCartWholesalePressed}
-                isDisabled={isQuantityExceeded || isLoading}
+                isDisabled={isQuantityExceeded || isLoading || totalSelectedQuantity < 6}
                 isLoading={isLoading}
                 loadingText="Agregando al carrito..."
               >

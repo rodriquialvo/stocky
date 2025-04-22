@@ -63,6 +63,14 @@ export const LoginPage: FC<
             <Button isLoading={controller.isLoading} type="submit" colorScheme="teal" width="full">
               Iniciar sesion
             </Button>
+            <Button 
+              onClick={controller.handleGuestLogin} 
+              variant="outline" 
+              colorScheme="pink" 
+              width="full"
+            >
+              Continuar como invitado
+            </Button>
             {/* <Text alignSelf={"center"}>ó</Text> */}
             {/* <GoogleLogin
               onSuccess={() => console.log('Login Success')}

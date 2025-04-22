@@ -1,5 +1,5 @@
 import { Box, Button, Flex, FormControl, FormLabel, HStack, Input, Select, Text, VStack, useColorModeValue, Stack, useToast } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Variant {
   color: string;
@@ -51,11 +51,15 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
     ...variant,
     stock: getAvailableStock(variant.color, variant.size)
   })));
-  const [remainingQuantity, setRemainingQuantity] = useState(totalQuantity);
+  const [remainingQuantity, setRemainingQuantity] = useState(0);
   const toast = useToast();
 
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
+
+  useEffect(() => {
+    setRemainingQuantity(totalQuantity);
+  }, [totalQuantity])
 
   const handleAddVariant = () => {
     setVariants([...variants, { color: "", size: "", quantity: 0, stock: 0 }]);

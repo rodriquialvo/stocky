@@ -7,6 +7,7 @@ export interface LoginController {
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
   handleSubmit: (e: React.FormEvent) => void;
+  handleGuestLogin: () => void;
 }
 
 export interface LoginProps {

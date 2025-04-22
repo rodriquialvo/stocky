@@ -100,7 +100,7 @@ export default function StockEntry() {
       getProductsByCodeOrName(value);
     }
     const updatedEntries = [...stockEntries];
-    updatedEntries[index][field] = value.value || value;
+    updatedEntries[index][field] = value?.value || value;
     if (isDuplicatedRow(index, updatedEntries)) {
       handleRemoveEntry(index);
       return;

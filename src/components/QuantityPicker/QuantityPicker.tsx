@@ -88,7 +88,7 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
           <Input
             value={quantity}
             readOnly
-            width="45px"
+            width="50px"
             textAlign="center"
             variant="filled"
             size="sm"

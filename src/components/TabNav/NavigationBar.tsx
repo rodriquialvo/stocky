@@ -44,6 +44,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
   
   const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
   const isOpenCartPanel = useCartStore(state => state.isOpenCartPanel);
+  const cart = useCartStore(state => state.cart);
   const { setProductsFiltersAction } = ProductAction();
   const productsFilters = useProductStore(state => state.productsFilters);
   const isAdminUser = useSessionStore(state => state.isAdminUser);
@@ -81,133 +82,191 @@ const NavigationBar: React.FC<TabNavProps> = ({
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const NavItems = () => (
-    <Flex gap={4} alignItems="center">
-      <Tooltip label="Carrito de compras">
-        <IconButton
-          aria-label="Cart"
-          icon={<FiShoppingCart />}
-          variant="ghost"
-          color="#ec0868"
-          fontSize="1.5rem"
-          onClick={() => setIsOpenCartPanel(true)}
-          _hover={{ bg: "pink.50" }}
-        />
-      </Tooltip>
-      <MenuUser />
-    </Flex>
-  );
+  const NavItems = () => {
+    const totalItems = cart?.items?.reduce((total, item) => {
+      if (item.wholesale_variants) {
+        return total + item.wholesale_variants.reduce((sum, variant) => sum + variant.quantity, 0);
+      }
+      return total + item.quantity;
+    }, 0) || 0;
 
-  const MobileMenuContent = () => (
-    <VStack 
-      spacing={4} 
-      p={4} 
-      bg="white" 
-      borderTop="1px" 
-      borderColor="gray.200"
-      w="100%"
-      align="stretch"
-      maxH="80vh"
-      overflowY="auto"
-    >
-      <Box w="100%">
-        <InputGroup>
-          <InputLeftElement pointerEvents="none">
-            <FiSearch color="#ec0868" />
-          </InputLeftElement>
-          <Input
-            placeholder="Buscar productos..."
-            value={searchQuery}
-            onChange={(e) => onSearch(e.target.value)}
-            borderColor="gray.200"
-            _hover={{ borderColor: "pink.200" }}
-            _focus={{ borderColor: "#ec0868" }}
-          />
-        </InputGroup>
-      </Box>
-      
-      <Divider />
-      
-      <VStack spacing={2} align="stretch">
-        <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Navegación</Text>
-        <Button
-          leftIcon={<FiUser />}
-          variant="ghost"
-          justifyContent="flex-start"
-          onClick={() => setIsOpenMenuPanel(true)}
-          color="#ec0868"
-          _hover={{ bg: "pink.50" }}
-          w="100%"
-          p={4}
-        >
-          Menú principal
-        </Button>
-      </VStack>
+    return (
+      <Flex gap={4} alignItems="center">
+        <Tooltip label="Carrito de compras">
+          <Box position="relative">
+            <IconButton
+              aria-label="Cart"
+              icon={<FiShoppingCart />}
+              variant="ghost"
+              color="#ec0868"
+              fontSize="1.5rem"
+              onClick={() => setIsOpenCartPanel(true)}
+              _hover={{ bg: "pink.50" }}
+            />
+            {totalItems > 0 && (
+              <Box
+                position="absolute"
+                top="-1"
+                right="-1"
+                bg="#ec0868"
+                color="white"
+                borderRadius="full"
+                w="20px"
+                h="20px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                fontSize="xs"
+                fontWeight="bold"
+              >
+                {totalItems}
+              </Box>
+            )}
+          </Box>
+        </Tooltip>
+        <MenuUser />
+      </Flex>
+    );
+  };
 
-      <Divider />
+  const MobileMenuContent = () => {
+    const totalItems = cart?.items?.reduce((total, item) => {
+      if (item.wholesale_variants) {
+        return total + item.wholesale_variants.reduce((sum, variant) => sum + variant.quantity, 0);
+      }
+      return total + item.quantity;
+    }, 0) || 0;
 
-      <VStack spacing={2} align="stretch">
-        <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Filtros y Preferencias</Text>
-        <Flex 
-          justify="space-between" 
-          align="center" 
-          w="100%"
-          p={2}
-          bg="gray.50"
-          borderRadius="md"
-        >
-          <Text fontSize="sm" fontWeight="medium">Ver solo mayoristas</Text>
-          <Switch
-            size="sm"
-            colorScheme="pink"
-            id='enable-Wholesaler-mobile'
-            onChange={onActivateWholesalerProducts}
-            isChecked={productsFilters.isWholesaler}
-          />
-        </Flex>
-
-        <Button
-          leftIcon={<IoFilter />}
-          variant="ghost"
-          justifyContent="flex-start"
-          onClick={() => setIsOpenFilterPanel(true)}
-          color="#ec0868"
-          _hover={{ bg: "pink.50" }}
-          w="100%"
-          p={4}
-        >
-          Filtrar productos
-        </Button>
-      </VStack>
-
-      <Divider />
-
-      <VStack spacing={2} align="stretch">
-        <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Compras</Text>
-        <Button
-          leftIcon={<FiShoppingCart />}
-          variant="ghost"
-          justifyContent="flex-start"
-          onClick={() => setIsOpenCartPanel(true)}
-          color="#ec0868"
-          _hover={{ bg: "pink.50" }}
-          w="100%"
-          p={4}
-        >
-          Carrito de compras
-        </Button>
-      </VStack>
-
-      <Divider />
-
-      <VStack spacing={2} align="stretch">
-        <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Cuenta</Text>
-        <Box>
-          <MenuUser />
+    return (
+      <VStack 
+        spacing={4} 
+        p={4} 
+        bg="white" 
+        borderTop="1px" 
+        borderColor="gray.200"
+        w="100%"
+        align="stretch"
+        maxH="80vh"
+        overflowY="auto"
+      >
+        <Box w="100%">
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <FiSearch color="#ec0868" />
+            </InputLeftElement>
+            <Input
+              placeholder="Buscar productos..."
+              value={searchQuery}
+              onChange={(e) => onSearch(e.target.value)}
+              borderColor="gray.200"
+              _hover={{ borderColor: "pink.200" }}
+              _focus={{ borderColor: "#ec0868" }}
+            />
+          </InputGroup>
         </Box>
+        
+        <Divider />
+        
+        <VStack spacing={2} align="stretch">
+          <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Navegación</Text>
+          <Button
+            leftIcon={<FiUser />}
+            variant="ghost"
+            justifyContent="flex-start"
+            onClick={() => setIsOpenMenuPanel(true)}
+            color="#ec0868"
+            _hover={{ bg: "pink.50" }}
+            w="100%"
+            p={4}
+          >
+            Menú principal
+          </Button>
+        </VStack>
+
+        <Divider />
+
+        <VStack spacing={2} align="stretch">
+          <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Filtros y Preferencias</Text>
+          <Flex 
+            justify="space-between" 
+            align="center" 
+            w="100%"
+            p={2}
+            bg="gray.50"
+            borderRadius="md"
+          >
+            <Text fontSize="sm" fontWeight="medium">Ver solo mayoristas</Text>
+            <Switch
+              size="sm"
+              colorScheme="pink"
+              id='enable-Wholesaler-mobile'
+              onChange={onActivateWholesalerProducts}
+              isChecked={productsFilters.isWholesaler}
+            />
+          </Flex>
+
+          <Button
+            leftIcon={<IoFilter />}
+            variant="ghost"
+            justifyContent="flex-start"
+            onClick={() => setIsOpenFilterPanel(true)}
+            color="#ec0868"
+            _hover={{ bg: "pink.50" }}
+            w="100%"
+            p={4}
+          >
+            Filtrar productos
+          </Button>
+        </VStack>
+
+        <Divider />
+
+        <VStack spacing={2} align="stretch">
+          <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Compras</Text>
+          <Button
+            leftIcon={<FiShoppingCart />}
+            variant="ghost"
+            justifyContent="flex-start"
+            onClick={() => setIsOpenCartPanel(true)}
+            color="#ec0868"
+            _hover={{ bg: "pink.50" }}
+            w="100%"
+            p={4}
+            position="relative"
+          >
+            Carrito de compras
+            {totalItems > 0 && (
+              <Box
+                position="absolute"
+                right="2"
+                bg="#ec0868"
+                color="white"
+                borderRadius="full"
+                w="20px"
+                h="20px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                fontSize="xs"
+                fontWeight="bold"
+              >
+                {totalItems}
+              </Box>
+            )}
+          </Button>
+        </VStack>
+
+        <Divider />
+
+        <VStack spacing={2} align="stretch">
+          <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Cuenta</Text>
+          <Box>
+            <MenuUser />
+          </Box>
+        </VStack>
       </VStack>
-    </VStack>
-  );
+    );
+  };
 
   return (
     <Box

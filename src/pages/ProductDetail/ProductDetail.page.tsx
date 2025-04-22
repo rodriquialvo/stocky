@@ -327,7 +327,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             <Box>
               <HStack spacing={4} align="baseline" flexDirection={{
                 base: "column",
-                md: "row"
+                // md: "row"
               }}>
                 <Heading color="pink.500" fontSize="2xl">
                   {formattedNumberToMoney(controller.productDetail?.prices.retail)}
@@ -355,6 +355,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                       onChange={controller.handleWholesaleToggle}
                       colorScheme="purple"
                       size="lg"
+                      isDisabled={!controller.productDetail?.hasStock}
                     />
                     <Text fontWeight="bold" fontSize="lg">Modo Mayorista</Text>
                   </HStack>

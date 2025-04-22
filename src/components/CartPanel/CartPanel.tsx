@@ -183,14 +183,11 @@ const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuan
   )
 }
 
-
-//REMOVE
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CartPanel: FC<CartPanelProps> = props => {
-
   const cart = useCartStore(state => state.cart);
   const statusCart = useCartStore(state => state.status)
   const userLogged = useSessionStore(state => state.userLogged);
+  const isAuthenticated = useSessionStore(state => state.isAuthenticated);
   const [exceededItems, setExceededItems] = useState<{ label: string, value: string }[]>([]);
   const [showItemError, setShowItemError] = useState(false);
   const { postSale } = SaleAction()
@@ -200,6 +197,33 @@ const CartPanel: FC<CartPanelProps> = props => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const { getProductDetail } = ProductAction()
   const { updateQuantity, removeFromCart, getCart } = CartAction();
+
+  useEffect(() => {
+    if (userLogged?.id) {
+      getCart(userLogged.id);
+    }
+  }, []);
+
+  useEffect(() => {
+    setExceededItems(cart?.items?.filter(item => item?.quantity > item.stock?.quantity)?.map(item => ({ label: item.product.name, value: item.product._id })) || [])
+  }, [cart?.items])
+
+  useEffect(() => {
+    setVariantsQuantity(cart?.items?.reduce((acc, item) => {
+      if (item.variant) {
+        acc[item.variant._id + item.product._id] = item.quantity;
+      } else {
+        item.wholesale_variants.forEach((variant: any) => {
+          acc[variant.variant._id + item.product._id] = variant.quantity;
+        });
+      }
+      return acc;
+    }, {}))
+  }, [cart]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const handleQuantityChange = (id: string, value: number, productId: string, operation: 'increase' | 'decrease', isWholesalePackage?: boolean, predefinedQuantity?: number) => {
     if (value < 0) {
@@ -293,30 +317,6 @@ const CartPanel: FC<CartPanelProps> = props => {
 
     postSale({ cartId: cart._id })
   }
-
-  useEffect(() => {
-    if (userLogged?.id) {
-      getCart(userLogged.id);
-    }
-  }, []);
-
-  useEffect(() => {
-    setExceededItems(cart?.items?.filter(item => item?.quantity > item.stock?.quantity)?.map(item => ({ label: item.product.name, value: item.product._id })) || [])
-  }, [cart?.items])
-
-  useEffect(() => {
-    setVariantsQuantity(cart?.items?.reduce((acc, item) => {
-      if (item.variant) {
-        acc[item.variant._id + item.product._id] = item.quantity;
-      } else {
-        item.wholesale_variants.forEach((variant: any) => {
-          acc[variant.variant._id + item.product._id] = variant.quantity;
-        });
-      }
-      return acc;
-    }, {}))
-
-  }, [cart]);
 
   console.log('cart', cart)
   console.log("selectedItem", selectedItem)

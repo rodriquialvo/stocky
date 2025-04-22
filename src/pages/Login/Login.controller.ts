@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { LoginController } from './interfaces';
 import { SessionAction } from '../../store/session/actions';
 import { useSessionStore } from '../../store/session/slice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
 
 export const useLoginController =
@@ -14,22 +14,22 @@ export const useLoginController =
     const { login } = SessionAction();
     const isAuthenticated = useSessionStore(state => state.isAuthenticated);
     const navigate = useNavigate();
+    const location = useLocation();
     /* State */
     // Ex. const [count, setCount] = useState(0);
 
     /* Listeners */
     useEffect(() => {
-      if (!!isAuthenticated) {
-        navigate(-1);
+      // Guardar la ruta actual si no es login ni register
+      if (!location.pathname.includes(ROUTES.LOGIN) && !location.pathname.includes(ROUTES.REGISTER)) {
+        localStorage.setItem('lastPath', location.pathname);
+      }
+    }, [location]);
 
-        // Si no hay una página anterior, navega a una ruta específica
-        // Nota: No hay una forma directa de verificar el historial en v6,
-        // por lo que puedes usar un enfoque alternativo.
-        window.addEventListener('popstate', () => {
-          if (window.history.state === null) {
-            navigate(ROUTES.HOME, { replace: true });
-          }
-        }, { once: true });
+    useEffect(() => {
+      if (!!isAuthenticated) {
+        const lastPath = localStorage.getItem('lastPath') || ROUTES.HOME;
+        navigate(lastPath);
       }
     }, [isAuthenticated]);
 
@@ -37,6 +37,11 @@ export const useLoginController =
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       login(email, password);
+    };
+
+    const handleGuestLogin = () => {
+      const lastPath = localStorage.getItem('lastPath') || ROUTES.HOME;
+      navigate(lastPath);
     };
 
     /* Private Methods */
@@ -49,7 +54,7 @@ export const useLoginController =
       setEmail,
       setPassword,
       handleSubmit,
+      handleGuestLogin,
       isLoading: stateLogin.isFetching
-
     };
   };
