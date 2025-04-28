@@ -93,10 +93,10 @@ const MonthlySalesSummary: FC = () => {
               <Stat>
                 <StatLabel color="green.500">Total Ventas</StatLabel>
                 <StatNumber color="green.400">
-                  ${monthlyStats.totalSales.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                  ${monthlyStats?.totalSales?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                 </StatNumber>
                 <StatHelpText>
-                  {monthlyStats.totalTransactions} transacciones
+                  {monthlyStats?.totalTransactions} transacciones
                 </StatHelpText>
               </Stat>
             </CardBody>
@@ -108,7 +108,7 @@ const MonthlySalesSummary: FC = () => {
               <Stat>
                 <StatLabel color="red.500">Total Costos</StatLabel>
                 <StatNumber color="red.400">
-                  ${monthlyStats.totalCosts.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                  ${monthlyStats?.totalCosts?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                 </StatNumber>
                 <StatHelpText>
                   Costo de productos vendidos
@@ -123,10 +123,10 @@ const MonthlySalesSummary: FC = () => {
               <Stat>
                 <StatLabel color="blue.500">Ganancia Total</StatLabel>
                 <StatNumber color="blue.400">
-                  ${monthlyStats.totalProfit.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                  ${monthlyStats?.totalProfit?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                 </StatNumber>
                 <StatHelpText>
-                  {((monthlyStats.totalProfit / monthlyStats.totalCosts) * 100).toFixed(1)}% margen
+                  {((monthlyStats?.totalProfit / monthlyStats?.totalCosts) * 100).toFixed(1)}% margen
                 </StatHelpText>
               </Stat>
             </CardBody>
@@ -138,7 +138,7 @@ const MonthlySalesSummary: FC = () => {
               <Stat>
                 <StatLabel color="purple.500">Productos Vendidos</StatLabel>
                 <StatNumber color="purple.400">
-                  {monthlyStats.totalProductsSold.toLocaleString('es-AR')}
+                  {monthlyStats?.totalProductsSold?.toLocaleString('es-AR')}
                 </StatNumber>
                 <StatHelpText>
                   Unidades vendidas
@@ -153,7 +153,7 @@ const MonthlySalesSummary: FC = () => {
               <Stat>
                 <StatLabel color="orange.500">Promedio por Venta</StatLabel>
                 <StatNumber color="orange.400">
-                  ${monthlyStats.averageSaleAmount.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                  ${monthlyStats?.averageSaleAmount?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                 </StatNumber>
                 <StatHelpText>
                   Por transacción
@@ -168,7 +168,7 @@ const MonthlySalesSummary: FC = () => {
               <Stat>
                 <StatLabel color="teal.500">Ganancia Promedio</StatLabel>
                 <StatNumber color="teal.400">
-                  ${monthlyStats.averageProfitPerTransaction.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
+                  ${monthlyStats?.averageProfitPerTransaction?.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                 </StatNumber>
                 <StatHelpText>
                   Por transacción

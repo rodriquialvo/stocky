@@ -37,7 +37,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
   const [predefinedQuantity, setPredefinedQuantity] = useState(1);
   const [isHalfDozen, setIsHalfDozen] = useState(false);
 
-  const totalSelectedQuantity = variants.reduce((acc, variant) => acc + variant.quantity, 0);
+  const totalSelectedQuantity = variants?.reduce((acc, variant) => acc + variant?.quantity, 0);
   const targetQuantity = isHalfDozen ? 6 : quantity * 12;
   const isQuantityExceeded = totalSelectedQuantity > targetQuantity;
   const isQuantityBelowMinimum = totalSelectedQuantity < targetQuantity;
@@ -61,10 +61,10 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
 
   useEffect(() => {
     if (itemCart && productDetail) {
-      const wholesaleVariants = itemCart.wholesale_variants.map(variant => ({
-        color: variant.variant.color,
-        size: variant.variant.size,
-        quantity: variant.quantity
+      const wholesaleVariants = itemCart?.wholesale_variants?.map(variant => ({
+        color: variant?.variant?.color,
+        size: variant?.variant?.size,
+        quantity: variant?.quantity
       }));
       setVariants(wholesaleVariants);
       const isHalf = itemCart.predefined_quantity === 6;
