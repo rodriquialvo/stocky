@@ -40,6 +40,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
   const totalSelectedQuantity = variants.reduce((acc, variant) => acc + variant.quantity, 0);
   const targetQuantity = isHalfDozen ? 6 : quantity * 12;
   const isQuantityExceeded = totalSelectedQuantity > targetQuantity;
+  const isQuantityBelowMinimum = totalSelectedQuantity < targetQuantity;
 
   useEffect(() => {
     if (productDetail) {
@@ -156,6 +157,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
     }
   };
 
+  console.log("totalSelectedQuantity", totalSelectedQuantity)
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -211,12 +213,14 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
                 colorScheme={'purple'}
                 size="lg"
                 onClick={onAddToCartWholesalePressed}
-                isDisabled={isQuantityExceeded || isLoading || totalSelectedQuantity < 6}
+                isDisabled={isQuantityExceeded || isLoading || totalSelectedQuantity < 6 || isQuantityBelowMinimum}
                 isLoading={isLoading}
                 loadingText="Agregando al carrito..."
               >
                 {isQuantityExceeded
                   ? `Cantidad total (${totalSelectedQuantity}) excede el límite (${targetQuantity})`
+                  : isQuantityBelowMinimum
+                  ? `Cantidad total (${totalSelectedQuantity}) es menor al mínimo requerido (${targetQuantity})`
                   : 'Agregar al carrito mayorista'
                 }
               </Button>
