@@ -77,6 +77,8 @@ export interface Stock {
 export interface Variant {
     size:      string;
     color:     string;
+    size_label: string;
+    color_label: string;
     _id:       string;
     createdAt: Date;
     updatedAt: Date;

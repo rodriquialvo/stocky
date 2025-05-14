@@ -60,4 +60,6 @@ export interface Variant {
     id:    string;
     color: string;
     size:  string;
+    colorLabel: string;
+    sizeLabel: string;
 }

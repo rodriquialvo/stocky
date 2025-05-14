@@ -493,11 +493,11 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   >
                     <Box flex={1}>
                       <Text fontWeight="bold" mb={2}>Cantidad</Text>
-                      {!controller.isSimpleWholesale && (
+                      {/* {!controller.isSimpleWholesale && (
                         <Text color="gray.500" fontSize="sm" mb={2}>
                           {controller.variantSelected?.quantity ? `Quedan solo ${controller.variantSelected.quantity} disponibles` : 'No hay stock disponible'}
                         </Text>
-                      )}
+                      )} */}
                       <QuantityPicker
                         stock={controller.variantSelected?.quantity || 0}
                         quantity={controller.quantity}
