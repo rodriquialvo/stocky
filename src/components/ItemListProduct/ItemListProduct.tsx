@@ -121,7 +121,7 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
                     minW="200px"
                   >
                     <Text fontWeight="semibold" mb={2}>
-                      Color: {colorsObj[stock.variant.color] || ''} / Talle: {stock.variant.size}
+                      Color: {colorsObj[stock.variant.color] || ''} / Talle: {stock.variant.sizeLabel}
                     </Text>
                     <Text color="gray.600">Cantidad: {stock.quantity} {stock.quantity > 1 ? "unidades" : "unidad"}</Text>
                     <Text color="gray.600">Precio de costo: {formattedNumberToMoney(stock.costPrice)}</Text>

@@ -30,7 +30,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const colors = allColors.filter(color => productDetail?.colors?.includes(color.value)).map(color => { return { label: color.label, value: color.value } })
-  const [variants, setVariants] = useState<{ color: string; size: string; quantity: number }[]>([]);
+  const [variants, setVariants] = useState<{ color: string; size: string; sizeLabel: string; colorLabel: string; quantity: number }[]>([]);
   const { addToCartWholesale } = CartAction();
   const [quantity, setQuantity] = useState(1);
   const [totalDozens, setTotalDozens] = useState(0);
@@ -42,29 +42,36 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
   const isQuantityExceeded = totalSelectedQuantity > targetQuantity;
   const isQuantityBelowMinimum = totalSelectedQuantity < targetQuantity;
 
+  const isSizeIncluded = (array: { label: string, value: string }[], value: string) => {
+    return array.some(stock => stock.value === value);
+  }
+
   useEffect(() => {
     if (productDetail) {
       setTotalUnits(productDetail.stocks.reduce((acc, stock) => acc + stock.quantity, 0) || 0);
       const allSizes = productDetail.stocks?.reduce((acc, stock) => {
-        if (!acc.includes(stock.variant.size)) {
-          acc.push(stock.variant.size);
+        if (!isSizeIncluded(acc, stock.variant.size)) {
+          acc.push({ label: stock.variant.sizeLabel, value: stock.variant.size });
         }
         return acc;
-      }, [] as string[]) || [];
-      setSizes(allSizes.map(size => ({ label: size, value: size })));
+      }, [] as { label: string, value: string }[]) || [];
+      setSizes(allSizes.map(size => ({ label: size.label, value: size.value })));
     }
   }, [productDetail]);
 
   useEffect(() => {
+    console.log('totalUnits', totalUnits)
     setTotalDozens(Math.floor(totalUnits / 12));
   }, [totalUnits])
 
   useEffect(() => {
     if (itemCart && productDetail) {
-      const wholesaleVariants = itemCart?.wholesale_variants?.map(variant => ({
-        color: variant?.variant?.color,
-        size: variant?.variant?.size,
-        quantity: variant?.quantity
+      const wholesaleVariants = itemCart.wholesale_variants.map(variant => ({
+        color: variant.variant.color,
+        size: variant.variant.size,
+        sizeLabel: variant.variant.size_label,
+        colorLabel: variant.variant.color_label,
+        quantity: variant.quantity
       }));
       setVariants(wholesaleVariants);
       const isHalf = itemCart.predefined_quantity === 6;
@@ -74,22 +81,22 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
     }
   }, [itemCart, productDetail]);
 
-  const onVariantsChange = (newVariants: { color: string; size: string; quantity: number }[]) => {
+  const onVariantsChange = (newVariants: { color: string; size: string; sizeLabel: string; colorLabel: string; quantity: number }[]) => {
     // Verificar stock para cada variante
-    const hasInsufficientStock = newVariants.some(variant => {
-      const stock = productDetail?.stocks.reduce((total, item) => {
-        if (item.variant.color === variant.color && item.variant.size === variant.size) {
-          return total + item.quantity;
-        }
-        return total;
-      }, 0);
-      return variant.quantity > stock;
-    });
+    // const hasInsufficientStock = newVariants.some(variant => {
+    //   const stock = productDetail?.stocks.reduce((total, item) => {
+    //     if (item.variant.color === variant.color && item.variant.size === variant.size) {
+    //       return total + item.quantity;
+    //     }
+    //     return total;
+    //   }, 0);
+    //   return variant.quantity > stock;
+    // });
 
-    if (hasInsufficientStock) {
-      toast.error("Alguna variante excede el stock disponible");
-      return;
-    }
+    // if (hasInsufficientStock) {
+    //   toast.error("Alguna variante excede el stock disponible");
+    //   return;
+    // }
 
     setVariants(newVariants);
   };
@@ -129,7 +136,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
           s => s.variant.color === variant.color && s.variant.size === variant.size
         );
         if (!stock?.variant.id) {
-          toast.error(`No se encontró la variante para color ${variant.color} y talle ${variant.size}`);
+          toast.error(`No se encontró la variante para color ${variant.color} y talle ${variant.sizeLabel}`);
           return null;
         }
 
@@ -157,7 +164,14 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
     }
   };
 
-  console.log("totalSelectedQuantity", totalSelectedQuantity)
+  const calculateTotalQuantity = () => {
+    if (isHalfDozen) {
+      return 6;
+    } else {
+      return quantity * 12;
+    }
+  }
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -202,7 +216,7 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
                   colors={colors}
                   sizes={sizes}
                   stocks={productDetail?.stocks || []}
-                  totalQuantity={isHalfDozen ? 6 : quantity * 12}
+                  totalQuantity={calculateTotalQuantity()}
                   onVariantsChange={onVariantsChange}
                   isDisabled={false}
                   initialVariants={variants}

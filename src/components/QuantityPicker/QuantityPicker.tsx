@@ -25,7 +25,6 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
     isSimpleWholesale = false,
     disableButtons = false
   }) => {
-
   const [isNearMax, setIsNearMax] = useState(false);
   
   const buttonBg = useColorModeValue("gray.100", "gray.700");
@@ -117,7 +116,7 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
         </Tooltip>
       </HStack>
       
-      {isNearMax && !isSimpleWholesale && (
+      {isNearMax && !isSimpleWholesale && stock > 0 && (
         <Text fontSize="xs" color={warningColor} mt={1}>
           Quedan solo {stock - quantity} disponibles
         </Text>

@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 interface Variant {
   color: string;
   size: string;
+  sizeLabel: string;
+  colorLabel: string;
   quantity: number;
   stock: number;
 }
@@ -15,7 +17,7 @@ interface WholesaleVariantSelectorProps {
   totalQuantity: number;
   onVariantsChange: (variants: Variant[]) => void;
   isDisabled?: boolean;
-  initialVariants?: { color: string; size: string; quantity: number }[];
+  initialVariants?: { color: string; size: string; quantity: number, sizeLabel: string, colorLabel: string }[];
 }
 
 const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
@@ -51,7 +53,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
     ...variant,
     stock: getAvailableStock(variant.color, variant.size)
   })));
-  const [remainingQuantity, setRemainingQuantity] = useState(0);
+  const [remainingQuantity, setRemainingQuantity] = useState(totalQuantity);
   const toast = useToast();
 
   const bgColor = useColorModeValue("white", "gray.800");
@@ -62,7 +64,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
   }, [totalQuantity])
 
   const handleAddVariant = () => {
-    setVariants([...variants, { color: "", size: "", quantity: 0, stock: 0 }]);
+    setVariants([...variants, { color: "", size: "", quantity: 0, sizeLabel: "", colorLabel: "", stock: 0 }]);
   };
 
   const handleRemoveVariant = (index: number) => {
@@ -125,6 +127,10 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
     setRemainingQuantity(totalQuantity - total);
     onVariantsChange(currentVariants);
   };
+
+  useEffect(() => {
+    setRemainingQuantity(totalQuantity);
+  }, [totalQuantity]);
 
   return (
     <Box>
@@ -225,7 +231,7 @@ const WholesaleVariantSelector: React.FC<WholesaleVariantSelectorProps> = ({
             fontSize="sm"
             textAlign={{ base: "center", sm: "right" }}
           >
-            Cantidad restante: {remainingQuantity}
+            Cantidad restante: {remainingQuantity !== Number.NaN ? remainingQuantity : 0}
           </Text>
         </Flex>
       </VStack>

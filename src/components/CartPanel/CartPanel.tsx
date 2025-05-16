@@ -121,9 +121,9 @@ const QuantityPickerVariant = ({ item, variantsQuantity, handleQuantityChange, s
     <Box>
       <QuantityPicker
         stock={item?.stock?.quantity}
-        quantity={variantsQuantity[item.variant._id + item.product._id]}
-        onIncrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id], item.product._id, 'increase', item.is_wholesale_package)}
-        onDecrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id], item.product._id, 'decrease', item.is_wholesale_package)}
+        quantity={variantsQuantity[item.variant._id + item.product._id + (item.product.wholesale_data?.package_type === 'complex' && item.is_wholesale_package ? 'complex' : '')]}
+        onIncrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id + (item.product.wholesale_data?.package_type === 'complex' && item.is_wholesale_package ? 'complex' : '')], item.product._id, 'increase', item.product.wholesale_data?.package_type === 'complex' && item.is_wholesale_package)}
+        onDecrease={() => handleQuantityChange(item.variant._id, variantsQuantity[item.variant._id + item.product._id + (item.product.wholesale_data?.package_type === 'complex' && item.is_wholesale_package ? 'complex' : '')], item.product._id, 'decrease', item.product.wholesale_data?.package_type === 'complex' && item.is_wholesale_package)}
         isDisabled={statusCart.isFetching}
         isSimpleWholesale={item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type === "simple"}
         isWholesale={item.product.wholesale_data?.is_wholesaler}
@@ -159,7 +159,7 @@ const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuan
             <Box key={variant.variant._id} mb={2} p={2} borderWidth="1px" borderRadius="md">
               <Flex justifyContent="space-between" alignItems="center">
                 <Box>
-                  <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {variant.variant.size}</Text>
+                  <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {variant.variant.size_label}</Text>
                   <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Color: {capitalizeFirstLetter(variant.variant.color)}</Text>
                 </Box>
                 <DeleteButton item={{ variant: variant.variant, product: item.product, is_wholesale_package: true }} onRemoveFromCartPressed={onRemoveFromCartPressed} />
@@ -214,11 +214,12 @@ const CartPanel: FC<CartPanelProps> = props => {
         acc[item.variant._id + item.product._id] = item.quantity;
       } else {
         item.wholesale_variants.forEach((variant: any) => {
-          acc[variant.variant._id + item.product._id] = variant.quantity;
+          acc[variant.variant._id + item.product._id + 'complex'] = variant.quantity;
         });
       }
       return acc;
     }, {}))
+
   }, [cart]);
 
   if (!isAuthenticated) {
@@ -379,7 +380,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                             <Box>
                               {item.variant ? (
                                 <>
-                                  <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {item.variant.size}</Text>
+                                  <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {item.variant.size_label}</Text>
                                   <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Color: {capitalizeFirstLetter(item.variant.color)}</Text>
                                   <QuantityPickerVariant item={item} variantsQuantity={variantsQuantity} handleQuantityChange={handleQuantityChange} statusCart={statusCart} />
                                 </>
