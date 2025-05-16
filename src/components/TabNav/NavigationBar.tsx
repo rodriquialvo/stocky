@@ -9,7 +9,6 @@ import {
   useBreakpointValue,
   Collapse,
   VStack,
-  HStack,
   Tooltip,
   Divider,
   Button,
@@ -31,7 +30,7 @@ import { initialStateFilters } from '../FilterPanel/constants';
 import MenuPanel from '../MenuPanel/MenuPanel';
 import MenuUser from './MenuUser';
 import { useProductStore } from '../../store/product/slice';
-import { useSessionStore } from '../../store/session/slice';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 const NavigationBar: React.FC<TabNavProps> = ({
 }) => {
@@ -47,10 +46,12 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const cart = useCartStore(state => state.cart);
   const { setProductsFiltersAction } = ProductAction();
   const productsFilters = useProductStore(state => state.productsFilters);
-  const isAdminUser = useSessionStore(state => state.isAdminUser);
-
+  const { requireAuth } = useRequireAuth();
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const searchBarWidth = useBreakpointValue({ base: "100%", md: "40%" });
+
+  const handlePressCartButton = () => {
+    requireAuth(() => setIsOpenCartPanel(true));
+  }
 
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
@@ -100,7 +101,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
               variant="ghost"
               color="#ec0868"
               fontSize="1.5rem"
-              onClick={() => setIsOpenCartPanel(true)}
+              onClick={handlePressCartButton}
               _hover={{ bg: "pink.50" }}
             />
             {totalItems > 0 && (
@@ -227,7 +228,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
             leftIcon={<FiShoppingCart />}
             variant="ghost"
             justifyContent="flex-start"
-            onClick={() => setIsOpenCartPanel(true)}
+            onClick={handlePressCartButton}
             color="#ec0868"
             _hover={{ bg: "pink.50" }}
             w="100%"
@@ -359,7 +360,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
               variant="ghost"
               color="#ec0868"
               fontSize="1.5rem"
-              onClick={() => setIsOpenCartPanel(true)}
+              onClick={handlePressCartButton}
               _hover={{ bg: "pink.50" }}
             />
           </Flex>

@@ -12,12 +12,10 @@ import WholesaleModal from "../../components/WholesaleModal/WholesaleModal";
 const ProductDetail: React.FC<ProductDetailProps> = props => {
   const [isHovered, setIsHovered] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isWholesaleModalOpen, setIsWholesaleModalOpen] = useState(false);
 
   const { useController = useProductDetailController } = props;
   const controller = useController();
 
-  const currentImageIndex = controller.productDetail?.pictures.findIndex(img => img.url === controller.imageSelected) || 0;
   const totalImages = controller.productDetail?.pictures.length || 0;
 
   return (
@@ -434,7 +432,6 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                         w={"full"}
                         colorScheme={'purple'}
                         size="lg"
-                        onClick={() => setIsWholesaleModalOpen(true)}
                       >
                         Agregar al carrito mayorista
                       </Button>

@@ -318,8 +318,6 @@ const CartPanel: FC<CartPanelProps> = props => {
     postSale({ cartId: cart._id })
   }
 
-  console.log('cart', cart)
-  console.log("selectedItem", selectedItem)
   return (
     <>
       <>

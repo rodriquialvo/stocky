@@ -9,9 +9,9 @@ import { CartAction } from '../../store/shoppingcart/actions';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
-import { MOCK_WHOLESALE_PRODUCT } from './mockData';
 import { AddToCartRequestDto, Item } from '../../services/shoppingcart/dtos/generic';
 import { AddComplexWholesaleProductToCartDTO } from '../../services/shoppingcart/cart.service';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
@@ -21,7 +21,6 @@ export const useProductDetailController =
     const { id } = useParams<{ id: string, }>();
 
     const { getProductDetail } = ProductAction()
-    // todo: ver si esto esta bien, estoy importand cartAction dentro del product controller
     const { addToCart, addToCartWholesale } = CartAction();
 
     const addToCartstatus = useCartStore(state => state.addToCartStatus);
@@ -29,7 +28,6 @@ export const useProductDetailController =
     const statusCart = useCartStore(state => state.status)
 
     const productDetail = useProductStore(state => state.product);
-    // const productDetail = MOCK_WHOLESALE_PRODUCT;
     const statusProduct = useProductStore(state => state.status);
 
     const [isDisabledButton, setIsDisabledButton] = useState(false)
@@ -43,9 +41,6 @@ export const useProductDetailController =
     const [productItemCart, setProductItemCart] = useState<Item | null>(null);
     const [selectedColor, setSelectedColor] = useState<string | null>(null);
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
     const isSimpleWholesale = productDetail?.wholesaleData?.isWholesaler && productDetail?.wholesaleData?.packageType === "simple";
     const isWholesale = (productDetail?.wholesaleData?.isWholesaler || false) && isWholesaleEnabled;
     const minimumQuantity = productDetail?.wholesaleData?.minimumQuantity || 0;
@@ -57,6 +52,7 @@ export const useProductDetailController =
     const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
     const allColors = useProductAtributesStore(state => state.allColors);
     const [maximumQuantity, setMaximumQuantity] = useState(0);
+    const { requireAuth } = useRequireAuth();
 
     useEffect(() => {
       if (productDetail) {
@@ -145,36 +141,21 @@ export const useProductDetailController =
       setTotalDozens(Math.floor(totalUnits / 12));
     }, [totalUnits])
 
-    const isValidWholesaleQuantity = (qty: number) => {
-      if (!isWholesale) return true;
-      return qty === 6 || qty % 12 === 0;
-    };
-
-    const getNextValidQuantity = (currentQty: number) => {
-      if (!isWholesale) return currentQty + 1;
-      if (currentQty === 6) return 12;
-      return currentQty + 12;
-    };
-
-    const getPrevValidQuantity = (currentQty: number) => {
-      if (!isWholesale) return currentQty - 1;
-      if (currentQty === 12) return 6;
-      return currentQty - 12;
-    };
-
     /* View Events */
     const onAddToCartPressed = ({ size, color, quantity }: ParamsOnAddToCartPressed) => {
-      if (quantity > productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color)?.quantity) {
-        return toast("No hay suficiente stock. Intenta con una cantidad menor")
-      }
+      requireAuth(() => {
+        if (quantity > productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color)?.quantity) {
+          return toast("No hay suficiente stock. Intenta con una cantidad menor")
+        }
       // find stock with size and color
       const stock = productDetail.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
       addToCart({
         productId: productDetail.id,
         variantId: stock.variant.id,
         quantity: isSimpleWholesale ? quantity * wholesaleMultiplier : quantity,
-        isWholesalePackage: isSimpleWholesale
-      })
+          isWholesalePackage: isSimpleWholesale
+        })
+      });
     };
 
     const onAddToCartWholesalePressed = () => {
@@ -252,10 +233,12 @@ export const useProductDetailController =
     };
 
     const handleWholesaleToggle = () => {
-      setIsWholesaleEnabled(!isWholesaleEnabled);
-      // Resetear estados cuando se cambia el modo
-      setVariants([]);
-      setQuantity(minimumQuantity);
+      requireAuth(() => {
+        setIsWholesaleEnabled(!isWholesaleEnabled);
+        // Resetear estados cuando se cambia el modo
+        setVariants([]);
+        setQuantity(minimumQuantity);
+      });
     };
 
     const getVariantSelected = () => {
@@ -276,10 +259,6 @@ export const useProductDetailController =
       return [1, 2, 4, 6, 8, 10].map(m => ({ label: `${m * 6} unidades`, value: m }));
     };
 
-    // console.log("variants", variants)
-    // console.log("colorsProduct", allColors)
-    console.log("productDetail", productDetail)
-    console.log("quantity", quantity)
     return {
       productDetail,
       statusProduct,
