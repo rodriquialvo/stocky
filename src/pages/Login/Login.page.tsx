@@ -71,12 +71,6 @@ export const LoginPage: FC<
             >
               Continuar como invitado
             </Button>
-            {/* <Text alignSelf={"center"}>ó</Text> */}
-            {/* <GoogleLogin
-              onSuccess={() => console.log('Login Success')}
-              onError={() => console.log('Login Failed')}
-              size="large"
-            /> */}
             <Text fontSize={"sm"}>¿Todavia no tienes una cuenta? <Link fontSize={"sm"} color={"pink.500"} href={ROUTES.REGISTER}>Registrate</Link></Text>
           </Box>
         </form>

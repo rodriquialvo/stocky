@@ -60,7 +60,6 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
   }, [productDetail]);
 
   useEffect(() => {
-    console.log('totalUnits', totalUnits)
     setTotalDozens(Math.floor(totalUnits / 12));
   }, [totalUnits])
 
