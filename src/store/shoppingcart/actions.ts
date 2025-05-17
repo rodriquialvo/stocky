@@ -77,11 +77,9 @@ export const CartAction = () => {
         setStatus(getErrorStatus('No response'));
         return;
       }
-      console.log("RESPONSE EN REMOVE FROM CART", response)
       setStatus(getSuccessStatus());
       setCart(response.cart);
     } catch (e) {
-      console.log("ERRORRR EN REMOVE FROM CART", e)
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -105,7 +103,6 @@ export const CartAction = () => {
     setStatus(getStartStatus());
     try {
       const response = await cartService.getCart(userId);
-      console.log("RESPONSE EN GET CART", response)
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));
         clearCart();
@@ -143,10 +140,8 @@ export const CartAction = () => {
       setStatus(getSuccessStatus());
       setCart(response.cart);
       setAddToCartStatus(getSuccessStatus());
-      console.log("EXITO!!!!!", data);
       return response;
     } catch (e) {
-      console.log("ERRORRR", e);
       setStatus(getErrorStatus(e as Error));
       throw e;
     }

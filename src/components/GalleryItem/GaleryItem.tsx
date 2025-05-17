@@ -78,20 +78,20 @@ const GalleryItem: React.FC<GalleryItemProps> = ({ name, price, availability, im
         />
         
         {props?.isWholesale && (
-          <Badge
+          <Text
             position="absolute"
             bottom={2}
             left={2}
             px={2}
             py={1}
-            bg="pink.500"
-            color="white"
+            bg="blackAlpha.800"
+            color="pink.300"
             borderRadius="md"
             fontSize="sm"
             fontWeight="bold"
           >
-            -30% desde 2da pieza 🔥
-          </Badge>
+            Descuento por mayor 🔥
+          </Text>
         )}
 
         {isHovered && images.length > 1 && (

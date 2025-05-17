@@ -120,12 +120,6 @@ export const RegisterPage: FC<
             <Button isLoading={controller.isLoading} mt={5} type="submit" colorScheme="teal" width="full">
               Registrarse
             </Button>
-            {/* <Text alignSelf={"center"}>ó</Text>
-            <GoogleLogin
-              onSuccess={() => console.log('Login Success')}
-              onError={() => console.log('Login Failed')}
-              size="large"
-            /> */}
             <Text fontSize={"sm"}>¿ya tienes una cuenta? <Link fontSize={"sm"} color={"pink.500"} href={ROUTES.LOGIN}>Inicia Sesión</Link></Text>
           </form>
         </Box>
