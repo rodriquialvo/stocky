@@ -1,4 +1,3 @@
-
 export interface CartItem {
     cartId: string,
     productId: string,
@@ -10,62 +9,77 @@ export interface CartItem {
 }
 
 export interface Cart {
-    _id: string;
-    userId: string;
-    items: Item[];
-    total: number;
-    total_reseller: number;
-    total_retail: number;
-    active: boolean;
-    createdAt: Date;
-    updatedAt: Date;
-    __v: number;
+    _id:             string;
+    userId:          string;
+    items:           Item[];
+    active:          boolean;
+    createdAt:       Date;
+    updatedAt:       Date;
+    v:             number;
+    total_reseller:  number;
+    total_retail:    number;
+    total_wholesale: number;
 }
 
 export interface Item {
-    product: Product;
-    variant: Variant;
-    quantity: number;
-    _id: string;
-    stock: {
-        _id: string,
-        product: string,
-        variant: string,
-        quantity: number,
-        cost_price: number,
-        date: string | Date,
-        createdAt: string | Date,
-        updatedAt: string | Date,
-    }
+    product:              Product;
+    variant:              Variant | null;
+    quantity:             number;
+    stock:                Stock;
+    is_wholesale_package: boolean;
+    predefined_quantity:  number;
+    wholesale_variants:   WholesaleVariant[];
 }
 
 export interface Product {
-    categories_filter: any[];
-    categories: any[];
-    name: string;
-    code: string;
+    _id:      string;
+    name:     string;
+    code:     string;
+    prices:   Prices;
     pictures: Picture[];
-    prices: Prices;
-    has_stock: boolean;
-    _id: string;
-    createdAt: Date;
-    updatedAt: Date;
+    wholesale_data?: WholesaleData;
 }
 
 export interface Picture {
-    url: string;
+    url:      string;
     alt_text: string;
 }
 
 export interface Prices {
-    retail: number;
-    reseller: number;
+    retail:    number;
+    reseller:  number;
+    wholesale: Wholesale;
+}
+
+export interface Wholesale {
+    half_dozen: number;
+    dozen:      number;
+}
+
+export interface WholesaleVariant {
+    variant:  Variant;
+    quantity: number;
+    stock:    Stock;
+}
+
+export interface Stock {
+    _id:        string;
+    product:    string;
+    variant:    string;
+    quantity:   number;
+    cost_price: number;
+    date:       Date;
+    createdAt:  Date;
+    updatedAt:  Date;
+    v:        number;
 }
 
 export interface Variant {
-    size: string;
-    color: string;
-    _id: string;
+    size:      string;
+    color:     string;
+    size_label: string;
+    color_label: string;
+    _id:       string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -83,11 +97,14 @@ export interface AddToCartRequestDto {
     variantId: string
     quantity: number
     cartId?: string,
+    isWholesalePackage?: boolean
 }
 
 export interface RemoveFromCartRequestDto {
     cartId: string,
-    variantId: string
+    variantId: string,
+    productId: string,
+    isWholesalePackage: boolean
 }
 
 export interface UpdateQuantityRequestDto {
@@ -97,10 +114,18 @@ export interface UpdateQuantityRequestDto {
     },
     body: {
         quantity: number,
-        productId: string
+        productId: string,
+        isWholesalePackage?: boolean,
+        predefinedQuantity?: number
     }
 }
 
 export interface CartReponseDto {
     cart: Cart
+}
+
+export interface WholesaleData {
+    is_wholesaler: boolean;
+    minimum_quantity: number;
+    package_type?: 'simple' | 'complex';
 }

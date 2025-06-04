@@ -1,33 +1,36 @@
-import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, FormControl, FormLabel, Heading, Image, Stack, Text, Tooltip, Badge, HStack, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, useDisclosure, Switch, VStack, SimpleGrid } from "@chakra-ui/react";
 import { Select } from "chakra-react-select";
 import { useState } from "react";
 import QuantityPicker from "../../components/QuantityPicker/QuantityPicker";
-import NavigationBar from "../../components/TabNav/NavigationBar";
+import WholesaleVariantSelector from "../../components/WholesaleVariantSelector/WholesaleVariantSelector";
 import { capitalizeFirstLetter, formattedNumberToMoney } from "../../utils/functions";
 import { useProductDetailController } from "./ProductDetail.controller";
 import { ProductDetailProps } from "./interfaces";
 import LoadingOverlay from "../../components/LoadingOverlay/LoadingOverlay";
+import WholesaleModal from "../../components/WholesaleModal/WholesaleModal";
 
 const ProductDetail: React.FC<ProductDetailProps> = props => {
   const [isHovered, setIsHovered] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { useController = useProductDetailController } = props;
   const controller = useController();
 
+  const totalImages = controller.productDetail?.pictures.length || 0;
+
   return (
     <Box
       w="100%"
-      h="100%"
+      minH="100vh"
+      bg="white"
       position="relative"
       overflow="hidden"
       justifyContent="center"
       flex={1}
       display={"flex"}
       flexDirection={"column"}
+      py={0}
     >
-      <NavigationBar
-      // onClickFilterButton={onOpen}
-      />
       {
         controller.isLoading && (
           <LoadingOverlay />
@@ -39,10 +42,20 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
           base: "column",
           lg: "row"
         }}
-        borderWidth={1}
-        padding={10}
-        width={"90%"}
+        bg="white"
+        width="100%"
+        mx="auto"
         alignSelf={"center"}
+        px={{
+          base: 4,
+          md: 8,
+          lg: 10
+        }}
+        py={{
+          base: 4,
+          md: 8,
+          lg: 10
+        }}
       >
         <Box
           width={{
@@ -56,9 +69,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             alignSelf={"center"}
             width={"100%"}
             height={500}
-
-          // bg="blue"
-
+            position="relative"
           >
             <Box
               overflow={"scroll"}
@@ -68,39 +79,51 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 md: "flex"
               }}
               flexDirection={"column"}
-              // px={10}
               css={{
-                /* Oculta el scroll en diferentes navegadores */
-                scrollbarWidth: 'none', /* Firefox */
-                '-ms-overflow-style': 'none', /* IE y Edge */
+                scrollbarWidth: 'none',
+                '-ms-overflow-style': 'none',
               }}
               sx={{
                 '::-webkit-scrollbar': {
-                  display: 'none', /* Chrome, Safari y Opera */
+                  display: 'none',
                 },
               }}
-            // bg="yellow"
             >
               {
-                controller.productDetail?.pictures.map(image => {
+                controller.productDetail?.pictures.map((image, index) => {
                   return (
-                    <Box
-                      borderWidth={controller.imageSelected === image.url ? 2 : 0}
-                      borderColor={"black"}
-                      borderRadius={7}
-                    >
-                      <Image
-                        height={60}
-                        width={"auto"}
-                        src={image.url}
-                        className="object-cover"
-                        objectFit='cover'
-                        px={0}
-                        onClick={() => controller.setImageSelected(image.url)}
-                        borderRadius={5}
-                        alt={image.alt_text}
-                      />
-                    </Box>)
+                    <Tooltip _hover={{ 
+                      transform: 'scale(1.05)',
+                      borderWidth: controller.imageSelected === image.url ? 2 : 1,
+                      borderColor: "pink.500"
+                    }} key={index} label={`Imagen ${index + 1} de ${totalImages}`}>
+                      <Box
+                        borderWidth={controller.imageSelected === image.url ? 2 : 0}
+                        borderColor={"pink.500"}
+                        cursor="pointer"
+                        transition="all 0.2s"
+                        
+                        sx={{
+                          '&:hover': {
+                            borderWidth: controller.imageSelected === image.url ? '2px !important' : '1px',
+                            borderColor: 'pink.500',
+                            borderStyle: 'solid'
+                          }
+                        }}
+                      >
+                        <Image
+                          height={60}
+                          width={"auto"}
+                          src={image.url}
+                          className="object-cover"
+                          objectFit='cover'
+                          px={0}
+                          onClick={() => controller.setImageSelected(image.url)}
+                          alt={image.alt_text}
+                        />
+                      </Box>
+                    </Tooltip>
+                  )
                 })
               }
             </Box>
@@ -110,9 +133,10 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
               justifyContent={"center"}
               alignItems={"center"}
               flexDirection={"column"}
-              onMouseEnter={() => setIsHovered(true)} // Activar zoom al pasar el cursor
-              onMouseLeave={() => setIsHovered(false)} // Desactivar zoom al salir
-              overflow="hidden" // Para evitar que la imagen se desborde
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              overflow="hidden"
+              position="relative"
             >
               <Image
                 height={"100%"}
@@ -120,23 +144,25 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 src={controller.imageSelected}
                 objectFit='cover'
                 px={0}
-                transform={isHovered ? 'scale(1.1)' : 'scale(1)'} // Aumentar tamaño cuando está en hover
-                transition="transform 0.3s ease" // Animación suave
+                transform={isHovered ? 'scale(1.1)' : 'scale(1)'}
+                transition="transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)"
+                onClick={onOpen}
+                cursor="pointer"
               />
               <Box position={"absolute"} w={'100%'} display={{
                 base: 'flex',
                 md: 'none'
               }} justifyContent={"space-between"}>
-
                 <Button
                   onClick={controller.handlePrev}
                   position="absolute"
                   left={2}
                   top="50%"
                   transform="translateY(-50%)"
-                  colorScheme="teal" // Personaliza el color del botón
+                  colorScheme="pink"
+                  borderRadius="full"
                 >
-                  &#8249; {/* Ícono de flecha izquierda */}
+                  ←
                 </Button>
                 <Button
                   onClick={controller.handleNext}
@@ -144,34 +170,130 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                   right={2}
                   top="50%"
                   transform="translateY(-50%)"
-                  colorScheme="teal" // Personaliza el color del botón
+                  colorScheme="pink"
+                  borderRadius="full"
                 >
-                  &#8250; {/* Ícono de flecha derecha */}
+                  →
                 </Button>
               </Box>
             </Box>
           </Box>
           <Box
-            bg="gray.100"
-            my={10}
-            padding={{
-              base: 5,
-              lg: 10
-            }}
-            gap={4}
-            display={{
-              base: "none",
-              lg: "flex"
-            }}
-            flexDirection={"column"}
-            width={"100%"}
+            bg="white"
+            my={6}
+            p={6}
+            width="100%"
+            borderRadius="xl"
+            boxShadow="sm"
+            borderWidth="1px"
+            borderColor="gray.100"
           >
-            <Text>Detalles del producto:</Text>
-            <Text>{capitalizeFirstLetter(controller.productDetail?.description)}</Text>
-            <Text>-Marca: {capitalizeFirstLetter(controller.productDetail?.attributes.brand)}</Text>
-            <Text>-Talles: {controller.productDetail?.sizes.join(", ")}</Text>
-            <Text>-Colores: {controller.colorsProduct.map(color => color.label).join(", ")}</Text>
-            <Text>-Artículo: {controller.productDetail?.code}</Text>
+            <VStack spacing={6} align="stretch">
+              <Flex justify="space-between" align="center">
+                <Heading size="md" color="gray.700">Detalles del producto</Heading>
+                
+              </Flex>
+              
+              <SimpleGrid columns={{base: 1, sm: 2}} spacing={4}>
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={1}>
+                    Marca
+                  </Text>
+                  <Text color="gray.800" fontSize="md">
+                    {capitalizeFirstLetter(controller.productDetail?.attributes.brand)}
+                  </Text>
+                </Box>
+
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={1}>
+                    Talles disponibles
+                  </Text>
+                  <Flex gap={2} flexWrap="wrap">
+                    {controller.productDetail?.sizes.map((size, index) => (
+                      <Badge 
+                        key={index}
+                        colorScheme="gray"
+                        px={2}
+                        py={1}
+                        borderRadius="md"
+                      >
+                        {size}
+                      </Badge>
+                    ))}
+                  </Flex>
+                </Box>
+
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={1}>
+                    Colores disponibles
+                  </Text>
+                  <Flex gap={2} flexWrap="wrap">
+                    {controller.colorsProduct.map((color, index) => (
+                      <Badge 
+                        key={index}
+                        colorScheme="gray"
+                        px={2}
+                        py={1}
+                        borderRadius="md"
+                      >
+                        {color.label}
+                      </Badge>
+                    ))}
+                  </Flex>
+                </Box>
+
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={1}>
+                    Artículo
+                  </Text>
+                  <HStack spacing={2} mt={1}>
+                    <Badge colorScheme="pink" variant="subtle">
+                    {controller.productDetail?.code}
+                    </Badge>
+                  </HStack>
+                </Box>
+
+                <Box 
+                  p={4} 
+                  bg="gray.50" 
+                  borderRadius="lg"
+                  transition="all 0.2s"
+                  _hover={{ bg: "pink.50" }}
+                  gridColumn={{base: "auto", sm: "1 / -1"}}
+                >
+                  <Text fontWeight="semibold" color="gray.500" fontSize="sm" mb={2}>
+                    Características y descripción
+                  </Text>
+                  <Text color="gray.700" fontSize="md" mb={3} lineHeight="tall">
+                    {capitalizeFirstLetter(controller.productDetail?.description)}
+                  </Text>
+                </Box>
+              </SimpleGrid>
+            </VStack>
           </Box>
         </Box>
         <Box
@@ -196,11 +318,73 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
             }}
             spacing={4}
           >
-            <Text
-              color={"GrayText"}
-            >{capitalizeFirstLetter(controller.productDetail?.attributes.brand)} - Artículo {controller.productDetail?.code}</Text>
-            <Heading>{capitalizeFirstLetter(controller.productDetail?.name)}</Heading >
-            <Heading>{formattedNumberToMoney(controller.productDetail?.prices.retail)}</Heading>
+            <Text color={"GrayText"}>
+              {capitalizeFirstLetter(controller.productDetail?.attributes.brand)} - Artículo {controller.productDetail?.code}
+            </Text>
+            <Heading>{capitalizeFirstLetter(controller.productDetail?.name)}</Heading>
+            <Box>
+              <HStack spacing={4} align="baseline" flexDirection={{
+                base: "column",
+                // md: "row"
+              }}>
+                <Heading color="pink.500" fontSize="2xl">
+                  {formattedNumberToMoney(controller.productDetail?.prices.retail)}
+                </Heading>
+                {controller.productDetail?.wholesaleData?.isWholesaler ? (
+                  <>
+                    <Badge colorScheme="purple" fontSize="md" p={2} borderRadius="md">
+                      Precio 6 unidades: {formattedNumberToMoney(controller.productDetail?.prices.wholesale.half_dozen)}
+                    </Badge>
+                  <Badge colorScheme="purple" fontSize="md" p={2} borderRadius="md">
+                      Precio +6 unidades: {formattedNumberToMoney(controller.productDetail?.prices.wholesale.dozen)}
+                    </Badge>
+                  </>
+                ) : (
+                  <Badge colorScheme="red" fontSize="md" p={2} borderRadius="md">
+                    -30% a partir de 2da pieza 🔥
+                  </Badge>
+                )}
+              </HStack>
+              {controller.productDetail?.wholesaleData?.isWholesaler && controller.productDetail?.wholesaleData?.packageType !== "simple" && (
+                <Box mt={4} p={4} bg="purple.50" borderRadius="lg" borderWidth="1px" borderColor="purple.200">
+                  <HStack spacing={4} align="center" mb={2}>
+                    <Switch
+                      isChecked={controller.isWholesaleEnabled}
+                      onChange={controller.handleWholesaleToggle}
+                      colorScheme="purple"
+                      size="lg"
+                      isDisabled={!controller.productDetail?.hasStock}
+                    />
+                    <Text fontWeight="bold" fontSize="lg">Modo Mayorista</Text>
+                  </HStack>
+                  {controller.isWholesaleEnabled ? (
+                    <VStack align="start" spacing={2}>
+                      <Text color="purple.700">
+                        • Mínimo {controller.minimumQuantity} unidades
+                      </Text>
+                      <Text color="purple.700">
+                        • Cantidades en docenas (6 unidades o múltiplos de 12)
+                      </Text>
+                      <Text color="purple.700">
+                        • Precio especial por volumen
+                      </Text>
+                    </VStack>
+                  ) : (
+                    <Text color="purple.700">
+                      Activa el modo mayorista para acceder a precios especiales por volumen
+                    </Text>
+                  )}
+                </Box>
+              )}
+              {controller.productDetail?.wholesaleData?.isWholesaler && controller.productDetail?.wholesaleData?.packageType === "simple" && (
+                <Box mt={4} p={4} bg="purple.50" borderRadius="lg" borderWidth="1px" borderColor="purple.200">
+                  <Text fontWeight="bold" fontSize="lg" color="purple.700">Producto Mayorista Simple</Text>
+                  <Text color="purple.700" mt={2}>
+                    Este producto se vende exclusivamente al precio mayorista
+                  </Text>
+                </Box>
+              )}
+            </Box>
             <Divider
               my={5}
               display={{
@@ -208,99 +392,166 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 lg: "flex"
               }}
             />
-            <Box
-              bg="gray.100"
-              my={10}
-              padding={{
-                base: 5,
-                lg: 10
-              }}
-              gap={4}
-              display={{
-                base: "flex",
-                lg: "none"
-              }}
-              flexDirection={"column"}
-              width={"100%"}
-            >
-              <Text>Detalles del producto:</Text>
-              <Text>{controller.productDetail?.description}</Text>
-              <Text>-Marca {controller.productDetail?.attributes.brand}</Text>
-              <Text>-Talles: {controller.productDetail?.sizes.join(", ")}</Text>
-              <Text>-Colores: {controller.colorsProduct.map(color => color.label).join(", ")}</Text>
-              <Text>-Artículo: {controller.productDetail?.code}</Text>
-            </Box>
+
             <Flex
               gap={8}
               flexDirection={"column"}
             >
-              <Box
-                display={"flex"}
-                gap={5}
-                flexDirection={{
-                  base: "column",
-                  lg: "row"
-                }}
-              >
-                <FormControl
-                  width={"100%"}
-                >
-                  <FormLabel htmlFor="brand">Color</FormLabel>
-                  <Select
-                    isSearchable={false}
-                    options={controller.colorsProduct}
-                    placeholder="Selecciona un color"
-                    size={{
-                      base: "sm",
-                      lg: "md"
+              {controller.isWholesale ? (
+                <>
+                  <Box bg="purple.50" p={6} borderRadius="lg" borderWidth="1px" borderColor="purple.200">
+                    <VStack align="stretch" spacing={4}>
+                      <Box>
+                        <Text fontWeight="bold" mb={2}>Cantidad total (en docenas) <Text fontSize="sm" color="purple.700" mt={2}>{controller.totalDozens} docenas disponibles</Text></Text>
+                        <QuantityPicker
+                          stock={controller.totalDozens || 0}
+                          quantity={controller.quantity}
+                          onIncrease={controller.onIncrease}
+                          onDecrease={controller.onDecrease}
+                          isDisabled={false}
+                          isWholesale={controller.isWholesale}
+                          minimumQuantity={controller.minimumQuantity}
+                        />
+                        <Text fontSize="sm" color="purple.700" mt={2}>
+                          Total: {controller.quantity * 12} unidades
+                        </Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight="bold" mb={4}>Distribuir cantidades por variante</Text>
+                        <WholesaleVariantSelector
+                          colors={controller.colorsProduct}
+                          sizes={controller.sizes}
+                          stocks={controller.productDetail?.stocks || []}
+                          totalQuantity={controller.quantity * 12}
+                          onVariantsChange={controller.handleVariantsChange}
+                          isDisabled={false}
+                        />
+                      </Box>
+                      <Button
+                        isDisabled={controller.isDisabledButton}
+                        w={"full"}
+                        colorScheme={'purple'}
+                        size="lg"
+                      >
+                        Agregar al carrito mayorista
+                      </Button>
+                    </VStack>
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Box
+                    display={"flex"}
+                    gap={5}
+                    flexDirection={{
+                      base: "column",
+                      lg: "row"
                     }}
-                    onChange={controller.handleSelectColor}
-                    isDisabled={!controller.productDetail?.hasStock}
-                  />
-                </FormControl>
-                <FormControl
-                >
-                  <FormLabel htmlFor="brand">Talle</FormLabel>
-                  <Select
-                    isSearchable={false}
-                    options={controller.sizes}
-                    placeholder="Selecciona un talle"
-                    size={{
-                      base: "sm",
-                      lg: "md"
+                  >
+                    <FormControl
+                      width={"100%"}
+                    >
+                      <FormLabel htmlFor="brand">Color</FormLabel>
+                      <Select
+                        isSearchable={false}
+                        options={controller.colorsProduct}
+                        placeholder="Selecciona un color"
+                        size={{
+                          base: "sm",
+                          lg: "md"
+                        }}
+                        onChange={(option) => controller.handleSelectColor(option)}
+                        isDisabled={!controller.productDetail?.hasStock}
+                        value={controller.colorsProduct?.find((color) => color.value === controller.selectedColor) || null}
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel htmlFor="brand">Talle</FormLabel>
+                      <Select
+                        isSearchable={false}
+                        options={controller.sizes}
+                        placeholder="Selecciona un talle"
+                        size={{
+                          base: "sm",
+                          lg: "md"
+                        }}
+                        onChange={(option) => controller.handleSelectSize(option)}
+                        isDisabled={!controller.productDetail?.hasStock}
+                        value={controller.sizes?.find((size) => size.value === controller.selectedSize) || null}
+                      />
+                    </FormControl>
+                  </Box>
+                  <Flex
+                    gap={4}
+                    flexDir={{
+                      base: "column",
+                      lg: "row"
                     }}
-                    onChange={controller.handleSelectSize}
-                    isDisabled={!controller.productDetail?.hasStock}
-                    value={controller.sizes?.find((size) => size.value === controller.size) || null}
-                  />
-                </FormControl>
-              </Box>
-              <Flex
-                gap={4}
-                flexDir={{
-                  base: "column",
-                  lg: "row"
-                }}
-              >
-                <QuantityPicker
-                  stock={100}
-                  quantity={controller.quantity}
-                  onIncrease={controller.onIncrease}
-                  onDecrease={controller.onDecrease}
-                  isDisabled={controller.isDisabledButton}
-                />
-                <Button
-                  isDisabled={controller.isDisabledButton}
-                  w={"full"}
-                  colorScheme={'pink'}
-                  onClick={() => controller.onAddToCartPressed({ size: controller.size, color: controller.color, quantity: controller.quantity })}
-                >Agregar al carrito</Button>
-              </Flex>
+                  >
+                    <Box flex={1}>
+                      <Text fontWeight="bold" mb={2}>Cantidad</Text>
+                      {/* {!controller.isSimpleWholesale && (
+                        <Text color="gray.500" fontSize="sm" mb={2}>
+                          {controller.variantSelected?.quantity ? `Quedan solo ${controller.variantSelected.quantity} disponibles` : 'No hay stock disponible'}
+                        </Text>
+                      )} */}
+                      <QuantityPicker
+                        stock={controller.variantSelected?.quantity || 0}
+                        quantity={controller.quantity}
+                        onIncrease={controller.onIncrease}
+                        onDecrease={controller.onDecrease}
+                        isDisabled={false}
+                        isWholesale={controller.isWholesale}
+                        minimumQuantity={controller.minimumQuantity}
+                        isSimpleWholesale={controller.isSimpleWholesale}
+                      />
+                    </Box>
+                    <Button
+                      isDisabled={controller.isDisabledButton}
+                      w={"full"}
+                      colorScheme={'pink'}
+                      size="lg"
+                      onClick={() => controller.onAddToCartPressed({ size: controller.selectedSize, color: controller.selectedColor, quantity: controller.quantity })}
+                    >
+                      Agregar al carrito
+                    </Button>
+                  </Flex>
+                </>
+              )}
             </Flex>
-
           </Stack>
         </Box>
       </Box>
+      {/* Modal para zoom */}
+      <Modal isOpen={isOpen} onClose={onClose} size="full">
+        <ModalOverlay />
+        <ModalContent bg="rgba(0, 0, 0, 0.9)" margin={0} rounded="none">
+          <ModalCloseButton color="white" size="lg" />
+          <ModalBody 
+            display="flex" 
+            justifyContent="center" 
+            alignItems="center" 
+            p={{
+              base: 4,
+              md: 10
+            }}
+          >
+            <Image
+              src={controller.imageSelected}
+              maxH="90vh"
+              maxW="90vw"
+              objectFit="contain"
+              onClick={onClose}
+              cursor="pointer"
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <WholesaleModal
+        isOpen={controller.isWholesaleEnabled}
+        onClose={controller.onCloseModalWholeSale}
+        itemCart={controller.productItemCart}
+      />
     </Box>
   )
 }

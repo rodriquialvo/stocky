@@ -140,3 +140,6 @@ export function roundUpTo500(value: number): number {
 export function roundUpTo100(value: number): number {
   return Math.ceil(value / 100) * 100;
 }
+
+export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+

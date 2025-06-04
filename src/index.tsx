@@ -5,6 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ChakraProvider } from '@chakra-ui/react';
 import toast, { Toaster } from 'react-hot-toast';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import './fonts.css';
+import theme from './theme';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,11 +15,12 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <ChakraProvider>
-      <App />
-      <Toaster
-      />
-    </ChakraProvider>
+      <ChakraProvider theme={theme}>
+        <App />
+        <Toaster
+        />
+      </ChakraProvider>
+
 
   </React.StrictMode>
 );

@@ -44,6 +44,7 @@ export interface CreateSaleRequestDto {
 
 export interface SalesReponseDto {
     sales: Sale[];
+    total: number;
 }
 
 export interface SaleReponseDto {

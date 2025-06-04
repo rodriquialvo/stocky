@@ -15,6 +15,21 @@ export interface Product {
     colors: string[],
     sizeType: string;
     hasStock: boolean;
+    wholesaleData: WholesaleData;
+    percentages?: {
+        retail: number;
+        reseller: number;
+        wholesale: {
+            half_dozen: number;
+            dozen: number;
+        }
+    };
+}
+
+export interface WholesaleData {
+    isWholesaler: boolean;
+    minimumQuantity: number;
+    packageType?: 'simple' | 'complex';
 }
 
 export interface Attributes {

@@ -7,6 +7,17 @@ import {
 import { useAPICartService } from '../../services/shoppingcart/cart.service';
 import { Toast } from '@chakra-ui/react';
 import { AddToCartRequestDto, Cart, CreateNewCartRequestDto, UpdateQuantityRequestDto } from '../../services/shoppingcart/dtos/generic';
+import { sleep } from '../../utils/functions';
+
+interface AddComplexWholesaleProductToCartDTO {
+  cartId: string;
+  productId: string;
+  predefinedQuantity: number;
+  variants: {
+    variantId: string;
+    quantity: number;
+  }[];
+}
 
 export const CartAction = () => {
   const cartService = useAPICartService();
@@ -32,7 +43,6 @@ export const CartAction = () => {
         isClosable: true,
       });
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -46,23 +56,23 @@ export const CartAction = () => {
         const respCart = await cartService.postCreateNewCart({});
         item.cartId = respCart.cart._id;
       }
-      const response = await cartService.postAddToCart(item);
+        const response = await cartService.postAddToCart(item);
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));
         return;
-      }
-      setStatus(getSuccessStatus());
-      setAddToCartStatus(getSuccessStatus());
-      setCart(response.cart);
+        }
+        setStatus(getSuccessStatus());
+        setAddToCartStatus(getSuccessStatus());
+        setCart(response.cart);
     } catch (e) {
       setStatus(getErrorStatus(e as Error));
     }
   };
 
-  const removeFromCart = async (cartId: string, variantId: string) => {
+  const removeFromCart = async (cartId: string, variantId: string, productId: string, isWholesalePackage: boolean) => {
     setStatus(getStartStatus());
     try {
-      const response = await cartService.removeFromCart({ cartId, variantId });
+      const response = await cartService.removeFromCart({ cartId, variantId, productId, isWholesalePackage });
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));
         return;
@@ -101,7 +111,6 @@ export const CartAction = () => {
       setStatus(getSuccessStatus());
       setCart(response.cart);
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -114,12 +123,37 @@ export const CartAction = () => {
     }
   };
 
+  const addToCartWholesale = async (data: AddComplexWholesaleProductToCartDTO) => {
+    setStatus(getStartStatus());
+    try {
+      if (cart._id) {
+        data.cartId = cart._id;
+      } else {
+        const respCart = await cartService.postCreateNewCart({});
+        data.cartId = respCart.cart._id;
+      }
+      const response = await cartService.addComplexWholesaleProduct(data);
+      if (!response.cart) {
+        setStatus(getErrorStatus('No response'));
+        throw new Error('No response from server');
+      }
+      setStatus(getSuccessStatus());
+      setCart(response.cart);
+      setAddToCartStatus(getSuccessStatus());
+      return response;
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+      throw e;
+    }
+  }
+
   return {
     createNewCart,
     addToCart,
     removeFromCart,
     updateQuantity,
     getCart,
-    clearCart
+    clearCart,
+    addToCartWholesale
   };
 };

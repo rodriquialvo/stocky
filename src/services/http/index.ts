@@ -1,8 +1,7 @@
-import servers from '../../constants/servers';
 import isTokenExpired from '../../utils/isTokenExpired';
 // remember: if local, to do requests, run adb reverse tcp:3300 tcp:3300
-// export const DOMAIN =  process.env.NODE_ENV === 'production' ? servers.dev : servers.local;
-export const DOMAIN =  servers.dev
+// export const DOMAIN =  servers.local;
+const DOMAIN = process.env.REACT_APP_API_URL;
 // export const DOMAIN =  'https://ce3b-138-121-126-38.ngrok-free.app/api'
 const JSON_MIME_TYPE = 'application/json';
 
@@ -78,6 +77,15 @@ class Http {
     throw {message, status: response.status, response: result};
   };
 
+  processBlobResponse = async (response: Response): Promise<Blob> => {
+    if (response.ok) {
+      return response.blob();
+    }
+
+    const errorText = await response.text();
+    throw new Error(`Error downloading file: ${response.status} ${response.statusText} - ${errorText}`);
+  };
+
   get = async <T>(url: string, params?: any): Promise<T> => {
     console.info(
       'GET',
@@ -94,6 +102,25 @@ class Http {
     );
     console.log(this.getUrl(url));
     return this.processResponse<T>(response);
+  };
+
+  downloadBlob = async (url: string, params?: any, filename?: string): Promise<Blob> => {
+    console.info(
+      'GET BLOB',
+      `${this.getUrl(url)}${this.getSearchParams(params)}`,
+    );
+    
+    const response = await fetch(
+      `${this.getUrl(url)}${this.getSearchParams(params)}`,
+      {
+        headers: {
+          ...this.getAuthHeader(),
+          Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
+      },
+    );
+    
+    return this.processBlobResponse(response);
   };
 
   post = async <T>(url: string, data: any, params?: any) => {
@@ -148,13 +175,18 @@ class Http {
     return this.processResponse<T>(response);
   };
 
-  delete = async <T>(url: string, params?: any) => {
+  delete = async <T>(url: string, params?: any, body?: any) => {
     console.info('DELETE', `${this.getUrl(url)}${this.getSearchParams(params)}`);
     const response = await fetch(
       `${this.getUrl(url)}${this.getSearchParams(params)}`,
       {
         method: 'DELETE',
-        headers: this.getAuthHeader(),
+        headers: {
+          ...this.getAuthHeader(),
+          'Content-Type': JSON_MIME_TYPE,
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(body),
       },
     );
     return this.processResponse<T>(response);

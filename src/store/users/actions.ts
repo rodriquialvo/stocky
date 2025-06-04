@@ -1,10 +1,12 @@
 import { CreateUserDto, FilterGetResellersDto, Reseller } from '../../services/users/dtos/generic';
+import { registerBody } from '../../services/users/dtos/register.dto';
 import { useAPIUserService } from '../../services/users/user.service';
 import {
   getErrorStatus,
   getStartStatus,
   getSuccessStatus,
 } from '../helper/statusStateFactory';
+import { SessionAction } from '../session/actions';
 import { useUserStore } from './slice';
 
 export const UserAction = () => {
@@ -12,7 +14,7 @@ export const UserAction = () => {
   const setStatus = useUserStore(state => state.setStatus);
   const setResellersList = useUserStore(state => state.setResellersList);
   const setCreateOrUpdateStatus = useUserStore(state => state.setCreateOrUpdateStatus);
-
+  const {login} = SessionAction();
   const getResellers = async (filter: FilterGetResellersDto) => {
     setStatus(getStartStatus());
     try {
@@ -60,10 +62,25 @@ export const UserAction = () => {
     setCreateOrUpdateStatus(getStartStatus());
   };
 
+  const registerNewUser = async (body: registerBody) => {
+    setStatus(getStartStatus());
+    try {
+      const response = await usersService.register(body);
+      if (!response.user) {
+        setStatus(getErrorStatus('No response'));
+        return;
+      }
+      setStatus(getSuccessStatus());
+      login(response.user.email, body.password);
+    } catch (e) {
+      setStatus(getErrorStatus(e as Error));
+    }
+  };
   return {
     getResellers,
     createUser,
     updateUser,
-    clearCreateOrUpdateStatus
+    clearCreateOrUpdateStatus,
+    registerNewUser
   };
 };

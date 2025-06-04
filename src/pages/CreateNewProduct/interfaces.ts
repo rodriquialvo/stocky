@@ -41,6 +41,10 @@ export interface CreateNewProductController {
   onSelectAllColors: () => void,
   handleColorChange: (colorValue: string) => void
   onSelectSizeType: (value: string) => void,
+  handleWholesaleToggle: (isWholesale: boolean) => void;
+  handlePackageTypeChange: (packageType: string) => void;
+  handleWholesalePercentageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  calculateWholesalePrice: (type: 'half_dozen' | 'dozen') => number;
 }
 
 export interface CreateNewProductProps {
@@ -57,7 +61,8 @@ export interface ProductFormData {
   prices: Prices;
   percentages: Percentages;
   colors: string[],
-  sizeType: string
+  sizeType: string,
+  wholesaleData?: WholesaleData;
 }
 
 export interface Attributes {
@@ -78,4 +83,14 @@ export interface Prices {
 export interface Percentages {
   retail: number
   reseller: number
+  wholesale?: {
+    half_dozen: number
+    dozen: number
+  }
+}
+
+export interface WholesaleData {
+  isWholesaler: string
+  packageType?: 'simple' | 'complex'
+  minimumQuantity?: number
 }

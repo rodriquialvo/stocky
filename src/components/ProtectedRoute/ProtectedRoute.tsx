@@ -6,6 +6,7 @@ import { Box, Button, IconButton, useMediaQuery } from '@chakra-ui/react';
 import { useSessionStore } from '../../store/session/slice';
 import { SessionAction } from '../../store/session/actions';
 import { HamburgerIcon } from '@chakra-ui/icons';
+import NavigationBar from '../TabNav/NavigationBar';
 
 //REMOVE
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,16 +16,15 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
   const [isMobile] = useMediaQuery("(max-width: 768px)");
+  const isAdminUser = useSessionStore(state => state.isAdminUser);
 
-
-  if (!userIsAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
+  // if (!userIsAuthenticated) {
+  //   return <Navigate to="/" replace />;
+  // }
   return <>
     <Box
       as="main"
       flex="1"
-      ml={isSidebarExpanded ? "250px" : (isMobile ? 0 : "70px")} // Ajustamos el margen izquierdo dinámicamente
       p={4}
       transition="margin-left 0.3s ease"
       padding={0}
@@ -33,24 +33,9 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
       flexDirection={"column"}
       bg={"gray.50"}
     >
-      <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} />
+      {/* <Sidebar isExpanded={isSidebarExpanded} setIsExpanded={setIsSidebarExpanded} /> */}
+      <NavigationBar/>
       {children}
-      {
-        isMobile && (
-          <Box position="fixed" bottom="20px" right="20px" zIndex="1000">
-            <IconButton
-              aria-label="Toggle expand sidebar"
-              icon={<HamburgerIcon />}
-              onClick={() => setIsSidebarExpanded(!isSidebarExpanded)}
-              variant="outline"
-              size="lg"
-              color="white"
-              bg="gray.800"
-              _hover={{ bg: "gray.700" }}
-            />
-          </Box>
-        )
-      }
     </Box>
 
   </>;

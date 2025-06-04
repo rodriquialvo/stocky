@@ -9,6 +9,9 @@ import { CartAction } from '../../store/shoppingcart/actions';
 import { useCartStore } from '../../store/shoppingcart/slice';
 import { ParamsOnAddToCartPressed, ProductDetailController } from './interfaces';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
+import { AddToCartRequestDto, Item } from '../../services/shoppingcart/dtos/generic';
+import { AddComplexWholesaleProductToCartDTO } from '../../services/shoppingcart/cart.service';
+import { useRequireAuth } from '../../hooks/useRequireAuth';
 
 export const useProductDetailController =
   (): /* <--Dependency Injections  like services hooks */
@@ -18,57 +21,108 @@ export const useProductDetailController =
     const { id } = useParams<{ id: string, }>();
 
     const { getProductDetail } = ProductAction()
-    // todo: ver si esto esta bien, estoy importand cartAction dentro del product controller
-    const { addToCart } = CartAction();
+    const { addToCart, addToCartWholesale } = CartAction();
 
     const addToCartstatus = useCartStore(state => state.addToCartStatus);
     const setAddToCartStatus = useCartStore(state => state.setAddToCartStatus);
     const statusCart = useCartStore(state => state.status)
-    
+
     const productDetail = useProductStore(state => state.product);
     const statusProduct = useProductStore(state => state.status);
-    
+
     const [isDisabledButton, setIsDisabledButton] = useState(false)
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
+    const [isWholesaleEnabled, setIsWholesaleEnabled] = useState(false);
+    const [wholesaleMultiplier, setWholesaleMultiplier] = useState(1);
+    const [totalUnits, setTotalUnits] = useState(0)
+    const [variants, setVariants] = useState<{ color: string; size: string; quantity: number, colorLabel: string, sizeLabel: string }[]>([]);
+    const [totalDozens, setTotalDozens] = useState(0);
+    const cart = useCartStore(state => state.cart);
+    const [productItemCart, setProductItemCart] = useState<Item | null>(null);
+    const [selectedColor, setSelectedColor] = useState<string | null>(null);
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const isSimpleWholesale = productDetail?.wholesaleData?.isWholesaler && productDetail?.wholesaleData?.packageType === "simple";
+    const isWholesale = (productDetail?.wholesaleData?.isWholesaler || false) && isWholesaleEnabled;
+    const minimumQuantity = productDetail?.wholesaleData?.minimumQuantity || 0;
 
     const navigate = useNavigate();
     const [sizes, setSizes] = useState<{ label: string, value: string }[]>([]);
-    const [size, setSize] = useState("");
-    const [color, setColor] = useState("");
-    const [quantity, setQuantity] = useState(1);
+    const [quantity, setQuantity] = useState(0);
     const [imageSelected, setImageSelected] = useState("");
     const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
     const allColors = useProductAtributesStore(state => state.allColors);
-
-
+    const [maximumQuantity, setMaximumQuantity] = useState(0);
+    const { requireAuth } = useRequireAuth();
 
     useEffect(() => {
-      setSizes(
-        productDetail?.stocks?.filter(stock => stock.variant.color === color).map(stock => ({ label: stock.variant.size, value: stock.variant.size }))
-      );
-      
-      setSize("");
-    }, [color, productDetail])
+      if (productDetail) {
+        // En modo mayorista, mostrar todos los tamaños disponibles
+        if (isWholesale) {
+          setSizes(
+            productDetail.stocks.map(stock => ({ label: stock.variant.size, value: stock.variant.size }))
+          );
+        } else {
+          // En modo normal, filtrar por color seleccionado
+          setSizes(
+            productDetail.stocks
+              .filter(stock => stock.variant.color === selectedColor)
+              .map(stock => ({ label: stock.variant.sizeLabel, value: stock.variant.size }))
+          );
+        }
+      }
+    }, [productDetail, isWholesale, selectedColor]);
+
+    useEffect(() => {
+      if (productDetail) {
+        const stock = productDetail.stocks.find(
+          s => s.variant.color === selectedColor && s.variant.size === selectedSize
+        );
+        setMaximumQuantity(stock?.quantity || 0);
+      }
+    }, [productDetail, selectedColor, selectedSize]);
 
     useEffect(() => {
       setImageSelected(productDetail?.pictures[currentImageIndex].url);
     }, [currentImageIndex, productDetail])
 
-    /* Listeners */
+    useEffect(() => {
+      if (productDetail?.pictures.length > 0) {
+        setImageSelected(productDetail.pictures[0].url)
+      }
+    }, [productDetail]);
 
     useEffect(() => {
-      getProductDetail(id, {by: 'variant'});
+      // set only if product in cart is not wholesale
+      const findProductInCart = cart?.items?.find(item => item.product._id === productDetail?.id && item.variant === null);
+      if (findProductInCart) {
+        setProductItemCart(findProductInCart);
+      } else {
+        setProductItemCart(null);
+      }
+    }, [cart, productDetail])
+
+    useEffect(() => {
+      if (productDetail?.wholesaleData?.isWholesaler && productDetail?.wholesaleData?.packageType === "simple") {
+        // Inicializar con 0 para productos mayoristas simples
+        setQuantity(0);
+      }
+    }, [productDetail]);
+
+    useEffect(() => {
+      setTotalUnits(productDetail?.stocks.reduce((acc, stock) => acc + stock.quantity, 0) || 0)
+    }, [productDetail])
+
+    useEffect(() => {
+      getProductDetail(id, { by: 'variant' });
     }, [id]);
 
     useEffect(() => {
       setIsDisabledButton(
         !productDetail?.hasStock ||
-        !color.length ||
-        !size.length ||
-        !quantity
+        (!isWholesale && (!selectedColor || !selectedSize || !quantity)) ||
+        (isWholesale && (!variants.length || variants.some(v => !v.color || !v.size || !v.quantity)))
       )
-    }, [productDetail, color, size, quantity])
+    }, [productDetail, selectedColor, selectedSize, quantity, isWholesale, variants])
 
     useEffect(() => {
       if (addToCartstatus.success) {
@@ -79,39 +133,89 @@ export const useProductDetailController =
     }, [addToCartstatus, navigate])
 
     useEffect(() => {
-      if (productDetail?.pictures.length > 0) {
-        setImageSelected(productDetail.pictures[0].url)
+      if (!!selectedSize && !!selectedColor) {
+        setQuantity(0)
       }
-    }, [productDetail])
+    }, [selectedSize, productDetail, selectedColor]);
+
+    useEffect(() => {
+      setTotalDozens(Math.floor(totalUnits / 12));
+    }, [totalUnits])
 
     /* View Events */
     const onAddToCartPressed = ({ size, color, quantity }: ParamsOnAddToCartPressed) => {
-      if (quantity > productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color)?.quantity) {
-        return toast("No hay suficiente stock. Intenta con una cantidad menor")
-      }
+      requireAuth(() => {
+        if (quantity > productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color)?.quantity) {
+          return toast("No hay suficiente stock. Intenta con una cantidad menor")
+        }
       // find stock with size and color
       const stock = productDetail.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
       addToCart({
         productId: productDetail.id,
         variantId: stock.variant.id,
-        quantity: quantity
-      })
+        quantity: isSimpleWholesale ? quantity * wholesaleMultiplier : quantity,
+          isWholesalePackage: isSimpleWholesale
+        })
+      });
     };
 
+    const onAddToCartWholesalePressed = () => {
+      const items = transformVariantsToCartItems();
+      if (items.length > 0) {
+        addToCartWholesale({
+          cartId: cart._id,
+          productId: productDetail?.id || '',
+          predefinedQuantity: 12,
+          variants: items
+        } as AddComplexWholesaleProductToCartDTO);
+      }
+    }
+
+    const transformVariantsToCartItems = () => {
+      return variants.map(variant => {
+        const stock = productDetail?.stocks.find(
+          s => s.variant.color === variant.color && s.variant.size === variant.size
+        );
+        if (!stock?.variant.id) {
+          toast.error(`No se encontró la variante para color ${variant.colorLabel} y talle ${variant.sizeLabel}`);
+          return null;
+        }
+
+        return {
+          productId: productDetail?.id || '',
+          variantId: stock.variant.id,
+          quantity: variant.quantity
+        };
+      }).filter(Boolean) as AddToCartRequestDto[];
+    }
+
     const handleSelectColor = (event) => {
-      setColor(event.value);
+      setSelectedColor(event.value);
+      setSelectedSize(null);
     };
 
     const handleSelectSize = (event) => {
-      setSize(event.value);
+      setSelectedSize(event.value);
     };
 
     const onIncrease = () => {
-      setQuantity(quantity + 1);
+      if (isSimpleWholesale) {
+        const validValues = [0, 6, 12, 24, 36, 48];
+        const currentIndex = validValues.indexOf(quantity);
+        const nextIndex = currentIndex < validValues.length - 1 ? currentIndex + 1 : currentIndex;
+        setQuantity(validValues[nextIndex]);
+      } else {
+        setQuantity(quantity + 1);
+      }
     };
 
     const onDecrease = () => {
-      if (quantity > 1) {
+      if (isSimpleWholesale) {
+        const validValues = [0, 6, 12, 24, 36, 48];
+        const currentIndex = validValues.indexOf(quantity);
+        const prevIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
+        setQuantity(validValues[prevIndex]);
+      } else if (quantity > 1) {
         setQuantity(quantity - 1);
       }
     };
@@ -120,18 +224,46 @@ export const useProductDetailController =
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % productDetail.pictures.length);
       setImageSelected(productDetail.pictures[currentImageIndex].url);
     };
-  
+
     const handlePrev = () => {
       setCurrentImageIndex((prevIndex) => (prevIndex - 1 + productDetail.pictures.length) % productDetail.pictures.length);
     };
 
-    /* Private Methods */
-    //Ex. const increaseCount = () => {}
+    const handleVariantsChange = (newVariants: { color: string; size: string; quantity: number, colorLabel: string, sizeLabel: string }[]) => {
+      setVariants(newVariants);
+    };
 
-    // Return state and events
+    const handleWholesaleToggle = () => {
+      requireAuth(() => {
+        setIsWholesaleEnabled(!isWholesaleEnabled);
+        // Resetear estados cuando se cambia el modo
+        setVariants([]);
+        setQuantity(minimumQuantity);
+      });
+    };
+
+    const getVariantSelected = () => {
+      return productDetail?.stocks.find(stock => stock.variant.size === selectedSize && stock.variant.color === selectedColor);
+    }
+
+    const onCloseModalWholeSale = () => {
+      setIsWholesaleEnabled(false);
+      setVariants([]);
+      setQuantity(minimumQuantity);
+    }
+
+    const handleWholesaleMultiplierChange = (multiplier: number) => {
+      setWholesaleMultiplier(multiplier);
+    };
+
+    const getWholesaleMultipliers = () => {
+      return [1, 2, 4, 6, 8, 10].map(m => ({ label: `${m * 6} unidades`, value: m }));
+    };
 
     return {
       productDetail,
+      statusProduct,
+      statusCart,
       onAddToCartPressed,
       isDisabledButton,
       sizes,
@@ -142,11 +274,31 @@ export const useProductDetailController =
       onIncrease,
       onDecrease,
       quantity,
-      size,
-      color,
+      selectedSize,
+      selectedColor,
+      color: selectedColor || '',
+      size: selectedSize || '',
       isLoading: statusProduct.isFetching || statusCart.isFetching,
-      colorsProduct: allColors.filter(color => productDetail?.colors?.includes(color.value)).map(color => { return {label: color.label, value: color.value}}),
+      colorsProduct: allColors.filter(color => productDetail?.colors?.includes(color.value)).map(color => { return { label: color.label, value: color.value } }),
       handleNext,
-      handlePrev
+      handlePrev,
+      isWholesale,
+      minimumQuantity,
+      variants,
+      handleVariantsChange,
+      isWholesaleEnabled,
+      handleWholesaleToggle,
+      variantSelected: getVariantSelected(),
+      totalUnits,
+      totalDozens,
+      onAddToCartWholesalePressed,
+      onCloseModalWholeSale,
+      productItemCart,
+      isSimpleWholesale,
+      wholesaleMultiplier,
+      handleWholesaleMultiplierChange,
+      getWholesaleMultipliers,
+      maximumQuantity
     };
   };
+

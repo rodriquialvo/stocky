@@ -1,55 +1,91 @@
-import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import React, { FC } from 'react';
-import styles from './Pagination.module.css';
-import { PaginationProps } from './interfaces';
+import React from 'react';
+import { Button, ButtonGroup, Flex, IconButton, Text, useColorModeValue } from '@chakra-ui/react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 
-//REMOVE
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Pagination: FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
-  const previousPage = () => {
-    if (currentPage > 0) onPageChange(currentPage - 1);
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+  const buttonColorScheme = useColorModeValue('pink', 'pink');
+  const textColor = useColorModeValue('gray.600', 'gray.400');
+
+  const getPageNumbers = () => {
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
+
+    for (
+      let i = Math.max(2, currentPage - delta);
+      i <= Math.min(totalPages - 1, currentPage + delta);
+      i++
+    ) {
+      range.push(i);
+    }
+
+    if (currentPage - delta > 2) {
+      rangeWithDots.push(1, '...');
+    } else {
+      rangeWithDots.push(1);
+    }
+
+    rangeWithDots.push(...range);
+
+    if (currentPage + delta < totalPages - 1) {
+      rangeWithDots.push('...', totalPages);
+    } else if (totalPages > 1) {
+      rangeWithDots.push(totalPages);
+    }
+
+    return rangeWithDots;
   };
 
-  const nextPage = () => {
-    if (currentPage < totalPages) onPageChange(currentPage + 1);
-  };
+  if (totalPages <= 1) return null;
+
   return (
-    <Box
-      px={{ base: "-4", md: "-8" }}
-      position="sticky"
-      left={0}
-      right={0}
-      bottom="0"
-      backgroundColor="white"
-      py="4"
-      boxShadow="md"
-      zIndex="10"
-    >
-      <Flex
-        direction='row' // Cambia la dirección según el tamaño de la pantalla
-        justifyContent="center"
-        alignItems="center"
-        px={{ base: "2", md: "0" }} // Padding horizontal en móvil
-      >
-        <Button
-          onClick={previousPage}
-          isDisabled={currentPage === 1}
-          mb={{ base: "2", md: "0" }} // Margen en la parte inferior en móviles
-        >
-          <Text>Atrás</Text>
-        </Button>
-        <Text fontWeight="bold" mx="4">
-          {currentPage} de {totalPages}
-        </Text>
-        <Button
-          onClick={nextPage}
-          isDisabled={currentPage >= totalPages}
-          mb={{ base: "2", md: "0" }} // Margen en la parte inferior en móviles
-        >
-          <Text>Siguiente</Text>
-        </Button>
-      </Flex>
-    </Box>
+    <Flex justify="center" align="center" gap={2}>
+      <IconButton
+        aria-label="Previous page"
+        icon={<ChevronLeftIcon />}
+        onClick={() => onPageChange(currentPage - 1)}
+        isDisabled={currentPage === 1}
+        colorScheme={buttonColorScheme}
+        variant="outline"
+        size="md"
+      />
+
+      <ButtonGroup spacing={2} variant="outline">
+        {getPageNumbers().map((pageNumber, index) => (
+          pageNumber === '...' ? (
+            <Text key={`dots-${index}`} color={textColor} px={2}>
+              {pageNumber}
+            </Text>
+          ) : (
+            <Button
+              key={`page-${pageNumber}`}
+              onClick={() => onPageChange(Number(pageNumber))}
+              colorScheme={buttonColorScheme}
+              variant={currentPage === pageNumber ? 'solid' : 'outline'}
+              size="md"
+            >
+              {pageNumber}
+            </Button>
+          )
+        ))}
+      </ButtonGroup>
+
+      <IconButton
+        aria-label="Next page"
+        icon={<ChevronRightIcon />}
+        onClick={() => onPageChange(currentPage + 1)}
+        isDisabled={currentPage === totalPages}
+        colorScheme={buttonColorScheme}
+        variant="outline"
+        size="md"
+      />
+    </Flex>
   );
 };
 

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { Cart } from '../../services/shoppingcart/dtos/generic';
 import { getDefaultStatus, Status } from '../helper/statusStateFactory';
 
@@ -27,20 +26,13 @@ type Action = {
   setIsOpenCartPanel: (isOpenCartPanel: boolean) => void;
 };
 
-export const useCartStore = create<State & Action>()(
-  persist(
-    (set, get) => ({
-      ...initialState,
-      setStatus: (status: Status) => set({ status }),
-      setCart: (cart: Cart) => {
-        set({ cart })
-      },
-      setAddToCartStatus: (addToCartStatus: Status) => set({ addToCartStatus }),
-      setIsOpenCartPanel:(bool: boolean) => set({isOpenCartPanel: bool}),
-      clearCart: () => set({ cart: { items: [] } as Cart }),
-    }),
-    {
-      name: 'cart-store',
-    }
-  )
-);
+export const useCartStore = create<State & Action>()((set) => ({
+  ...initialState,
+  setStatus: (status: Status) => set({ status }),
+  setCart: (cart: Cart) => {
+    set({ cart })
+  },
+  setAddToCartStatus: (addToCartStatus: Status) => set({ addToCartStatus }),
+  setIsOpenCartPanel:(bool: boolean) => set({isOpenCartPanel: bool}),
+  clearCart: () => set({ cart: { items: [] } as Cart }),
+}));

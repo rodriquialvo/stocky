@@ -19,7 +19,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) =
   const [isMobile] = useMediaQuery("(max-width: 768px)");
   const { pathname } = useLocation();
   const userLoged = useSessionStore(state => state.userLogged);
-
+  const isAdminUser = useSessionStore(state => state.isAdminUser);
   useEffect(() => {
     setIsExpanded(false)
   }, [pathname]);
@@ -37,6 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isExpanded, setIsExpanded }) =
       zIndex="1000"
       overflowX="hidden"
       overflowY="auto"
+      display={isAdminUser ? "block" : "none"}
     >
       <Flex direction="column" h="100%">
         {
@@ -75,6 +76,10 @@ const SidebarContent: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
   const { logout } = SessionAction()
   const userLoged = useSessionStore(state => state.userLogged)
 
+  const confirmLogout = () => {
+    logout();
+    onCloseLogout();
+  }
   return (
     <VStack align="stretch" spacing={0}>
       <Accordion allowToggle>
@@ -108,11 +113,11 @@ const SidebarContent: React.FC<{ isExpanded: boolean }> = ({ isExpanded }) => {
         <ModalContent>
           <ModalHeader>Confirmación de Rechazo</ModalHeader>
           <ModalBody>
-            <Text>¿Está seguro que desea cerrar Sesion ?</Text>
+            <Text>¿Está seguro que desea cerrar Sesion?</Text>
           </ModalBody>
           <ModalFooter>
             <Button size={{ base: "xs", md: "sm" }} variant="ghost" onClick={onCloseLogout}>Cancelar</Button>
-            <Button size={{ base: "xs", md: "sm" }} colorScheme="red" ml={3} onClick={logout}>
+            <Button size={{ base: "xs", md: "sm" }} colorScheme="red" ml={3} onClick={confirmLogout}>
               Confirmar Cierre de Sesión
             </Button>
           </ModalFooter>

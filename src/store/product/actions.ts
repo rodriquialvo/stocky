@@ -15,6 +15,7 @@ export const ProductAction = () => {
 
   const setStatus = useProductStore(state => state.setStatus);
   const setUpdateProductStatus = useProductStore(state => state.setUpdateProductStatus);
+  const setCreateProductStatus = useProductStore(state => state.setCreateProductStatus);
   const setProducts = useProductStore(state => state.setProducts);
   const setProduct = useProductStore(state => state.setProduct);
   const setProductsWhitStocks = useProductStore(state => state.setProductsWhitStocks);
@@ -28,6 +29,7 @@ export const ProductAction = () => {
   const products = useProductStore(state => state.products);
   const setTotalProducts = useProductStore(state => state.setTotalProducts);
   const { createNewImageUrl } = ImageAction()
+
   const getProducts = async (filters) => {
     setStatus(getStartStatus());
     try {
@@ -40,13 +42,12 @@ export const ProductAction = () => {
       setProducts(data.products);
       setTotalProducts(data.total);
     } catch (e) {
-      console.log("e", e);
       setStatus(getErrorStatus(e as Error));
     }
   };
 
   const createNewProduct = async (body: ProductFormData) => {
-    setStatus(getStartStatus());
+    setCreateProductStatus(getStartStatus());
     try {
 
       const uploadedUrls = await Promise.all(
@@ -55,21 +56,21 @@ export const ProductAction = () => {
 
       const response = await productService.postCreateNewProduct({ ...body, pictures: uploadedUrls.map(url => ({ url, alt_text: body.name + " " + body.code })) });
       // if (!response.product) {
-      //   setStatus(getErrorStatus('No response'));
+      //   setCreateProductStatus(getErrorStatus('No response'));
       //   return;
       // }
       setCalculatedPrices({});
-      setStatus(getSuccessStatus());
+      setCreateProductStatus(getSuccessStatus());
       toast.success("Producto creado con éxito")
     } catch (e) {
-      setStatus(getErrorStatus(e as Error));
+      setCreateProductStatus(getErrorStatus(e as Error));
+      toast.error("Error al crear el producto")
     }
   };
 
   const updateProduct = async (id: string, body: ProductFormData) => {
     setUpdateProductStatus(getStartStatus());
     try {
-
       const imagesStored = (body.pictures as any).filter(element => !element.file).map(element => ({ url: element.data_url}));
       const imagesToUpload = (body.pictures as any).filter(element => !!element.file).map(element => element);
 
@@ -89,6 +90,7 @@ export const ProductAction = () => {
       setUpdateProductStatus(getSuccessStatus());
       toast.success("Producto creado con éxito")
     } catch (e) {
+      toast.error("Ha ocurrido un error al editar el producto")
       setUpdateProductStatus(getErrorStatus(e as Error));
     }
   };

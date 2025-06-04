@@ -1,104 +1,100 @@
-import { Box, Accordion, AccordionItem, Heading, Checkbox, Button } from '@chakra-ui/react';
+import { Box, Accordion, AccordionItem, Heading, Checkbox, Button, useBreakpointValue, Flex, Icon, Text } from '@chakra-ui/react';
+import { FaSort } from 'react-icons/fa';
 
-import NavigationBar from '../../components/TabNav/NavigationBar';
 import ItemListProduct from '../../components/ItemListProduct/ItemListProduct';
 import { useProductController } from './Product.controller';
 import { ProductProps } from './interfaces';
 import IncreaseAndDiscountPricePanel from '../../components/IncreaseAndDiscountPricePanel/IncreaseAndDiscountPricePanel';
 import Pagination from '../../components/Pagination/Pagination';
 import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
-import { ProductAction } from '../../store/product/actions';
-import { useLocation } from 'react-router-dom';
-import { ROUTES } from '../../constants/Routes';
 
 export const ProductList: React.FC<ProductProps> = (props) => {
   const { useController = useProductController } = props;
   const controller = useController();
-  
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
+  const TableHeader = ({ label, showOnMobile = true }) => (
+    <Flex 
+      flex='1' 
+      alignItems="center" 
+      display={showOnMobile ? 'flex' : { base: 'none', lg: 'flex' }}
+      gap={2}
+      _hover={{ color: 'pink.500', cursor: 'pointer' }}
+      transition="all 0.2s"
+    >
+      <Text fontWeight="bold" fontSize="md">{label}</Text>
+      <Icon as={FaSort} w={3} h={3} />
+    </Flex>
+  );
 
-  // if (isSidebarExpanded && isMobile) {
-  //   return null;
-  // }
   return (
-    <Box className=" relative min-h-screen">
-      <NavigationBar
-      />
-      {
-        controller.isLoading && (
-          <LoadingOverlay />
-        )
-      }
+    <Box className="relative min-h-screen" bg="gray.50">
+      {controller.isLoading && <LoadingOverlay />}
+      
       <Accordion allowMultiple>
-        <AccordionItem px={2} bg={"gray.300"} display={"flex"} py={3}>
-          <Checkbox
-            isChecked={controller.isAllproductsSelected}
-            onMouseDown={controller.onSelectAllProducts}
-            colorScheme={"pink"}
-          />
-          <Heading
-            ml={5}
-            fontSize="md" flex='1' textAlign='left'>
-            Nombre
-          </Heading>
-          <Heading fontSize="md" flex='1' textAlign='left'>Marca</Heading>
-          <Heading fontSize="md" flex='1' textAlign='left'>
-            Artículo
-          </Heading>
-          <Heading
-            display={{
-              base: "none",
-              lg: "flex"
-            }} fontSize="md" flex='1' textAlign='left'>
-            P. Reventa
-          </Heading>
-          <Heading
-            display={{
-              base: "none",
-              lg: "flex"
-            }} fontSize="md" flex='1' textAlign='left'>
-            P. Final
-          </Heading>
-          <Heading color={"green.700"} fontSize="md" flex='1' textAlign='left'>
-            Disponibilidad
-          </Heading>
-          <Heading fontSize="md" flex='1' textAlign='left'>
-            Editar
-          </Heading>
+        <AccordionItem 
+          px={4} 
+          py={4}
+          bg="white"
+          borderRadius="md"
+          shadow="sm"
+          mb={4}
+          border="1px solid"
+          borderColor="gray.200"
+        >
+          <Flex align="center" gap={4}>
+            <Checkbox
+              isChecked={controller.isAllproductsSelected}
+              onChange={controller.onSelectAllProducts}
+              colorScheme="pink"
+              size="lg"
+            />
+            
+            <TableHeader label="Nombre" />
+            <TableHeader label="Marca" />
+            <TableHeader label="Artículo" />
+            <TableHeader label="P. Reventa" showOnMobile={false} />
+            <TableHeader label="P. Final" showOnMobile={false} />
+            <TableHeader label="Stock" />
+            <TableHeader label="Acciones" />
+          </Flex>
         </AccordionItem>
-        {
-          controller.productsViewModel.map(item => {
-            return (
-              <ItemListProduct
-                {...item}
-                key={item.id}
-              />
-            )
-          })
-        }
+
+        {controller.productsViewModel.map(item => (
+          <ItemListProduct
+            {...item}
+            key={item.id}
+          />
+        ))}
       </Accordion>
+
       <Button
         position="fixed"
         bottom="4"
         right="4"
-        colorScheme="teal"
+        colorScheme="pink"
         borderRadius="full"
-        boxShadow="md"
-        p={4}
+        boxShadow="lg"
+        p={6}
         zIndex={20}
+        leftIcon={<Icon as={FaSort} />}
         onClick={controller.onPressedButtonOpenPanelIncreaseAndDiscount}
       >
         Aplicar aumento/descuento
       </Button>
+
       <IncreaseAndDiscountPricePanel
         isOpen={controller.isOpenIncreaseAndDiscountPanel}
         onClose={controller.onClosePanelIncreaseAndDiscount}
       />
-      <Pagination
-        currentPage={controller.currentPage}
-        totalPages={controller.totalPages}
-        onPageChange={controller.setCurrentPage}
-      />
+
+      <Box position="sticky" bottom={0} bg="white" p={4} shadow="lg">
+        <Pagination
+          currentPage={controller.currentPage}
+          totalPages={controller.totalPages}
+          onPageChange={controller.setCurrentPage}
+        />
+      </Box>
     </Box>
   );
 };

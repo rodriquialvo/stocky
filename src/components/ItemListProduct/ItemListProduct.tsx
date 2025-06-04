@@ -1,17 +1,17 @@
-import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Checkbox, Flex, Heading, SimpleGrid, Text } from '@chakra-ui/react';
-import React, { FC } from 'react';
+import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Checkbox, Flex, Text, Badge, Image, useBreakpointValue, IconButton } from '@chakra-ui/react';
+import React, { FC, MouseEvent, ChangeEvent } from 'react';
 import { ItemListProductProps } from './interfaces';
 import { useProductStore } from '../../store/product/slice';
 import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/Routes';
 import { useProductAtributesStore } from '../../store/product-atributes/slice';
+import { FaEdit } from 'react-icons/fa';
 
-//REMOVE
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ItemListProduct: FC<ItemListProductProps> = props => {
   const productsWhitStocks = useProductStore(state => state.productsWhitStocks);
   const allColors = useProductAtributesStore(state => state.allColors);
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   const colorsObj = allColors.length ? allColors.reduce((acc, color) => {
     return {
@@ -21,143 +21,126 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
   }) : {};
 
   const navigate = useNavigate();
-  return (
-    <AccordionItem px={0} onClick={props.onClick}>
-      <AccordionButton px={2} py={3}>
-        <Checkbox
-          onMouseDown={props.onPressCheckbox}
-          isChecked={props.isChecked}
-        />
-        <Heading
-          ml={5}
-          fontSize="md" flex='1' textAlign='left'>
-          {capitalizeFirstLetter(props.name)}
-        </Heading>
-        <Heading fontSize="md" flex='1' textAlign='left'>{capitalizeFirstLetter(props?.brand)}</Heading>
-        <Heading fontSize="md" flex='1' textAlign='left'>
-          {props?.code.toUpperCase()}
-        </Heading>
-        <Heading
-          display={{
-            base: "none",
-            lg: "flex"
-          }}
-          fontSize="md" flex='1' textAlign='left'>
-          {formattedNumberToMoney(props?.priceResseller)}
-        </Heading>
-        <Heading
-          display={{
-            base: "none",
-            lg: "flex"
-          }}
-          fontSize="md" flex='1' textAlign='left'>
-          {formattedNumberToMoney(props?.priceRetail)}
-        </Heading>
-        <Heading color={props?.hasStock ? "green.700" : "red.500"} fontSize="md" flex='1' textAlign='left'>
-          {props?.hasStock ? "DISPONIBLE" : "NO DISPONIBLE"}
-        </Heading>
-        <Button flex='1' onClick={() => navigate(ROUTES.NEW_PRODUCT, { state: { product: props.fullProduct } })}>
-          Editar
-        </Button>
-        <AccordionIcon />
-      </AccordionButton>
-      <AccordionPanel rounded={"md"} shadow="inner" bg={"gray.50"}
-        m={5}>
-        <SimpleGrid
-          columns={{ base: 2, md: 2, lg: 5 }}
-        >
-          <Box
-            gap={4}
-            alignItems={"center"}
-          >
-            <Heading
-              color={"pink.600"}
-              fontSize="md"
-            >Descripcion:</Heading>
-            <Text fontSize="md" color="gray.600" as='span' >{productsWhitStocks[props.id]?.name}</Text>
-          </Box>
-          <Box
-            gap={4}
-            alignItems={"center"}
-          >
-            <Heading
-              fontSize="md"
-              color={"pink.600"}
-            >Artículo:</Heading>
-            <Text fontSize="md" color="gray.600" as='span' >{productsWhitStocks[props.id]?.code.toString().toUpperCase()}</Text>
-          </Box>
-          <Box
-            gap={4}
-            alignItems={"center"}
-          >
-            <Heading
-              color={"pink.600"}
-              fontSize="md"
-            >Precio Minorista:</Heading>
-            <Text fontSize="md" color="gray.600" as='span' >{formattedNumberToMoney(productsWhitStocks[props.id]?.prices.retail)}</Text>
-          </Box>
-          <Box
-            gap={4}
-            alignItems={"center"}
-          >
-            <Heading
-              color={"pink.600"}
-              fontSize="md"
-            >Precio Revendedor:</Heading>
-            <Text fontSize="md" color="gray.600" as='span' >{formattedNumberToMoney(productsWhitStocks[props.id]?.prices.reseller)}</Text>
-          </Box>
-        </SimpleGrid>
 
-        {
-          !!productsWhitStocks[props.id]?.stocks.length && (
-            <Box
-              mt={4}
-              display={"flex"}
-              flexDirection={"column"}
-            >
-              <Heading
-                fontSize="lg"
-                my={4}
-              >STOCKS:</Heading>
-              <SimpleGrid
-                columns={{ base: 2, md: 2, lg: 5 }}
-              >
-                {productsWhitStocks[props.id]?.stocks.map(stock => {
-                  return (
-                    <Box
-                      gap={4}
-                      alignItems={"center"}
-                    >
-                      <Heading
-                        fontSize="md"
-                      >Color {colorsObj[stock.variant.color] || ''} / Talle {stock.variant.size}:</Heading>
-                      <Text fontSize="md" color="pink.600" >Cantidad: <Text as="span" color="gray.600">{stock.quantity} {stock.quantity > 1 ? "unidades" : "unidad"}</Text></Text>
-                      <Text fontSize="md" color="pink.600" >Precio de costo: <Text as="span" color="gray.600">{formattedNumberToMoney(stock.costPrice)}</Text></Text>
-                    </Box>
-                  )
-                })
-                }
-              </SimpleGrid>
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    props.onPressCheckbox?.();
+  };
+
+  const handleEditClick = (e: MouseEvent) => {
+    e.stopPropagation();
+    navigate(ROUTES.NEW_PRODUCT, { state: { product: props.fullProduct } });
+  };
+
+  return (
+    <AccordionItem onClick={props.onClick}>
+      <AccordionButton 
+        px={4} 
+        py={4}
+        _hover={{ bg: 'gray.50' }}
+        transition="all 0.2s"
+        borderBottom="1px solid"
+        borderColor="gray.200"
+      >
+        <Flex align="center" gap={4} width="100%">
+          <Checkbox
+            isChecked={props.isChecked}
+            onChange={handleCheckboxChange}
+            colorScheme="pink"
+            size="lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+          
+          <Flex flex='1' direction="column" align="start">
+            <Text fontWeight="semibold">{capitalizeFirstLetter(props.name)}</Text>
+            {isMobile && <Text fontSize="sm" color="gray.600">{capitalizeFirstLetter(props?.brand)}</Text>}
+          </Flex>
+          
+          {!isMobile && <Text flex='1'>{capitalizeFirstLetter(props?.brand)}</Text>}
+          <Text flex='1'>{props?.code.toUpperCase()}</Text>
+          
+          <Text flex='1' display={{ base: "none", lg: "block" }}>
+            {formattedNumberToMoney(props?.priceResseller)}
+          </Text>
+          
+          <Text flex='1' display={{ base: "none", lg: "block" }}>
+            {formattedNumberToMoney(props?.priceRetail)}
+          </Text>
+          
+          <Badge 
+            flex='1'
+            colorScheme={props?.hasStock ? "green" : "red"}
+            px={2}
+            py={1}
+            borderRadius="full"
+          >
+            {props?.hasStock ? "Disponible" : "No disponible"}
+          </Badge>
+          
+          <IconButton
+            aria-label="Editar"
+            icon={<FaEdit />}
+            colorScheme="pink"
+            variant="ghost"
+            onClick={handleEditClick}
+          />
+          
+          <AccordionIcon />
+        </Flex>
+      </AccordionButton>
+
+      <AccordionPanel 
+        bg="white" 
+        p={6}
+        borderBottom="1px solid"
+        borderColor="gray.200"
+      >
+        <Flex direction={{ base: "column", lg: "row" }} gap={6}>
+          <Box flex="1">
+            <Text fontWeight="bold" color="pink.500" mb={2}>Detalles del Producto</Text>
+            <Flex direction="column" gap={2}>
+              <Text><strong>Descripción:</strong> {productsWhitStocks[props.id]?.name}</Text>
+              <Text><strong>Artículo:</strong> {productsWhitStocks[props.id]?.code.toString().toUpperCase()}</Text>
+              <Text><strong>Precio Minorista:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.retail)}</Text>
+              <Text><strong>Precio Revendedor:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.reseller)}</Text>
+              <Text><strong>Precio Mayorista 6 unidades:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.wholesale?.half_dozen)}</Text>
+              <Text><strong>Precio Mayorista +6 unidades:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.wholesale?.dozen)}</Text>
+            </Flex>
+          </Box>
+
+          {!!productsWhitStocks[props.id]?.stocks.length && (
+            <Box flex="2">
+              <Text fontWeight="bold" color="pink.500" mb={4}>Inventario Disponible</Text>
+              <Flex wrap="wrap" gap={4}>
+                {productsWhitStocks[props.id]?.stocks.map((stock, index) => (
+                  <Box 
+                    key={index}
+                    p={4}
+                    bg="gray.50"
+                    borderRadius="md"
+                    minW="200px"
+                  >
+                    <Text fontWeight="semibold" mb={2}>
+                      Color: {colorsObj[stock.variant.color] || ''} / Talle: {stock.variant.sizeLabel}
+                    </Text>
+                    <Text color="gray.600">Cantidad: {stock.quantity} {stock.quantity > 1 ? "unidades" : "unidad"}</Text>
+                    <Text color="gray.600">Precio de costo: {formattedNumberToMoney(stock.costPrice)}</Text>
+                  </Box>
+                ))}
+              </Flex>
             </Box>
-          )
-        }
-        <Box
-          mt={4}
-          alignItems={"center"}
-          display={"flex"}
-          flexDirection={"column"}
-        >
+          )}
+        </Flex>
+
+        <Flex justify="center" mt={6}>
           <Button
-            w={{
-              base: "100%",
-              lg: "20%"
-            }}
-            colorScheme={'pink'}
-            alignSelf={"center"}
-            display={"flex"}
+            colorScheme="pink"
+            size="lg"
             onClick={() => navigate(ROUTES.PRODUCT_DETAILS(props.id))}
-          >Visitar Producto</Button>
-        </Box>
+          >
+            Ver Detalles Completos
+          </Button>
+        </Flex>
       </AccordionPanel>
     </AccordionItem>
   );

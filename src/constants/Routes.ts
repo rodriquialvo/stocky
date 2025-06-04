@@ -1,5 +1,6 @@
 export const  ROUTES = {
     LOGIN: '/login',
+    REGISTER: '/register',
     HOME: '/',
     SHOPPING_CART: '/cart/',
     STOCK_LIST: '/stock/list',
@@ -11,6 +12,8 @@ export const  ROUTES = {
     GALLERY: '/gallery',
     SALES_LIST: '/sales/list',
     SALES_WEEK: '/sales/week',
+    SALES_ANALYTICS: '/sales/analytics',
+    SALES_MONTHLY: '/sales/monthly',
     STOCK_ENTRY: '/stock/entry',
     PRODUCT_DETAILS: (id: string) =>  `/product/${id}`
 }

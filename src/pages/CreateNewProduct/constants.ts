@@ -15,9 +15,22 @@ export const initialStateProductformData: (product?: Product) => ProductFormData
       reseller: product?.prices.reseller || 0
     },
     percentages: {
-      retail: 30,
-      reseller: 80
+      retail: product?.percentages?.retail || 30,
+      reseller: product?.percentages?.reseller || 80,
+      wholesale: product?.percentages?.wholesale || {
+        half_dozen: 10,
+        dozen: 15
+      }
     },
     colors: product?.colors || [],
-    sizeType: product?.sizeType || ""
+    sizeType: product?.sizeType || "",
+    wholesaleData: product?.wholesaleData ? {
+      isWholesaler: product.wholesaleData.isWholesaler ? "true" : "false",
+      packageType: product.wholesaleData.packageType || "simple",
+      minimumQuantity: product.wholesaleData.minimumQuantity || 6
+    } : {
+      isWholesaler: "false",
+      packageType: "simple",
+      minimumQuantity: 6
+    }
   })

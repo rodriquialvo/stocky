@@ -18,6 +18,7 @@ type State = {
   productsSelected: Product[],
   productsFilters: FiltersState
   updateProductStatus: Status
+  createProductStatus: Status
 };
 
 const initialState: State = {
@@ -30,7 +31,8 @@ const initialState: State = {
   calculatedPrices: {},
   productsSelected: [],
   productsFilters: initialStateFilters,
-  updateProductStatus: getDefaultStatus()
+  updateProductStatus: getDefaultStatus(),
+  createProductStatus: getDefaultStatus()
 };
 
 type Action = {
@@ -44,7 +46,8 @@ type Action = {
   setProductsSelected: (products: Product[]) => void
   setProductsFilters: (productsFilters: any) => void,
   setTotalProducts: (total: number) => void,
-  setUpdateProductStatus: (status: Status) => void
+  setUpdateProductStatus: (status: Status) => void,
+  setCreateProductStatus: (status: Status) => void
 };
 
 // Create your store, which includes both state and (optionally) actions
@@ -61,4 +64,5 @@ export const useProductStore = create<State & Action>()((set, get) => ({
   setProductsFilters: (productsFilters) => set({productsFilters}),
   setTotalProducts: (total: number) => set({ total }),
   setUpdateProductStatus: (status: Status) => set({ updateProductStatus: status }),
+  setCreateProductStatus: (status: Status) => set({ createProductStatus: status })
 }));
