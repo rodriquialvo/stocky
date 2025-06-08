@@ -330,7 +330,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                 <Heading color="pink.500" fontSize="2xl">
                   {formattedNumberToMoney(controller.productDetail?.prices.retail)}
                 </Heading>
-                {controller.productDetail?.wholesaleData?.isWholesaler ? (
+                {controller.productDetail?.wholesaleData?.isWholesaler && (
                   <>
                     <Badge colorScheme="purple" fontSize="md" p={2} borderRadius="md">
                       Precio 6 unidades: {formattedNumberToMoney(controller.productDetail?.prices.wholesale.half_dozen)}
@@ -339,10 +339,6 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                       Precio +6 unidades: {formattedNumberToMoney(controller.productDetail?.prices.wholesale.dozen)}
                     </Badge>
                   </>
-                ) : (
-                  <Badge colorScheme="red" fontSize="md" p={2} borderRadius="md">
-                    -30% a partir de 2da pieza 🔥
-                  </Badge>
                 )}
               </HStack>
               {controller.productDetail?.wholesaleData?.isWholesaler && controller.productDetail?.wholesaleData?.packageType !== "simple" && (
