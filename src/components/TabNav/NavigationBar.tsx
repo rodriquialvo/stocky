@@ -84,12 +84,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
   };
 
   const NavItems = () => {
-    const totalItems = cart?.items?.reduce((total, item) => {
-      if (item.wholesale_variants) {
-        return total + item.wholesale_variants.reduce((sum, variant) => sum + variant.quantity, 0);
-      }
-      return total + item.quantity;
-    }, 0) || 0;
+    const totalItems = cart?.items?.length || 0;
 
     return (
       <Flex gap={4} alignItems="center">
@@ -131,12 +126,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
   };
 
   const MobileMenuContent = () => {
-    const totalItems = cart?.items?.reduce((total, item) => {
-      if (item.wholesale_variants) {
-        return total + item.wholesale_variants.reduce((sum, variant) => sum + variant.quantity, 0);
-      }
-      return total + item.quantity;
-    }, 0) || 0;
+    const totalItems = cart?.items?.length || 0;  
 
     return (
       <VStack 

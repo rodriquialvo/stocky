@@ -1,4 +1,3 @@
-service: stocky-web-test
 runtime: nodejs20
 
 instance_class: F4

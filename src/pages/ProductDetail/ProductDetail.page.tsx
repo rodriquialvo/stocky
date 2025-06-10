@@ -336,7 +336,7 @@ const ProductDetail: React.FC<ProductDetailProps> = props => {
                       Precio 6 unidades: {formattedNumberToMoney(controller.productDetail?.prices.wholesale.half_dozen)}
                     </Badge>
                   <Badge colorScheme="purple" fontSize="md" p={2} borderRadius="md">
-                      Precio +6 unidades: {formattedNumberToMoney(controller.productDetail?.prices.wholesale.dozen)}
+                      Precio llevando por docena: {formattedNumberToMoney(controller.productDetail?.prices.wholesale.dozen)}
                     </Badge>
                   </>
                 )}

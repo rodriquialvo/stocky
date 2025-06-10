@@ -85,7 +85,7 @@ const ProductPrices = ({ item }: any) => {
         <ProductDetail color={"orange"} price={item.product.prices.retail} text={"P/u Cliente"} />
       </ProductPriceContainer>
       <ProductPriceContainer>
-        <ProductDetail color={"purple"} price={item.quantity > 6 ? item?.product?.prices?.wholesale?.half_dozen : item?.product?.prices?.wholesale?.dozen} text={"P/u Mayorista"} />
+        <ProductDetail color={"purple"} price={item.quantity === 6 ? item?.product?.prices?.wholesale?.half_dozen : item?.product?.prices?.wholesale?.dozen} text={"P/u Mayorista"} />
       </ProductPriceContainer>
     </Box>
   )
@@ -410,6 +410,7 @@ const CartPanel: FC<CartPanelProps> = props => {
                   <HeadingTotal>Total:</HeadingTotal>
                   <HeadingTotal color={"green"} size={"sm"}>Revendedor: {!!cart.items.length ? formattedNumberToMoney(cart.total_reseller) : "0"}</HeadingTotal>
                   <HeadingTotal color={"orange"} size={"sm"}>Cliente final: {!!cart.items.length ? formattedNumberToMoney(cart.total_retail) : "0"}</HeadingTotal>
+                  <HeadingTotal color={"purple"} size={"sm"}>Mayorista: {!!cart.items.length ? formattedNumberToMoney(cart.total_wholesale) : "0"}</HeadingTotal>
                 </HeadingTotalContainer>
                 <Divider my={5} />
                 <ButtonFinishPurchase status={status} onConfirmOrderPressed={onConfirmOrderPressed} />
