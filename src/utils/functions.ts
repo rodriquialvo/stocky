@@ -143,3 +143,10 @@ export function roundUpTo100(value: number): number {
 
 export const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+export const getUserDisplayName = (user: { name?: string; lastname?: string } | null | undefined): string => {
+  if (!user || !user.name) return '';
+  const firstName = user.name.split(' ')[0];
+  const lastName = user.lastname ? user.lastname.split(' ')[0] : '';
+  return `${firstName} ${lastName}`.trim();
+};
+

@@ -31,6 +31,7 @@ import MenuPanel from '../MenuPanel/MenuPanel';
 import MenuUser from './MenuUser';
 import { useProductStore } from '../../store/product/slice';
 import { useRequireAuth } from '../../hooks/useRequireAuth';
+import { useSessionStore } from '../../store/session/slice';
 
 const NavigationBar: React.FC<TabNavProps> = ({
 }) => {
@@ -48,6 +49,8 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const productsFilters = useProductStore(state => state.productsFilters);
   const { requireAuth } = useRequireAuth();
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const isAuthenticated = useSessionStore(state => state.isAuthenticated);
+  const userLogged = useSessionStore(state => state.userLogged);
 
   const handlePressCartButton = () => {
     requireAuth(() => setIsOpenCartPanel(true));
@@ -251,6 +254,16 @@ const NavigationBar: React.FC<TabNavProps> = ({
 
         <VStack spacing={2} align="stretch">
           <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Cuenta</Text>
+          {isAuthenticated && userLogged?.name ? (
+            <Box p={2} bg="gray.50" borderRadius="md">
+              <Text fontSize="sm" color="gray.700" fontWeight="medium">
+                {userLogged.name} {userLogged.lastname}
+              </Text>
+              <Text fontSize="xs" color="gray.500">
+                {userLogged.email}
+              </Text>
+            </Box>
+          ) : null}
           <Box>
             <MenuUser />
           </Box>
