@@ -59,7 +59,8 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const location = useLocation();
 
   const handlePressCartButton = () => {
-    requireAuth(() => setIsOpenCartPanel(true));
+    // requireAuth(() => setIsOpenCartPanel(true));
+    setIsOpenCartPanel(true);
   }
 
   const handleScroll = () => {

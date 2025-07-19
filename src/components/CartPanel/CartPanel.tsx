@@ -13,6 +13,8 @@ import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/funct
 import QuantityPicker from '../QuantityPicker/QuantityPicker';
 import WholesaleModal from '../WholesaleModal/WholesaleModal';
 import { CartPanelProps } from './interfaces';
+import { ROUTES } from '../../constants/Routes';
+import { useNavigate } from 'react-router-dom';
 
 const ProductHeader = ({ children, item, onEditPressed, onRemoveFromCartPressed }: any) => {
   const isComplexWholesale = item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type !== "simple";
@@ -112,7 +114,7 @@ const ButtonFinishPurchase = ({ status, onConfirmOrderPressed }: any) => {
       w={"full"}
       colorScheme={'pink'}
       onClick={onConfirmOrderPressed}
-    >Terminar compra</Button>
+    >Iniciar compra</Button>
   )
 }
 
@@ -197,7 +199,7 @@ const CartPanel: FC<CartPanelProps> = props => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const { getProductDetail } = ProductAction()
   const { updateQuantity, removeFromCart, getCart } = CartAction();
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (userLogged?.id) {
       getCart(userLogged.id);
@@ -222,9 +224,9 @@ const CartPanel: FC<CartPanelProps> = props => {
 
   }, [cart]);
 
-  if (!isAuthenticated) {
-    return null;
-  }
+  // if (!isAuthenticated) {
+  //   return null;
+  // }
 
   const handleQuantityChange = (id: string, value: number, productId: string, operation: 'increase' | 'decrease', isWholesalePackage?: boolean, predefinedQuantity?: number) => {
     if (value < 0) {
@@ -316,7 +318,8 @@ const CartPanel: FC<CartPanelProps> = props => {
       return;
     }
 
-    postSale({ cartId: cart._id })
+    // postSale({ cartId: cart._id })
+    navigate(ROUTES.CHECKOUT)
   }
 
   return (

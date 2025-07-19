@@ -24,6 +24,7 @@ import { initialStateFilters } from './components/FilterPanel/constants';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { RegisterPage } from './pages/Register/Register.page';
 import MonthlySalesSummary from './pages/MonthlySalesSummary/MonthlySalesSummary.page';
+import { CheckoutPage } from './pages/Checkout/Checkout.page';
 
 function App() {
   const userIsAuthenticated = useSessionStore(state => state.isAuthenticated);
@@ -105,6 +106,9 @@ function App() {
             <ProtectedRoute >
               <MonthlySalesSummary />
             </ProtectedRoute>
+          } />
+          <Route path={ROUTES.CHECKOUT} element={
+              <CheckoutPage />
           } />
         </Routes>
       </BrowserRouter>

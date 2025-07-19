@@ -1,0 +1,231 @@
+import React, {FC} from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  Flex,
+  FormControl,
+  FormLabel,
+  Grid,
+  GridItem,
+  Heading,
+  HStack,
+  Image,
+  Input,
+  Text,
+  Textarea,
+  VStack,
+  Badge,
+  Spinner,
+  IconButton,
+  useToast
+} from '@chakra-ui/react';
+import { ArrowBackIcon } from '@chakra-ui/icons';
+import { useCheckoutController} from './Checkout.controller';
+import styles from './Checkout.module.css';
+import { CheckoutProps } from './interfaces';
+import { formattedNumberToMoney } from '../../utils/functions';
+
+export const CheckoutPage: FC<CheckoutProps> = props => {
+  const {useController = useCheckoutController} = props;
+  const controller = useController();
+  const toast = useToast();
+
+  const {
+    formData,
+    isSubmitting,
+    cart,
+    onInputChange,
+    onSubmit,
+    onBackToCart
+  } = controller;
+
+  const calculateTotal = () => {
+    if (!cart?.items) return 0;
+    return cart.items.reduce((total: number, item: any) => {
+      const price = item.variant?.price?.retail || item.product.price?.retail || 0;
+      return total + (price * item.quantity);
+    }, 0);
+  };
+
+  const calculateTotalReseller = () => {
+    if (!cart?.items) return 0;
+    return cart.items.reduce((total: number, item: any) => {
+      const price = item.variant?.price?.reseller || item.product.price?.reseller || 0;
+      return total + (price * item.quantity);
+    }, 0);
+  };
+
+  return (
+    <Box className={styles.checkoutContainer}>
+      <Container maxW="container.xl" py={8}>
+        <VStack spacing={8} align="stretch" className={styles.fadeIn}>
+          {/* Header */}
+          <Flex justify="space-between" align="center">
+            <HStack spacing={4}>
+              <IconButton
+                aria-label="Volver al carrito"
+                icon={<ArrowBackIcon />}
+                variant="ghost"
+                onClick={onBackToCart}
+                _hover={{ bg: "pink.50" }}
+              />
+              <Heading size="lg" color="#ec0868">
+                Finalizar Compra
+              </Heading>
+            </HStack>
+          </Flex>
+
+          <Grid templateColumns={{ base: "1fr", lg: "1fr 400px" }} gap={8}>
+            {/* Formulario */}
+            <GridItem>
+              <Box className={styles.formSection} p={6}>
+              <Heading size="md" mb={6} color="gray.700">
+                Información de Contacto
+              </Heading>
+              
+              <VStack spacing={4} align="stretch">
+                <FormControl isRequired>
+                  <FormLabel>Nombre completo</FormLabel>
+                  <Input
+                    value={formData.nombre}
+                    onChange={(e) => onInputChange('nombre', e.target.value)}
+                    placeholder="Tu nombre completo"
+                    size="lg"
+                  />
+                </FormControl>
+
+                <FormControl isRequired>
+                  <FormLabel>Email</FormLabel>
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => onInputChange('email', e.target.value)}
+                    placeholder="tu@email.com"
+                    size="lg"
+                  />
+                </FormControl>
+                <FormControl isRequired>
+                  <FormLabel>Teléfono (para WhatsApp)</FormLabel>
+                  <Input
+                    type="tel"
+                    value={formData.telefono}
+                    onChange={(e) => onInputChange('telefono', e.target.value)}
+                    placeholder="+54 9 11 1234-5678"
+                    size="lg"
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Comentarios adicionales</FormLabel>
+                  <Textarea
+                    value={formData.comentarios}
+                    onChange={(e) => onInputChange('comentarios', e.target.value)}
+                    placeholder="Comentarios sobre tu pedido..."
+                    size="lg"
+                    rows={3}
+                  />
+                </FormControl>
+              </VStack>
+            </Box>
+          </GridItem>
+
+          {/* Resumen del carrito */}
+          <GridItem>
+            <Box className={styles.cartSection} p={6}>
+              <Heading size="md" mb={6} color="gray.700">
+                Resumen del Pedido
+              </Heading>
+
+              <VStack spacing={4} align="stretch" maxH="60vh" overflowY="auto">
+                {cart?.items?.map((item: any, index: number) => (
+                  <Box key={index} className={styles.cartItem} p={4}>
+                    <Flex justify="space-between" align="start" mb={2}>
+                      <Box flex={1}>
+                        <Text fontWeight="semibold" fontSize="sm">
+                          {item.product.name}
+                        </Text>
+                        {item.variant && (
+                          <Text fontSize="xs" color="gray.600">
+                            {item.variant.color && `Color: ${item.variant.color}`}
+                            {item.variant.size && ` | Talle: ${item.variant.size}`}
+                          </Text>
+                        )}
+                        {item.is_wholesale_package && (
+                          <Badge colorScheme="green" size="sm" mt={1}>
+                            Mayorista
+                          </Badge>
+                        )}
+                      </Box>
+                      <Text fontWeight="bold" fontSize="sm">
+                        x{item.quantity}
+                      </Text>
+                    </Flex>
+                    
+                    <Flex justify="space-between" align="center">
+                      <Text fontSize="xs" color="gray.600">
+                        {formattedNumberToMoney(item.variant?.price?.retail || item.product.price?.retail || 0)}
+                      </Text>
+                      <Text fontSize="sm" fontWeight="semibold">
+                        {formattedNumberToMoney((item.variant?.price?.retail || item.product.price?.retail || 0) * item.quantity)}
+                      </Text>
+                    </Flex>
+                  </Box>
+                ))}
+              </VStack>
+
+              <Divider my={6} />
+
+              {/* Totales */}
+              <VStack spacing={3} align="stretch" className={styles.totalSection}>
+                <Flex justify="space-between">
+                  <Text>Subtotal:</Text>
+                  <Text fontWeight="semibold">
+                    {formattedNumberToMoney(calculateTotal())}
+                  </Text>
+                </Flex>
+                
+                <Flex justify="space-between">
+                  <Text color="green.600">Precio Mayorista:</Text>
+                  <Text fontWeight="semibold" color="green.600">
+                    {formattedNumberToMoney(calculateTotalReseller())}
+                  </Text>
+                </Flex>
+
+                <Divider />
+
+                <Flex justify="space-between">
+                  <Text fontSize="lg" fontWeight="bold">
+                    Total:
+                  </Text>
+                  <Text fontSize="lg" fontWeight="bold" color="#ec0868">
+                    {formattedNumberToMoney(calculateTotal())}
+                  </Text>
+                </Flex>
+              </VStack>
+
+              <Text fontSize="sm" color="gray.600" textAlign="center" mb={4}>
+                💬 Al confirmar, se abrirá WhatsApp con tu pedido pre-escrito
+              </Text>
+              
+              <Button
+                className={styles.confirmButton}
+                size="lg"
+                width="full"
+                onClick={onSubmit}
+                isLoading={isSubmitting}
+                loadingText="Enviando por WhatsApp..."
+                disabled={!cart?.items?.length}
+                _hover={{ transform: "translateY(-2px)" }}
+                leftIcon={<Box as="span" fontSize="1.2em">📱</Box>}
+              >
+                Enviar Pedido por WhatsApp
+              </Button>
+            </Box>
+          </GridItem>
+        </Grid>
+      </VStack>
+    </Container>
+    </Box>
+  );
+};
