@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, memo } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Box,
   Flex,
@@ -19,6 +20,7 @@ import {
 import { FiShoppingCart, FiSearch, FiUser } from 'react-icons/fi';
 import { IoFilter } from "react-icons/io5";
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { useDebounce } from 'use-debounce';
 
 import { TabNavProps } from './interfaces';
 import FilterPanel from '../FilterPanel/FilterPanel';
@@ -42,6 +44,9 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Implementar debounce para la búsqueda
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 500);
+  
   const setIsOpenCartPanel = useCartStore(state => state.setIsOpenCartPanel);
   const isOpenCartPanel = useCartStore(state => state.isOpenCartPanel);
   const cart = useCartStore(state => state.cart);
@@ -51,6 +56,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const isMobile = useBreakpointValue({ base: true, md: false });
   const isAuthenticated = useSessionStore(state => state.isAuthenticated);
   const userLogged = useSessionStore(state => state.userLogged);
+  const location = useLocation();
 
   const handlePressCartButton = () => {
     requireAuth(() => setIsOpenCartPanel(true));
@@ -73,9 +79,18 @@ const NavigationBar: React.FC<TabNavProps> = ({
     };
   }, [lastScrollY]);
 
+  // Efecto para ejecutar la búsqueda solo cuando el debounced query cambie
+  useEffect(() => {
+    setProductsFiltersAction({ ...initialStateFilters, q: debouncedSearchQuery });
+  }, [debouncedSearchQuery]);
+
+  // Efecto para limpiar la búsqueda cuando cambia la página
+  useEffect(() => {
+    setSearchQuery('');
+  }, [location.pathname]);
+
   const onSearch = (query: string) => {
     setSearchQuery(query);
-    setProductsFiltersAction({ ...initialStateFilters, q: query });
   };
 
   const onActivateWholesalerProducts = () => {
@@ -128,7 +143,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
     );
   };
 
-  const MobileMenuContent = () => {
+  const MobileMenuContent = memo(() => {
     const totalItems = cart?.items?.length || 0;  
 
     return (
@@ -143,23 +158,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
         maxH="80vh"
         overflowY="auto"
       >
-        <Box w="100%">
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <FiSearch color="#ec0868" />
-            </InputLeftElement>
-            <Input
-              placeholder="Buscar productos..."
-              value={searchQuery}
-              onChange={(e) => onSearch(e.target.value)}
-              borderColor="gray.200"
-              _hover={{ borderColor: "pink.200" }}
-              _focus={{ borderColor: "#ec0868" }}
-            />
-          </InputGroup>
-        </Box>
-        
-        <Divider />
+
         
         <VStack spacing={2} align="stretch">
           <Text fontSize="sm" fontWeight="bold" color="gray.600" px={2}>Navegación</Text>
@@ -270,7 +269,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
         </VStack>
       </VStack>
     );
-  };
+  });
 
   return (
     <Box
@@ -370,6 +369,24 @@ const NavigationBar: React.FC<TabNavProps> = ({
         )}
       </Flex>
 
+      {isMobile && isMobileMenuOpen && (
+        <Box p={4} bg="white" borderTop="1px" borderColor="gray.200">
+          <InputGroup>
+            <InputLeftElement pointerEvents="none">
+              <FiSearch color="#ec0868" />
+            </InputLeftElement>
+            <Input
+              placeholder="Buscar productos..."
+              value={searchQuery}
+              onChange={(e) => onSearch(e.target.value)}
+              borderColor="gray.200"
+              _hover={{ borderColor: "pink.200" }}
+              _focus={{ borderColor: "#ec0868" }}
+            />
+          </InputGroup>
+        </Box>
+      )}
+      
       <Collapse in={isMobileMenuOpen}>
         <MobileMenuContent />
       </Collapse>
