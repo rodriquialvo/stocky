@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, memo } from 'react';
+import React, { useEffect, useState, useMemo, memo, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   Box,
@@ -43,6 +43,10 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const [isOpenMenuPanel, setIsOpenMenuPanel] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  // Nuevo estado para mostrar la searchbar en mobile
+  const [showMobileSearchBar, setShowMobileSearchBar] = useState(false);
+  // Ref para el input de búsqueda en mobile
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   
   // Implementar debounce para la búsqueda
   const [debouncedSearchQuery] = useDebounce(searchQuery, 500);
@@ -100,6 +104,16 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  // Efecto para enfocar el input cuando se abre la searchbar en mobile
+  useEffect(() => {
+    if (showMobileSearchBar && mobileSearchInputRef.current) {
+      // Usar un pequeño delay para asegurar que el input esté montado tras el Collapse
+      setTimeout(() => {
+        mobileSearchInputRef.current && mobileSearchInputRef.current.focus();
+      }, 200);
+    }
+  }, [showMobileSearchBar]);
 
   const NavItems = () => {
     const totalItems = cart?.items?.length || 0;
@@ -349,6 +363,14 @@ const NavigationBar: React.FC<TabNavProps> = ({
         ) : (
           <Flex gap={2} alignItems="center">
             <IconButton
+              aria-label="Buscar"
+              icon={<FiSearch />}
+              variant={showMobileSearchBar ? "solid" : "ghost"}
+              color="#ec0868"
+              onClick={() => setShowMobileSearchBar((prev) => !prev)}
+              _hover={{ bg: "pink.50" }}
+            />
+            <IconButton
               aria-label="Menu"
               icon={isMobileMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
               variant="ghost"
@@ -369,28 +391,30 @@ const NavigationBar: React.FC<TabNavProps> = ({
         )}
       </Flex>
 
-      {isMobile && isMobileMenuOpen && (
-        <Box p={4} bg="white" borderTop="1px" borderColor="gray.200">
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <FiSearch color="#ec0868" />
-            </InputLeftElement>
-            <Input
-              placeholder="Buscar productos..."
-              value={searchQuery}
-              onChange={(e) => onSearch(e.target.value)}
-              borderColor="gray.200"
-              _hover={{ borderColor: "pink.200" }}
-              _focus={{ borderColor: "#ec0868" }}
-            />
-          </InputGroup>
-        </Box>
+      {/* Searchbar en mobile debajo de la navbar */}
+      {isMobile && (
+        <Collapse in={showMobileSearchBar} animateOpacity>
+          <Box p={4} bg="white" borderTop="1px" borderColor="gray.200">
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <FiSearch color="#ec0868" />
+              </InputLeftElement>
+              <Input
+                placeholder="Buscar productos..."
+                value={searchQuery}
+                onChange={(e) => onSearch(e.target.value)}
+                borderColor="gray.200"
+                _hover={{ borderColor: "pink.200" }}
+                _focus={{ borderColor: "#ec0868" }}
+                ref={mobileSearchInputRef}
+              />
+            </InputGroup>
+          </Box>
+        </Collapse>
       )}
-      
       <Collapse in={isMobileMenuOpen}>
         <MobileMenuContent />
       </Collapse>
-
       <FilterPanel
         isOpen={isOpenFilterPanel}
         onClose={() => setIsOpenFilterPanel(false)}
