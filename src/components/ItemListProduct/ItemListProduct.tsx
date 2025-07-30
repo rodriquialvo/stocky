@@ -113,6 +113,7 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
                   <Text><strong>Precio Mayorista llevando por docena:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.wholesale?.dozen)}</Text>
                 )
               }
+              <Text><strong>Precio de costo:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.cost)}</Text>
             </Flex>
           </Box>
 
