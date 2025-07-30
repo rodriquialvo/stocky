@@ -13,6 +13,7 @@ export interface AddComplexWholesaleProductToCartDTO {
 
 export interface CartService {
   postCreateNewCart: (body: CreateNewCartRequestDto) => Promise<CartReponseDto>,
+  postCreateNewCart2: (body: CreateNewCartRequestDto) => Promise<CartReponseDto>,
   postAddToCart: (item: AddToCartRequestDto) => Promise<CartReponseDto>,
   updateQuantity: (req: UpdateQuantityRequestDto) => Promise<CartReponseDto>,
   removeFromCart: (data: RemoveFromCartRequestDto) => Promise<CartReponseDto>,

@@ -234,12 +234,12 @@ export const useProductDetailController =
     };
 
     const handleWholesaleToggle = () => {
-      requireAuth(() => {
+      // requireAuth(() => {
         setIsWholesaleEnabled(!isWholesaleEnabled);
         // Resetear estados cuando se cambia el modo
         setVariants([]);
         setQuantity(minimumQuantity);
-      });
+      // });
     };
 
     const getVariantSelected = () => {

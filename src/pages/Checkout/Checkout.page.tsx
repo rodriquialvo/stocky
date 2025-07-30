@@ -87,15 +87,23 @@ export const CheckoutPage: FC<CheckoutProps> = props => {
               
               <VStack spacing={4} align="stretch">
                 <FormControl isRequired>
-                  <FormLabel>Nombre completo</FormLabel>
+                  <FormLabel>Nombre</FormLabel>
                   <Input
-                    value={formData.nombre}
-                    onChange={(e) => onInputChange('nombre', e.target.value)}
+                    value={formData.name}
+                    onChange={(e) => onInputChange('name', e.target.value)}
                     placeholder="Tu nombre completo"
                     size="lg"
                   />
                 </FormControl>
-
+                <FormControl isRequired>
+                  <FormLabel>Apellido</FormLabel>
+                  <Input
+                    value={formData.lastname}
+                    onChange={(e) => onInputChange('lastname', e.target.value)}
+                    placeholder="Tu apellido"
+                    size="lg"
+                  />
+                </FormControl>
                 <FormControl isRequired>
                   <FormLabel>Email</FormLabel>
                   <Input
@@ -110,8 +118,8 @@ export const CheckoutPage: FC<CheckoutProps> = props => {
                   <FormLabel>Teléfono (para WhatsApp)</FormLabel>
                   <Input
                     type="tel"
-                    value={formData.telefono}
-                    onChange={(e) => onInputChange('telefono', e.target.value)}
+                    value={formData.phone}
+                    onChange={(e) => onInputChange('phone', e.target.value)}
                     placeholder="+54 9 11 1234-5678"
                     size="lg"
                   />
@@ -119,8 +127,8 @@ export const CheckoutPage: FC<CheckoutProps> = props => {
                 <FormControl>
                   <FormLabel>Comentarios adicionales</FormLabel>
                   <Textarea
-                    value={formData.comentarios}
-                    onChange={(e) => onInputChange('comentarios', e.target.value)}
+                    value={formData.comments}
+                    onChange={(e) => onInputChange('comments', e.target.value)}
                     placeholder="Comentarios sobre tu pedido..."
                     size="lg"
                     rows={3}

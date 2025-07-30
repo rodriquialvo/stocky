@@ -33,6 +33,8 @@ function App() {
   const { getRoles } = RoleAction();
   const setProductsFilters = useProductStore(state => state.setProductsFilters);
   const isAuthenticated = useSessionStore(state => state.isAuthenticated);
+  const sessionId = useSessionStore(state => state.sessionId);
+  const setSessionId = useSessionStore(state => state.setSessionId);
 
   useEffect(() => {
       getCategories();
@@ -42,7 +44,15 @@ function App() {
       getAllColors();
       getAllBrands();
       setProductsFilters(initialStateFilters)
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (!sessionId.length) {
+      setSessionId(crypto.randomUUID());
+    }
+  }, [sessionId]);
+
+
 
   return (
     <GoogleOAuthProvider clientId={"318321636416-2b8qvnqab4815thpf7schcojkv4h4di7.apps.googleusercontent.com"}>
@@ -92,16 +102,6 @@ function App() {
               <SalesList />
             </ProtectedRoute>
           } />
-          {/* <Route path={ROUTES.SALES_WEEK} element={
-            <ProtectedRoute >
-              <SalesWeek />
-            </ProtectedRoute>
-          } />
-          <Route path={ROUTES.SALES_ANALYTICS} element={
-            <ProtectedRoute >
-              <SalesAnalyticsPage />
-            </ProtectedRoute>
-          } /> */}
           <Route path={ROUTES.SALES_MONTHLY} element={
             <ProtectedRoute >
               <MonthlySalesSummary />

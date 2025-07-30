@@ -1,69 +1,78 @@
 export interface Sale {
-    id: string;
-    code: string;
-    date: string;
-    status: string;
-    details: Detail[];
-    stocksUpdated: StocksUpdated[];
-    cartId: string;
-    weekCode: number;
+  id: string;
+  code: string;
+  date: string;
+  status: string;
+  details: Detail[];
+  stocksUpdated: StocksUpdated[];
+  cartId: string;
+  weekCode: number;
 }
 export interface StocksUpdated {
-    stock: string;
-    quantity: number;
-    prices: Prices;
+  stock: string;
+  quantity: number;
+  prices: Prices;
 }
 export interface Detail {
-    productId: string;
-    variantId: string;
-    variant: VariantData;
-    quantity: number;
-    prices: Prices;
+  productId: string;
+  variantId: string;
+  variant: VariantData;
+  quantity: number;
+  prices: Prices;
 }
 export interface Prices {
-    retail: number;
-    reseller: number;
-    cost?: number;
+  retail: number;
+  reseller: number;
+  cost?: number;
 }
 
 interface VariantData {
-    productName: string;
-    productCode: string;
-    variantAttributes: VariantAttribute[];
-  }
-  interface VariantAttribute {
-    name: string;
-    value: string;
-  }
+  productName: string;
+  productCode: string;
+  variantAttributes: VariantAttribute[];
+}
+interface VariantAttribute {
+  name: string;
+  value: string;
+}
 
 export interface CreateSaleRequestDto {
-    date?: string;
-    details?: Detail[];
-    cartId: string;
+  date?: string;
+  cartId: string;
+  customerData: CustomerData;
 }
 
 export interface SalesReponseDto {
-    sales: Sale[];
-    total: number;
+  sales: Sale[];
+  total: number;
+}
+
+export interface CustomerData {
+  name: string;
+  lastname: string;
+  email: string;
+  phone: string;
+  address: string;
+  comments: string;
 }
 
 export interface SaleReponseDto {
-    sale: Sale;
+  sale: Sale;
 }
 
 export interface UpdateStatusRequestDto {
-    status: string;
+  status: string;
 }
 
 export interface PostSaleResponseDto {
-    sale: Sale
-} 
+  sale: Sale
+}
 
 export interface GetSalesFilter {
- 
+
 }
 
 export interface SalesListDto {
-    sales: Sale[];
-    total: number;
+  sales: Sale[];
+  total: number;
 }

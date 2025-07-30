@@ -89,7 +89,7 @@ export interface VariantsQuantityDto {
 }
 
 export interface CreateNewCartRequestDto {
-    // empty
+    sessionId: string
 }
 
 export interface AddToCartRequestDto {
@@ -110,11 +110,11 @@ export interface RemoveFromCartRequestDto {
 export interface UpdateQuantityRequestDto {
     params: {
         cartId: string,
-        variantId: string,
+        productId: string,
     },
     body: {
         quantity: number,
-        productId: string,
+        variantId: string,
         isWholesalePackage?: boolean,
         predefinedQuantity?: number
     }

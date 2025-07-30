@@ -1,8 +1,10 @@
 export interface CheckoutFormData {
-  nombre: string;
+  name: string;
+  lastname: string;
   email: string;
-  telefono: string;
-  comentarios: string;
+  phone: string;
+  address: string;
+  comments: string;
 }
 
 export interface CheckoutController {

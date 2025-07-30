@@ -8,6 +8,7 @@ import { useAPICartService } from '../../services/shoppingcart/cart.service';
 import { Toast } from '@chakra-ui/react';
 import { AddToCartRequestDto, Cart, CreateNewCartRequestDto, UpdateQuantityRequestDto } from '../../services/shoppingcart/dtos/generic';
 import { sleep } from '../../utils/functions';
+import { useSessionStore } from '../session/slice';
 
 interface AddComplexWholesaleProductToCartDTO {
   cartId: string;
@@ -25,12 +26,13 @@ export const CartAction = () => {
   const setCart = useCartStore(state => state.setCart);
   const setAddToCartStatus = useCartStore(state => state.setAddToCartStatus);
   const cart = useCartStore(state => state.cart);
-
+  const sessionId = useSessionStore(state => state.sessionId);
 
   const createNewCart = async (body: CreateNewCartRequestDto) => {
     setStatus(getStartStatus());
     try {
-      const response = await cartService.postCreateNewCart(body);
+      // const response = await cartService.postCreateNewCart(body);
+      const response = await cartService.postCreateNewCart2({ sessionId });
       if (!response.cart) {
         setStatus(getErrorStatus('No response'));
         return;
@@ -53,7 +55,8 @@ export const CartAction = () => {
       if (cart._id) {
         item.cartId = cart._id;
       } else {
-        const respCart = await cartService.postCreateNewCart({});
+        // const respCart = await cartService.postCreateNewCart({});
+        const respCart = await cartService.postCreateNewCart2({ sessionId });
         item.cartId = respCart.cart._id;
       }
         const response = await cartService.postAddToCart(item);
@@ -129,7 +132,7 @@ export const CartAction = () => {
       if (cart._id) {
         data.cartId = cart._id;
       } else {
-        const respCart = await cartService.postCreateNewCart({});
+        const respCart = await cartService.postCreateNewCart2({ sessionId });
         data.cartId = respCart.cart._id;
       }
       const response = await cartService.addComplexWholesaleProduct(data);
@@ -154,6 +157,6 @@ export const CartAction = () => {
     updateQuantity,
     getCart,
     clearCart,
-    addToCartWholesale
+    addToCartWholesale,
   };
 };

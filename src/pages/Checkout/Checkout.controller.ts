@@ -6,6 +6,7 @@ import { useSessionStore } from '../../store/session/slice';
 import { CartAction } from '../../store/shoppingcart/actions';
 import { ROUTES } from '../../constants/Routes';
 import toast from 'react-hot-toast';
+import { SaleAction } from '../../store/sales/actions';
 
 export const useCheckoutController = (): CheckoutController => {
   const navigate = useNavigate();
@@ -14,26 +15,21 @@ export const useCheckoutController = (): CheckoutController => {
   const { getCart, clearCart } = CartAction();
   
   const [formData, setFormData] = useState<CheckoutFormData>({
-    nombre: '',
+    name: '',
+    lastname: '',
     email: '',
-    telefono: '',
-    comentarios: ''
+    phone: '',
+    address: '',
+    comments: ''
   });
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Cargar carrito del usuario si está autenticado
-  useEffect(() => {
-    if (userLogged?.id) {
-      getCart(userLogged.id);
-    }
-  }, [userLogged?.id]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { postSale } = SaleAction();
 
   // Validar que hay productos en el carrito
   useEffect(() => {
     if (!cart?.items?.length) {
       navigate(ROUTES.HOME);
-      toast.error('No hay productos en el carrito');
     }
   }, [cart?.items?.length]);
 
@@ -45,7 +41,7 @@ export const useCheckoutController = (): CheckoutController => {
   };
 
   const validateForm = (): boolean => {
-    if (!formData.nombre.trim()) {
+    if (!formData.name.trim()) {
       toast.error('El nombre es obligatorio');
       return false;
     }
@@ -53,7 +49,7 @@ export const useCheckoutController = (): CheckoutController => {
       toast.error('El email es obligatorio');
       return false;
     }
-    if (!formData.telefono.trim()) {
+    if (!formData.phone.trim()) {
       toast.error('El teléfono es obligatorio');
       return false;
     }
@@ -89,12 +85,12 @@ export const useCheckoutController = (): CheckoutController => {
     const total = calculateTotal();
     
     let message = `🛍️ *NUEVO PEDIDO*\n\n`;
-    message += `👤 *Cliente:* ${formData.nombre}\n`;
+    message += `👤 *Cliente:* ${formData.name}\n`;
     message += `📧 *Email:* ${formData.email}\n`;
-    message += `📱 *Teléfono:* ${formData.telefono}\n`;
+    message += `📱 *Teléfono:* ${formData.phone}\n`;
     
-    if (formData.comentarios.trim()) {
-      message += `💬 *Comentarios:* ${formData.comentarios}\n`;
+    if (formData.comments.trim()) {
+      message += `💬 *Comentarios:* ${formData.comments}\n`;
     }
     
     message += `\n🛒 *PRODUCTOS:*\n\n${productDetails}\n\n`;
@@ -104,35 +100,6 @@ export const useCheckoutController = (): CheckoutController => {
     
     return message;
   };
-
-  /*
-  Ejemplo del mensaje que se generará:
-  
-  🛍️ *NUEVO PEDIDO*
-
-  👤 *Cliente:* Juan Pérez
-  📧 *Email:* juan@email.com
-  📱 *Teléfono:* +54 9 11 1234-5678
-  📍 *Dirección:* Av. Siempreviva 742, Springfield
-  💬 *Comentarios:* Entregar por la tarde
-
-  🛒 *PRODUCTOS:*
-
-  1. Remera Básica (Azul - L)
-     Cantidad: 2
-     Precio: $15,000
-     Subtotal: $30,000
-
-  2. Jeans Clásicos [MAYORISTA]
-     Cantidad: 1
-     Precio: $45,000
-     Subtotal: $45,000
-
-  💰 *TOTAL: $75,000*
-
-  📅 *Fecha:* 15/12/2024
-  ⏰ *Hora:* 14:30
-  */
 
   const onSubmit = async () => {
     if (!validateForm()) return;
@@ -151,14 +118,17 @@ export const useCheckoutController = (): CheckoutController => {
       // Abrir WhatsApp en nueva pestaña
       window.open(whatsappUrl, '_blank');
       
-      toast.success('¡Pedido enviado por WhatsApp!');
       
       // Limpiar carrito después de enviar
-      clearCart();
       setTimeout(() => {
         navigate(ROUTES.HOME);
       }, 2000);
       
+      postSale({
+        customerData: formData,
+        cartId: cart._id,
+      });
+      toast.success('¡Pedido enviado por WhatsApp!');
     } catch (error) {
       toast.error('Error al generar el mensaje de WhatsApp');
       console.error('Error en checkout:', error);

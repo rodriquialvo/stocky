@@ -1,4 +1,4 @@
-import { Box, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, VStack, Text, Button, Spinner } from "@chakra-ui/react";
+import { Box, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, VStack, Text, Button, Spinner, Flex } from "@chakra-ui/react";
 import QuantityPicker from "../QuantityPicker/QuantityPicker";
 import WholesaleVariantSelector from "../WholesaleVariantSelector/WholesaleVariantSelector";
 import { useProductStore } from "../../store/product/slice";
@@ -196,7 +196,8 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
                     {totalDozens} docenas disponibles
                   </Text>
                 </Text>
-                <QuantityPicker
+                <Flex>
+                  <QuantityPicker
                   stock={totalDozens || 0}
                   quantity={isHalfDozen ? 1/2 : quantity}
                   onIncrease={onIncrease}
@@ -205,6 +206,9 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
                   isWholesale={true}
                   minimumQuantity={1}
                 />
+                <Text fontSize="sm" color="purple.700">Docenas</Text>
+                </Flex>
+                
                 <Text fontSize="sm" color="purple.700" mt={2}>
                   Total: {isHalfDozen ? 6 : quantity * 12} unidades
                 </Text>
