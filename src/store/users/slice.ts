@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { GetResellersResponseDto, Reseller } from '../../services/users/dtos/generic';
+import { GetResellersResponseDto, Customer } from '../../services/users/dtos/generic';
 import { getDefaultStatus, Status } from '../helper/statusStateFactory';
 
 type State = {
   status: Status;
   createOrUpdateStatus: Status;
   resellersList: {
-    resellers: Reseller[],
+    resellers: Customer[],
     total: number
   };
 };
@@ -34,7 +34,7 @@ export const useUserStore = create<State & Action>()(
       setStatus: (status: Status) => set({ status }),
       setCreateOrUpdateStatus: (status: Status) => set({ createOrUpdateStatus: status }),
       setResellersList: (data: GetResellersResponseDto) => {
-        set({ resellersList: { resellers: data.resellers, total: data.total} })
+        set({ resellersList: { resellers: data.customers, total: data.total} })
       },
     }),
     {

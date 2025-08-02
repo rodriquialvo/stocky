@@ -1,3 +1,5 @@
+import { Item } from "../../services/shoppingcart/dtos/generic";
+
 export interface CheckoutFormData {
   name: string;
   lastname: string;
@@ -16,6 +18,7 @@ export interface CheckoutController {
   onInputChange: (field: keyof CheckoutFormData, value: string) => void;
   onSubmit: () => void;
   onBackToCart: () => void;
+  getPrice: (item: Item) => number;
 }
 
 export interface CheckoutProps {

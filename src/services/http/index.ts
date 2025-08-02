@@ -1,7 +1,8 @@
 import isTokenExpired from '../../utils/isTokenExpired';
 // remember: if local, to do requests, run adb reverse tcp:3300 tcp:3300
 // export const DOMAIN =  servers.local;
-const DOMAIN = process.env.REACT_APP_API_URL;
+// const DOMAIN = process.env.REACT_APP_API_URL;
+const DOMAIN = 'https://12e06995cf36.ngrok-free.app/api';
 const JSON_MIME_TYPE = 'application/json';
 
 class Http {

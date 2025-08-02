@@ -1,6 +1,6 @@
 import { Role } from "../../session/dtos/session.dto";
 
-export interface Reseller {
+export interface Customer {
     id: string,
     name: string;
     lastname: string;
@@ -24,12 +24,12 @@ export interface CreateUserDto {
   }
 
   export interface GetResellersResponseDto {
-    resellers: Reseller[];
+    customers: Customer[];
     total: number;
   }
 
   export interface GetResellerSingeResponseDto {
-    user: Reseller;
+    user: Customer;
   }
   
   export interface FilterGetResellersDto {

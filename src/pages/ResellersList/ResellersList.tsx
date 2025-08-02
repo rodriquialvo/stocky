@@ -46,6 +46,7 @@ const ResellerList: React.FC = () => {
         navigate('/resellers/new', { state: { reseller } });
     };
 
+
     return (
         <Box display="flex" flexDirection="column" height="100vh" bg="gray.50">
             <Box flex="1" overflowY="auto" p={4}>
@@ -69,8 +70,35 @@ const ResellerList: React.FC = () => {
                             <Tr key={index}>
                                 <Td>{reseller.name}</Td>
                                 <Td>{reseller.lastname}</Td>
-                                <Td>{reseller.email}</Td>
-                                <Td>{reseller.phone}</Td>
+                                <Td>
+                                    <Text 
+                                        as="span" 
+                                        cursor="pointer" 
+                                        color="blue.500" 
+                                        _hover={{ textDecoration: 'underline' }}
+                                        onClick={() => {
+                                            const mailtoUrl = `mailto:${reseller.email}`;
+                                            window.open(mailtoUrl, '_blank');
+                                        }}
+                                    >
+                                        {reseller.email}
+                                    </Text>
+                                </Td>
+                                <Td>
+                                    <Text 
+                                        as="span" 
+                                        cursor="pointer" 
+                                        color="blue.500" 
+                                        _hover={{ textDecoration: 'underline' }}
+                                        onClick={() => {
+                                            const phoneNumber = reseller.phone.replace(/\s+/g, '');
+                                            const whatsappUrl = `https://wa.me/${phoneNumber}`;
+                                            window.open(whatsappUrl, '_blank');
+                                        }}
+                                    >
+                                        {reseller.phone}
+                                    </Text>
+                                </Td>
                                 <Td>{reseller.active ? 'Yes' : 'No'}</Td>
                                 <Td>{reseller.dni}</Td>
                                 <Td>

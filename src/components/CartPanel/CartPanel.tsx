@@ -77,13 +77,29 @@ const ProductDetail = ({ color, price, text, isBold }: any) => {
   )
 }
 
-const ProductPrices = ({ item }: any) => {
-  console.log("ITEM", item)
+const ProductPrices = ({ item }: { item: Item }) => {
+  const getPrice = () => {
+    if (!!item.is_wholesale_package) {
+      if (item.quantity > 6) {
+        return (
+          item.product.prices.wholesale.dozen
+        )
+      } else {
+        return (
+          item.product.prices.wholesale.half_dozen
+        )
+      }
+    } else {
+      return (
+        item.product.prices.retail
+      )
+    }
+  }
   return (
     <Box>
       <ProductPriceContainer>
-        <ProductDetail color={"orange"} price={item.product.prices.retail} text={"P/u"} />
-        <ProductDetail color={"orange"} price={item.product.prices.retail * item.quantity} text={"Total"} isBold={true} />
+        <ProductDetail color={"orange"} price={getPrice()} text={"P/u"} />
+        <ProductDetail color={"orange"} price={getPrice() * item.quantity} text={"Total"} isBold={true} />
       </ProductPriceContainer>
     </Box>
   )

@@ -21,7 +21,7 @@ const Hero: React.FC = () => {
   return (
     <Box
       position="relative"
-      height={{ base: "60vh", md: "70vh" }}
+      height={{ base: "50vh", md: "50vh" }}
       overflow="hidden"
       background="linear-gradient(135deg, #fce7f3 0%, #fff 100%)"
       _before={{

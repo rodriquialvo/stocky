@@ -1,12 +1,16 @@
+import { User } from "../../session/dtos/session.dto";
+
 export interface Sale {
   id: string;
   code: string;
   date: string;
-  status: string;
   details: Detail[];
   stocksUpdated: StocksUpdated[];
   cartId: string;
   weekCode: number;
+  user: User;
+  creationDate: string;
+  status: "pending" | "approved" | "rejected";
 }
 export interface StocksUpdated {
   stock: string;
@@ -19,10 +23,12 @@ export interface Detail {
   variant: VariantData;
   quantity: number;
   prices: Prices;
+
 }
 export interface Prices {
   retail: number;
   reseller: number;
+  wholesale: number;
   cost?: number;
 }
 

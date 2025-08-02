@@ -8,6 +8,7 @@ import { ROUTES } from '../../constants/Routes';
 import toast from 'react-hot-toast';
 import { SaleAction } from '../../store/sales/actions';
 import { WHATSAPP_NUMBER } from '../../constants/importantNumbers';
+import { Item } from '../../services/shoppingcart/dtos/generic';
 
 export const useCheckoutController = (): CheckoutController => {
   const navigate = useNavigate();
@@ -142,12 +143,23 @@ export const useCheckoutController = (): CheckoutController => {
     navigate(-1);
   };
 
+  const getPrice = (item: Item) => {
+    if (item.is_wholesale_package) {
+      if(item.quantity > 6) {
+        return item.product.prices.wholesale.dozen;
+      }
+      return item.product.prices.wholesale.half_dozen;
+    }
+    return item.product.prices.retail;
+  };
+
   return {
     formData,
     isSubmitting,
     cart,
     onInputChange,
     onSubmit,
-    onBackToCart
+    onBackToCart,
+    getPrice
   };
 };

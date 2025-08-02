@@ -1,9 +1,8 @@
-import React, {FC} from 'react';
+import {FC} from 'react';
 import {
   Box,
   Button,
   Container,
-  Divider,
   Flex,
   FormControl,
   FormLabel,
@@ -11,26 +10,23 @@ import {
   GridItem,
   Heading,
   HStack,
-  Image,
   Input,
   Text,
   Textarea,
   VStack,
   Badge,
-  Spinner,
-  IconButton,
-  useToast
+  IconButton
 } from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { useCheckoutController} from './Checkout.controller';
 import styles from './Checkout.module.css';
 import { CheckoutProps } from './interfaces';
 import { formattedNumberToMoney } from '../../utils/functions';
+import { Item } from '../../services/shoppingcart/dtos/generic';
 
 export const CheckoutPage: FC<CheckoutProps> = props => {
   const {useController = useCheckoutController} = props;
   const controller = useController();
-  const toast = useToast();
 
   const {
     formData,
@@ -38,24 +34,9 @@ export const CheckoutPage: FC<CheckoutProps> = props => {
     cart,
     onInputChange,
     onSubmit,
-    onBackToCart
+    onBackToCart,
+    getPrice
   } = controller;
-
-  const calculateTotal = () => {
-    if (!cart?.items) return 0;
-    return cart.items.reduce((total: number, item: any) => {
-      const price = item.variant?.price?.retail || item.product.price?.retail || 0;
-      return total + (price * item.quantity);
-    }, 0);
-  };
-
-  const calculateTotalReseller = () => {
-    if (!cart?.items) return 0;
-    return cart.items.reduce((total: number, item: any) => {
-      const price = item.variant?.price?.reseller || item.product.price?.reseller || 0;
-      return total + (price * item.quantity);
-    }, 0);
-  };
 
   return (
     <Box className={styles.checkoutContainer}>
@@ -146,7 +127,7 @@ export const CheckoutPage: FC<CheckoutProps> = props => {
               </Heading>
 
               <VStack spacing={4} align="stretch" maxH="60vh" overflowY="auto">
-                {cart?.items?.map((item: any, index: number) => (
+                {cart?.items?.map((item: Item, index: number) => (
                   <Box key={index} className={styles.cartItem} p={4}>
                     <Flex justify="space-between" align="start" mb={2}>
                       <Box flex={1}>
@@ -172,42 +153,23 @@ export const CheckoutPage: FC<CheckoutProps> = props => {
                     
                     <Flex justify="space-between" align="center">
                       <Text fontSize="xs" color="gray.600">
-                        {formattedNumberToMoney(item.variant?.price?.retail || item.product.price?.retail || 0)}
+                        {formattedNumberToMoney(getPrice(item))}
                       </Text>
                       <Text fontSize="sm" fontWeight="semibold">
-                        {formattedNumberToMoney((item.variant?.price?.retail || item.product.price?.retail || 0) * item.quantity)}
+                        {formattedNumberToMoney(getPrice(item) * item.quantity)}
                       </Text>
                     </Flex>
                   </Box>
                 ))}
               </VStack>
-
-              <Divider my={6} />
-
               {/* Totales */}
               <VStack spacing={3} align="stretch" className={styles.totalSection}>
-                <Flex justify="space-between">
-                  <Text>Subtotal:</Text>
-                  <Text fontWeight="semibold">
-                    {formattedNumberToMoney(calculateTotal())}
-                  </Text>
-                </Flex>
-                
-                <Flex justify="space-between">
-                  <Text color="green.600">Precio Mayorista:</Text>
-                  <Text fontWeight="semibold" color="green.600">
-                    {formattedNumberToMoney(calculateTotalReseller())}
-                  </Text>
-                </Flex>
-
-                <Divider />
-
                 <Flex justify="space-between">
                   <Text fontSize="lg" fontWeight="bold">
                     Total:
                   </Text>
                   <Text fontSize="lg" fontWeight="bold" color="#ec0868">
-                    {formattedNumberToMoney(calculateTotal())}
+                    {formattedNumberToMoney(cart?.total_retail || 0)}
                   </Text>
                 </Flex>
               </VStack>
@@ -215,7 +177,6 @@ export const CheckoutPage: FC<CheckoutProps> = props => {
               <Text fontSize="sm" color="gray.600" textAlign="center" mb={4}>
                 💬 Al confirmar, se abrirá WhatsApp con tu pedido pre-escrito
               </Text>
-              
               <Button
                 className={styles.confirmButton}
                 size="lg"
