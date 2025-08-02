@@ -9,18 +9,20 @@ export class ApiCartService implements CartService {
 
   // todo encode token dinamically
   constructor() {
-    this.http = new Http(this.basicToken, 'carts');
+    this.http = new Http(this.basicToken, 'guest-carts');
   }
 
   postCreateNewCart = (body: CreateNewCartRequestDto) => this.http.post<CartReponseDto>('', body);
+  postCreateNewCart2 = (body: CreateNewCartRequestDto) => this.http.post<CartReponseDto>('', body);
 
   postAddToCart = (item: AddToCartRequestDto) => this.http.post<CartReponseDto>('add-product', item);
 
-  updateQuantity = ({ body, params: { cartId, variantId } }: UpdateQuantityRequestDto) => this.http.put<CartReponseDto>(`${cartId}/update-quantity/${variantId}`, body);
+  // updateQuantity = ({ body, params: { cartId, variantId } }: UpdateQuantityRequestDto) => this.http.put<CartReponseDto>(`${cartId}/update-quantity/${variantId}`, body);
+  updateQuantity = ({ body, params: { cartId, productId } }: UpdateQuantityRequestDto) => this.http.put<CartReponseDto>(`${cartId}/products/${productId}/quantity`, body);
 
-  removeFromCart = ({ cartId, variantId, isWholesalePackage, productId }: RemoveFromCartRequestDto) => this.http.delete<CartReponseDto>(`${cartId}/remove-product/${variantId}`, {}, {productId, isWholesalePackage});
+  removeFromCart = ({ cartId, variantId, isWholesalePackage, productId }: RemoveFromCartRequestDto) => this.http.delete<CartReponseDto>(`${cartId}/products/${productId}`, {}, {variantId, isWholesalePackage});
 
-  getCart = (userId: string) => this.http.get<CartReponseDto>(`user/${userId}`);
+  getCart = (userId: string) => this.http.get<CartReponseDto>(`${userId}`);
   
   addComplexWholesaleProduct = (data: AddComplexWholesaleProductToCartDTO) => this.http.post<CartReponseDto>(`add-product/complex`, data);
 }

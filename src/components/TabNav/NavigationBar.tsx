@@ -63,7 +63,8 @@ const NavigationBar: React.FC<TabNavProps> = ({
   const location = useLocation();
 
   const handlePressCartButton = () => {
-    requireAuth(() => setIsOpenCartPanel(true));
+    // requireAuth(() => setIsOpenCartPanel(true));
+    setIsOpenCartPanel(true);
   }
 
   const handleScroll = () => {
@@ -323,7 +324,7 @@ const NavigationBar: React.FC<TabNavProps> = ({
             alt="Logo"
             height="50px"
             width="50px"
-            borderRadius="full"
+            borderRadius="8"
             onClick={() => window.location.href = "/"}
             cursor="pointer"
             transition="transform 0.2s"

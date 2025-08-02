@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { SalesAnalytics, MonthlyStats } from '../../services/sale-analytics/dtos/generic';
 import { SalesListDto } from '../../services/sale/dtos/generic';
 import { Status, getDefaultStatus } from '../helper/statusStateFactory';
+import { Sale } from '../../services/sale/dtos/generic';
+import { Item } from '../../services/shoppingcart/dtos/generic';
+import { User } from '../../services/session/dtos/session.dto';
 
 type State = {
   status: Status;
@@ -9,12 +12,12 @@ type State = {
   monthlyStats: MonthlyStats | null;
   selectedMonth: string;
   list: {
-    sales: any[];
+    sales: Sale[];
     total: number;
   };
-  usersInSales: any[];
-  productsInSalesByUser: Record<string, any>;
-  productsInSales: Record<string, any>;
+  usersInSales: User[];
+  productsInSalesByUser: Record<string, Item>;
+  productsInSales: any
   setStatus: (status: Status) => void;
   setAnalytics: (analytics: SalesAnalytics) => void;
   setMonthlyStats: (stats: MonthlyStats) => void;
@@ -41,8 +44,8 @@ const initialState: State = {
 
 type Action = {
   setSales: (data: SalesListDto) => void;
-  setUsersInSales: (users: any[]) => void;
-  setProductsInSalesByUser: (data: { userId: string; products: any[] }) => void;
+  setUsersInSales: (users: User[]) => void;
+  setProductsInSalesByUser: (data: { userId: string; products: any }) => void;
   setProductsInSales: (products: any) => void;
   clearSaleWeek: () => void;
 };

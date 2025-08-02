@@ -144,19 +144,19 @@ export const useProductDetailController =
 
     /* View Events */
     const onAddToCartPressed = ({ size, color, quantity }: ParamsOnAddToCartPressed) => {
-      requireAuth(() => {
+      // requireAuth(() => {
         if (quantity > productDetail?.stocks.find(stock => stock.variant.size === size && stock.variant.color === color)?.quantity) {
           return toast("No hay suficiente stock. Intenta con una cantidad menor")
         }
-      // find stock with size and color
-      const stock = productDetail.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
-      addToCart({
-        productId: productDetail.id,
-        variantId: stock.variant.id,
-        quantity: isSimpleWholesale ? quantity * wholesaleMultiplier : quantity,
+        // find stock with size and color
+        const stock = productDetail.stocks.find(stock => stock.variant.size === size && stock.variant.color === color);
+        addToCart({
+          productId: productDetail.id,
+          variantId: stock.variant.id,
+          quantity: isSimpleWholesale ? quantity * wholesaleMultiplier : quantity,
           isWholesalePackage: isSimpleWholesale
         })
-      });
+      // });
     };
 
     const onAddToCartWholesalePressed = () => {
@@ -234,12 +234,12 @@ export const useProductDetailController =
     };
 
     const handleWholesaleToggle = () => {
-      requireAuth(() => {
+      // requireAuth(() => {
         setIsWholesaleEnabled(!isWholesaleEnabled);
         // Resetear estados cuando se cambia el modo
         setVariants([]);
         setQuantity(minimumQuantity);
-      });
+      // });
     };
 
     const getVariantSelected = () => {

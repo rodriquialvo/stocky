@@ -1,6 +1,5 @@
 import { AddIcon, MinusIcon } from "@chakra-ui/icons";
 import { Box, Button, HStack, Input, Text, Tooltip, useColorModeValue } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
 
 interface QuantityPickerProps {
   stock: number;
@@ -25,17 +24,10 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
     isSimpleWholesale = false,
     disableButtons = false
   }) => {
-  const [isNearMax, setIsNearMax] = useState(false);
   
   const buttonBg = useColorModeValue("gray.100", "gray.700");
   const buttonHoverBg = useColorModeValue("gray.200", "gray.600");
   const inputBg = useColorModeValue("white", "gray.800");
-  const warningColor = useColorModeValue("orange.500", "orange.300");
-
-  useEffect(() => {
-    // Consideramos "cerca del máximo" cuando estamos al 80% del stock
-    setIsNearMax(quantity >= stock * 0.8);
-  }, [quantity, stock]);
 
   const validWholesaleValues = [0, 6, 12, 24, 36, 48];
 
@@ -95,7 +87,6 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
             borderRadius="md"
             fontWeight="bold"
             disabled={isDisabled}
-            color={isNearMax ? warningColor : undefined}
             _hover={{ cursor: "default" }}
           />
         </Tooltip>
@@ -115,12 +106,6 @@ const QuantityPicker: React.FC<QuantityPickerProps> = ({
           </Button>
         </Tooltip>
       </HStack>
-      
-      {isNearMax && !isSimpleWholesale && stock > 0 && (
-        <Text fontSize="xs" color={warningColor} mt={1}>
-          Quedan solo {stock - quantity} disponibles
-        </Text>
-      )}
       
       {isWholesale && !isSimpleWholesale && (
         <Text fontSize="xs" color="gray.500" mt={1}>

@@ -1,4 +1,4 @@
-import { Box, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, VStack, Text, Button, Spinner } from "@chakra-ui/react";
+import { Box, Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, VStack, Text, Button, Spinner, Flex, Alert, AlertIcon } from "@chakra-ui/react";
 import QuantityPicker from "../QuantityPicker/QuantityPicker";
 import WholesaleVariantSelector from "../WholesaleVariantSelector/WholesaleVariantSelector";
 import { useProductStore } from "../../store/product/slice";
@@ -9,6 +9,8 @@ import { useCartStore } from "../../store/shoppingcart/slice";
 import toast from 'react-hot-toast';
 import { AddToCartRequestDto, Item } from "../../services/shoppingcart/dtos/generic";
 import { AddComplexWholesaleProductToCartDTO } from "../../services/shoppingcart/cart.service";
+import { FaWhatsapp } from "react-icons/fa";
+import { WHATSAPP_NUMBER } from "../../constants/importantNumbers";
 
 interface WholesaleModalProps {
   isOpen: boolean;
@@ -41,6 +43,9 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
   const targetQuantity = isHalfDozen ? 6 : quantity * 12;
   const isQuantityExceeded = totalSelectedQuantity > targetQuantity;
   const isQuantityBelowMinimum = totalSelectedQuantity < targetQuantity;
+
+  // Verificar si el usuario llegó al máximo de docenas disponibles
+  const isAtMaxDozens = quantity >= totalDozens && totalDozens > 0;
 
   const isSizeIncluded = (array: { label: string, value: string }[], value: string) => {
     return array.some(stock => stock.value === value);
@@ -81,22 +86,6 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
   }, [itemCart, productDetail]);
 
   const onVariantsChange = (newVariants: { color: string; size: string; sizeLabel: string; colorLabel: string; quantity: number }[]) => {
-    // Verificar stock para cada variante
-    // const hasInsufficientStock = newVariants.some(variant => {
-    //   const stock = productDetail?.stocks.reduce((total, item) => {
-    //     if (item.variant.color === variant.color && item.variant.size === variant.size) {
-    //       return total + item.quantity;
-    //     }
-    //     return total;
-    //   }, 0);
-    //   return variant.quantity > stock;
-    // });
-
-    // if (hasInsufficientStock) {
-    //   toast.error("Alguna variante excede el stock disponible");
-    //   return;
-    // }
-
     setVariants(newVariants);
   };
 
@@ -171,6 +160,40 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
     }
   }
 
+  // Función para generar el mensaje de WhatsApp
+  const generateWhatsAppMessage = () => {
+    const productName = productDetail?.name || 'Producto';
+    const totalQuantity = isHalfDozen ? 6 : quantity * 12;
+    const quantityText = isHalfDozen ? 'media docena' : `${quantity} docena${quantity > 1 ? 's' : ''}`;
+    
+    let variantsText = '';
+    if (variants.length > 0) {
+      const variantsWithQuantity = variants.filter(v => v.quantity > 0);
+      if (variantsWithQuantity.length > 0) {
+        variantsText = '\n\nVariantes seleccionadas:';
+        variantsWithQuantity.forEach(variant => {
+          variantsText += `\n• ${variant.colorLabel} - ${variant.sizeLabel}: ${variant.quantity} unidades`;
+        });
+      }
+    }
+
+    const message = `¡Hola! Necesito más cantidad del producto "${productName}". 
+
+Actualmente estoy seleccionando ${quantityText} (${totalQuantity} unidades), pero necesito más stock disponible.
+
+${variantsText}
+
+¿Podrían ayudarme con mayor disponibilidad?`;
+
+    return encodeURIComponent(message);
+  };
+
+  const handleWhatsAppContact = () => {
+    const message = generateWhatsAppMessage();
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -192,11 +215,9 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
               <Box>
                 <Text fontWeight="bold" mb={2}>
                   Cantidad total {isHalfDozen ? '(media docena)' : '(en docenas)'}
-                  <Text fontSize="sm" color="purple.700" mt={2}>
-                    {totalDozens} docenas disponibles
-                  </Text>
                 </Text>
-                <QuantityPicker
+                <Flex>
+                  <QuantityPicker
                   stock={totalDozens || 0}
                   quantity={isHalfDozen ? 1/2 : quantity}
                   onIncrease={onIncrease}
@@ -205,10 +226,38 @@ const WholesaleModal: React.FC<WholesaleModalProps> = ({
                   isWholesale={true}
                   minimumQuantity={1}
                 />
+                <Text fontSize="sm" color="purple.700">Docenas</Text>
+                </Flex>
+                
                 <Text fontSize="sm" color="purple.700" mt={2}>
                   Total: {isHalfDozen ? 6 : quantity * 12} unidades
                 </Text>
               </Box>
+
+              {/* Botón de WhatsApp cuando se llega al máximo */}
+              {isAtMaxDozens && (
+                <Alert status="info" borderRadius="md">
+                  <AlertIcon />
+                  <Box flex="1">
+                    <Text fontWeight="medium" mb={1}>
+                      ¿Necesitas más cantidad?
+                    </Text>
+                    <Text fontSize="sm" color="gray.600">
+                      Has llegado al máximo disponible. Contáctanos para solicitar más stock.
+                    </Text>
+                  </Box>
+                  <Button
+                    leftIcon={<FaWhatsapp />}
+                    colorScheme="green"
+                    size="sm"
+                    onClick={handleWhatsAppContact}
+                    ml={3}
+                  >
+                    Contactar por WhatsApp
+                  </Button>
+                </Alert>
+              )}
+
               <Box>
                 <Text fontWeight="bold" mb={4}>Distribuir cantidades por variante</Text>
                 <WholesaleVariantSelector

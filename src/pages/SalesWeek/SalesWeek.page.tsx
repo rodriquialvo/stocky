@@ -28,6 +28,7 @@ import { SaleAction } from '../../store/sales/actions';
 import { useSaleStore } from '../../store/sales/slice';
 import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 import { formatDateYearMonthDay } from '../../utils/date';
+import { User } from '../../services/session/dtos/session.dto';
 
 interface Product {
   id: number;
@@ -115,8 +116,8 @@ const ProductsBySeller = () => {
   );
 }
 
-const SellerTable = ({ seller, products }: { seller: Seller, products: any }) => {
-
+const SellerTable = ({ seller, products }: { seller: User, products: any }) => {
+  
   const totalAmount = products[seller.id]?.reduce(
     (acc, product) => acc + product.quantity * product.prices.reseller,
     0
@@ -192,7 +193,7 @@ const TotalProducts = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {productsInSales.length && productsInSales.map((product) => (
+          {productsInSales.length && productsInSales.map((product: any) => (
             <Tr key={product.id}>
               <Td>{product.variantData.productName}</Td>
               <Td isNumeric>{product.quantity}</Td>

@@ -1,6 +1,6 @@
 import { useSessionStore } from '../../store/session/slice';
 import Http from '../http';
-import { CreateUserDto, FilterGetResellersDto, GetResellerSingeResponseDto, GetResellersResponseDto, Reseller } from './dtos/generic';
+import { CreateUserDto, FilterGetResellersDto, GetResellerSingeResponseDto, GetResellersResponseDto, Customer } from './dtos/generic';
 import { registerBody, ResponseRegisterDto } from './dtos/register.dto';
 import { UserService } from './user.service';
 
@@ -13,8 +13,8 @@ export class ApiUserService implements UserService {
     this.http = new Http(this.basicToken, 'users');
   }
 
-  getUsers = (filter: FilterGetResellersDto) => this.http.get<GetResellersResponseDto>('resellers', filter);
+  getUsers = (filter: FilterGetResellersDto) => this.http.get<GetResellersResponseDto>('customers', filter);
   createUser = (reseller: CreateUserDto) => this.http.post<GetResellerSingeResponseDto>('', reseller);
-  updateUser = (id: string, reseller: Partial<Reseller>) => this.http.put<GetResellerSingeResponseDto>(id, reseller);
+  updateUser = (id: string, reseller: Partial<Customer>) => this.http.put<GetResellerSingeResponseDto>(id, reseller);
   register = (body: registerBody) => this.http.post<ResponseRegisterDto>('customers', body);
 }

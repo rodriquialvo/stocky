@@ -1,4 +1,4 @@
-import { CreateUserDto, FilterGetResellersDto, Reseller } from '../../services/users/dtos/generic';
+import { CreateUserDto, FilterGetResellersDto, Customer } from '../../services/users/dtos/generic';
 import { registerBody } from '../../services/users/dtos/register.dto';
 import { useAPIUserService } from '../../services/users/user.service';
 import {
@@ -15,17 +15,21 @@ export const UserAction = () => {
   const setResellersList = useUserStore(state => state.setResellersList);
   const setCreateOrUpdateStatus = useUserStore(state => state.setCreateOrUpdateStatus);
   const {login} = SessionAction();
+
   const getResellers = async (filter: FilterGetResellersDto) => {
+    console.log('filter', filter);
     setStatus(getStartStatus());
     try {
       const response = await usersService.getUsers(filter);
-      if (!response.resellers) {
+      console.log('response', response);
+      if (!response.customers) {
         setStatus(getErrorStatus('No response'));
         return;
       }
       setStatus(getSuccessStatus());
       setResellersList(response);
     } catch (e) {
+      console.log('error', e);
       setStatus(getErrorStatus(e as Error));
     }
   };
@@ -44,7 +48,7 @@ export const UserAction = () => {
     }
   };
 
-  const updateUser = async (id: string, reseller: Partial<Reseller>) => {
+  const updateUser = async (id: string, reseller: Partial<Customer>) => {
     setCreateOrUpdateStatus(getStartStatus());
     try {
       const response = await usersService.updateUser(id, reseller);

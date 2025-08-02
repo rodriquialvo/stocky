@@ -23,6 +23,7 @@ import LoadingOverlay from '../../components/LoadingOverlay/LoadingOverlay';
 import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/functions';
 import { formatFullDate, formatHour } from '../../utils/date';
 import Pagination from '../../components/Pagination/Pagination';
+import { Sale } from '../../services/sale/dtos/generic';
 
 const SalesList = () => {
     const { getSales, updateStatusSale } = SaleAction();
@@ -93,7 +94,7 @@ const SalesList = () => {
         <Box className="pt-4 px-4  sm:pt-8 pb-0 px-8 bg-gray-100 min-h-screen" position={'relative'} height="100vh" overflowY="auto">
             <Text fontSize="2xl" fontWeight="bold" className="text-center mb-6">Ventas</Text>
             {status.isFetching && <LoadingOverlay/>}
-            {sales.length > 0 && sales.map((sale: any) => (
+            {sales.length > 0 && sales.map((sale: Sale) => (
                 <Box
                     key={sale.id}
                     className="border border-gray-200 rounded-lg p-4 mb-4 shadow-sm bg-white cursor-pointer"
@@ -114,8 +115,8 @@ const SalesList = () => {
                             </Text>
                         </Box>
                         <Box textAlign="right" flex="1">
-                            <Text fontSize={{ base: "xs", md: "md" }} fontWeight="bold">Total: {formattedNumberToMoney(sale.details.reduce((acc, detail) => acc + detail.prices.reseller * detail.quantity, 0))}</Text>
-                            {sale.status === 'pending' ? (
+                            <Text fontSize={{ base: "xs", md: "md" }} fontWeight="bold">Total: {formattedNumberToMoney(sale.details.reduce((acc, detail) => acc + (detail.prices.retail + detail.prices.wholesale) * detail.quantity, 0))}</Text>
+                            {sale.status === 'pending' && (
                                 <>
                                     <Box display={{ base: "none", md: "flex" }} justifyContent="flex-end" gap="2" mt="2">
                                         <Button size="sm" colorScheme="green" onClick={(e) => { e.stopPropagation(); updateStatusSale(sale.id, { status: 'approved' }) }}>
@@ -134,10 +135,6 @@ const SalesList = () => {
                                         </Button>
                                     </Box>
                                 </>
-                            ) : (
-                                <Button size={{ base: "xs", md: "sm" }} colorScheme="blue" mt="2" onClick={(e) => { e.stopPropagation(); handleStatusChangeClick(sale); }}>
-                                    Modificar Estado
-                                </Button>
                             )}
                         </Box>
                     </Box>

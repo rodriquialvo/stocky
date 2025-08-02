@@ -13,7 +13,7 @@ export class ApiSaleService implements SaleService {
     this.http = new Http(this.basicToken, 'sales');
   }
 
-  postSale = (body: CreateSaleRequestDto) => this.http.post<PostSaleResponseDto>('', {...body, date: new Date().toISOString()});
+  postSale = (body: CreateSaleRequestDto) => this.http.post<PostSaleResponseDto>('create-guest-sale', {...body, date: new Date().toISOString()});
 
   updateStatusSale = (saleId: string, data: UpdateStatusRequestDto) => this.http.put<SaleReponseDto>(`${saleId}`, data);
 

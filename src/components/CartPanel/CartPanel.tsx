@@ -1,5 +1,5 @@
 import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Heading, IconButton, Image, Text, HStack } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, Flex, Heading, IconButton, Image, Text, HStack, Spinner, Center } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Item } from '../../services/shoppingcart/dtos/generic';
@@ -13,6 +13,8 @@ import { capitalizeFirstLetter, formattedNumberToMoney } from '../../utils/funct
 import QuantityPicker from '../QuantityPicker/QuantityPicker';
 import WholesaleModal from '../WholesaleModal/WholesaleModal';
 import { CartPanelProps } from './interfaces';
+import { ROUTES } from '../../constants/Routes';
+import { useNavigate } from 'react-router-dom';
 
 const ProductHeader = ({ children, item, onEditPressed, onRemoveFromCartPressed }: any) => {
   const isComplexWholesale = item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type !== "simple";
@@ -67,25 +69,37 @@ const ProductPriceContainer = ({ children }: any) => {
   )
 }
 
-const ProductDetail = ({ color, price, text }: any) => {
+const ProductDetail = ({ color, price, text, isBold }: any) => {
   return (
     <Box>
-      <Text fontSize={"sm"} color={`${color}.600`} textAlign={"left"} size={"sm"}>{text}: {formattedNumberToMoney(price)}</Text>
+      <Text fontSize={"sm"} color={`${color}.600`} textAlign={"left"} size={"sm"} fontWeight={isBold ? "bold" : "normal"}>{text}: {formattedNumberToMoney(price)}</Text>
     </Box>
   )
 }
 
-const ProductPrices = ({ item }: any) => {
+const ProductPrices = ({ item }: { item: Item }) => {
+  const getPrice = () => {
+    if (!!item.is_wholesale_package) {
+      if (item.quantity > 6) {
+        return (
+          item.product.prices.wholesale.dozen
+        )
+      } else {
+        return (
+          item.product.prices.wholesale.half_dozen
+        )
+      }
+    } else {
+      return (
+        item.product.prices.retail
+      )
+    }
+  }
   return (
     <Box>
       <ProductPriceContainer>
-        <ProductDetail color={"green"} price={item.product.prices.reseller} text={"P/u Revendedor"} />
-      </ProductPriceContainer>
-      <ProductPriceContainer>
-        <ProductDetail color={"orange"} price={item.product.prices.retail} text={"P/u Cliente"} />
-      </ProductPriceContainer>
-      <ProductPriceContainer>
-        <ProductDetail color={"purple"} price={item.quantity === 6 ? item?.product?.prices?.wholesale?.half_dozen : item?.product?.prices?.wholesale?.dozen} text={"P/u Mayorista"} />
+        <ProductDetail color={"orange"} price={getPrice()} text={"P/u"} />
+        <ProductDetail color={"orange"} price={getPrice() * item.quantity} text={"Total"} isBold={true} />
       </ProductPriceContainer>
     </Box>
   )
@@ -101,7 +115,7 @@ const HeadingTotalContainer = ({ children }: any) => {
 
 const HeadingTotal = ({ color, children }: any) => {
   return (
-    <Heading color={`${color}.400`} textAlign={"left"} fontSize="md">{children}</Heading>
+    <Heading color={`${color}.400`} textAlign={"left"} fontSize="lg">{children}</Heading>
   )
 }
 
@@ -112,7 +126,7 @@ const ButtonFinishPurchase = ({ status, onConfirmOrderPressed }: any) => {
       w={"full"}
       colorScheme={'pink'}
       onClick={onConfirmOrderPressed}
-    >Terminar compra</Button>
+    >Finalizar compra</Button>
   )
 }
 
@@ -162,7 +176,6 @@ const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuan
                   <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {variant.variant.size_label}</Text>
                   <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Color: {capitalizeFirstLetter(variant.variant.color)}</Text>
                 </Box>
-                <DeleteButton item={{ variant: variant.variant, product: item.product, is_wholesale_package: true }} onRemoveFromCartPressed={onRemoveFromCartPressed} />
               </Flex>
 
               <QuantityPicker
@@ -173,7 +186,7 @@ const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuan
                 isDisabled={statusCart.isFetching}
                 isSimpleWholesale={item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type === "simple"}
                 isWholesale={item.product.wholesale_data?.is_wholesaler}
-                disableButtons={item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type !== "simple"}
+                disableButtons
               />
             </Box>
           ))}
@@ -197,10 +210,12 @@ const CartPanel: FC<CartPanelProps> = props => {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const { getProductDetail } = ProductAction()
   const { updateQuantity, removeFromCart, getCart } = CartAction();
+  const navigate = useNavigate();
+  const sessionId = useSessionStore(state => state.sessionId);
 
   useEffect(() => {
-    if (userLogged?.id) {
-      getCart(userLogged.id);
+    if (!!sessionId) {
+      getCart(sessionId);
     }
   }, []);
 
@@ -221,10 +236,6 @@ const CartPanel: FC<CartPanelProps> = props => {
     }, {}))
 
   }, [cart]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   const handleQuantityChange = (id: string, value: number, productId: string, operation: 'increase' | 'decrease', isWholesalePackage?: boolean, predefinedQuantity?: number) => {
     if (value < 0) {
@@ -262,11 +273,11 @@ const CartPanel: FC<CartPanelProps> = props => {
     await updateQuantity({
       params: {
         cartId: cart._id,
-        variantId: id,
+        productId: productId,
       },
       body: {
+        variantId: id,
         quantity: value,
-        productId: productId,
         isWholesalePackage: isWholesalePackage,
         predefinedQuantity: predefinedQuantity
       }
@@ -316,7 +327,8 @@ const CartPanel: FC<CartPanelProps> = props => {
       return;
     }
 
-    postSale({ cartId: cart._id })
+    // postSale({ cartId: cart._id })
+    navigate(ROUTES.CHECKOUT)
   }
 
   return (
@@ -335,86 +347,103 @@ const CartPanel: FC<CartPanelProps> = props => {
                 Mi carrito
               </Heading>
               <Divider my={5} />
-              {
-                !!cart?.items?.length &&
-                cart.items.map(item => {
-                  return (
-                    <>
-                      <Box
-                        my={2}
-                        flexDirection={"row"}
-                        display={"flex"}
-                        justifyContent={"space-between"}
-                        alignItems={"center"}
-                        px={1}
-                        bg={(showItemError && !!exceededItems.find(exceededItem => exceededItem.value === item.product._id)) ? "red.100" : ""}
-                      >
-                        <Box
-                          display={"flex"}
-                          gap={4}
-                          justifyContent={"center"}
-                          alignItems={"center"}
-                          w={"100%"}
-                        >
-                          <Image
-                            src={item?.product?.pictures[0]?.url || 'https://picsum.photos/200'}
-                            alt={item.product.name}
-                            boxSize="80px"
-                            objectFit="cover"
-                            borderRadius={"lg"}
-                          />
-                          <Box
-                            justifyContent={"space-between"}
-                            display={"flex"}
-                            flexDirection={"column"}
-                            width={"100%"}
-                          >
-                            <ProductHeader
-                              item={item}
-                              onEditPressed={onEditPressed}
-                              onRemoveFromCartPressed={onRemoveFromCartPressed}
-                            >
-                              <HeadingProduct item={item} />
-                            </ProductHeader>
-
-                            <Box>
-                              {item.variant ? (
-                                <>
-                                  <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {item.variant.size_label}</Text>
-                                  <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Color: {capitalizeFirstLetter(item.variant.color)}</Text>
-                                  <QuantityPickerVariant item={item} variantsQuantity={variantsQuantity} handleQuantityChange={handleQuantityChange} statusCart={statusCart} />
-                                </>
-                              ) : (
-                                <VariantAccordion
-                                  item={item}
-                                  handleQuantityChange={handleQuantityChange}
-                                  statusCart={statusCart}
-                                  variantsQuantity={variantsQuantity}
-                                  onRemoveFromCartPressed={onRemoveFromCartPressed}
-                                />
-                              )}
-                            </Box>
-                            <ProductPrices item={item} />
-                          </Box>
-                        </Box>
+              {statusCart.isFetching ? (
+                <Center py={10}>
+                  <Spinner size="lg" color="pink.400" />
+                </Center>
+              ) : (
+                <>
+                  {!cart?.items?.length ? (
+                    <Center py={10}>
+                      <Box textAlign="center">
+                        <Text fontSize="lg" color="gray.500" mb={2}>
+                          Tu carrito está vacío
+                        </Text>
+                        <Text fontSize="sm" color="gray.400">
+                          Agrega algunos productos para comenzar a comprar
+                        </Text>
                       </Box>
-                      <Divider my={5} />
+                    </Center>
+                  ) : (
+                    <>
+                      {cart.items.map(item => {
+                        return (
+                          <>
+                            <Box
+                              my={2}
+                              flexDirection={"row"}
+                              display={"flex"}
+                              justifyContent={"space-between"}
+                              alignItems={"center"}
+                              px={1}
+                              bg={(showItemError && !!exceededItems.find(exceededItem => exceededItem.value === item.product._id)) ? "red.100" : ""}
+                            >
+                              <Box
+                                display={"flex"}
+                                gap={4}
+                                justifyContent={"center"}
+                                alignItems={"center"}
+                                w={"100%"}
+                              >
+                                <Image
+                                  src={item?.product?.pictures[0]?.url || 'https://picsum.photos/200'}
+                                  alt={item.product.name}
+                                  boxSize="80px"
+                                  objectFit="cover"
+                                  borderRadius={"lg"}
+                                />
+                                <Box
+                                  justifyContent={"space-between"}
+                                  display={"flex"}
+                                  flexDirection={"column"}
+                                  width={"100%"}
+                                >
+                                  <ProductHeader
+                                    item={item}
+                                    onEditPressed={onEditPressed}
+                                    onRemoveFromCartPressed={onRemoveFromCartPressed}
+                                  >
+                                    <HeadingProduct item={item} />
+                                  </ProductHeader>
+
+                                  <Box>
+                                    {item.variant ? (
+                                      <>
+                                        <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {item.variant.size_label}</Text>
+                                        <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Color: {capitalizeFirstLetter(item.variant.color)}</Text>
+                                        <QuantityPickerVariant item={item} variantsQuantity={variantsQuantity} handleQuantityChange={handleQuantityChange} statusCart={statusCart} />
+                                      </>
+                                    ) : (
+                                      <VariantAccordion
+                                        item={item}
+                                        handleQuantityChange={handleQuantityChange}
+                                        statusCart={statusCart}
+                                        variantsQuantity={variantsQuantity}
+                                        onRemoveFromCartPressed={onRemoveFromCartPressed}
+                                      />
+                                    )}
+                                  </Box>
+                                  <ProductPrices item={item} />
+                                </Box>
+                              </Box>
+                            </Box>
+                            <Divider my={5} />
+                          </>
+                        )
+                      })}
+                      <Box
+                        position="sticky"
+                      >
+                        <HeadingTotalContainer>
+                          <HeadingTotal>Total: {!!cart.items.length ? formattedNumberToMoney(cart.total_retail) : "0"}</HeadingTotal>
+                        </HeadingTotalContainer>
+                        <Divider my={5} />
+                        <ButtonFinishPurchase status={status} onConfirmOrderPressed={onConfirmOrderPressed} />
+                      </Box>
                     </>
-                  )
-                })
-              }
-              <Box
-                position="sticky"
-              >
-                <HeadingTotalContainer>
-                  <HeadingTotal>Total:</HeadingTotal>
-                  <HeadingTotal color={"green"} size={"sm"}>Revendedor: {!!cart.items.length ? formattedNumberToMoney(cart.total_reseller) : "0"}</HeadingTotal>
-                  <HeadingTotal color={"orange"} size={"sm"}>Cliente final: {!!cart.items.length ? formattedNumberToMoney(cart.total_retail) : "0"}</HeadingTotal>
-                  <HeadingTotal color={"purple"} size={"sm"}>Mayorista: {!!cart.items.length ? formattedNumberToMoney(cart.total_wholesale) : "0"}</HeadingTotal>
-                </HeadingTotalContainer>
-                <Divider my={5} />
-                <ButtonFinishPurchase status={status} onConfirmOrderPressed={onConfirmOrderPressed} />
-              </Box>
+                  )}
+                </>
+              )}
             </DrawerBody>
           </DrawerContent>
         </Drawer>
@@ -424,8 +453,8 @@ const CartPanel: FC<CartPanelProps> = props => {
         onClose={() => {
           setIsWholesaleModalOpen(false);
           setSelectedItem(null);
-          if (userLogged?.id) {
-            getCart(userLogged.id);
+          if (!!sessionId) {
+            getCart(sessionId);
           }
         }}
         itemCart={selectedItem}

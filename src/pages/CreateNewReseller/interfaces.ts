@@ -1,4 +1,4 @@
-import { Reseller } from '../../services/users/dtos/generic';
+import { Customer } from '../../services/users/dtos/generic';
 
 export interface CreateNewResellerController {
   /* State */

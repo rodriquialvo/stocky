@@ -71,7 +71,6 @@ export const LoginPage: FC<
             >
               Continuar como invitado
             </Button>
-            <Text fontSize={"sm"}>¿Todavia no tienes una cuenta? <Link fontSize={"sm"} color={"pink.500"} href={ROUTES.REGISTER}>Registrate</Link></Text>
           </Box>
         </form>
       </Box>

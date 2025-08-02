@@ -15,7 +15,7 @@ const initialState: State = {
   cart: {
     items: []
   } as Cart,
-  isOpenCartPanel: false
+  isOpenCartPanel: false,
 };
 
 type Action = {
