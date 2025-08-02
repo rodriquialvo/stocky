@@ -11,7 +11,7 @@ export const SIDEBAR_ITEMS = (isAdmin: boolean) => ({
         ]
     },
     Resellers: {
-        label: 'Revendedores/as',
+        label: 'Clientes',
         subItems: [
             { label: 'Lista', route: ROUTES.RESSELLERS_LIST },
             { label: 'Nuevo', route: ROUTES.NEW_RESELLER },

@@ -51,18 +51,18 @@ const ResellerList: React.FC = () => {
         <Box display="flex" flexDirection="column" height="100vh" bg="gray.50">
             <Box flex="1" overflowY="auto" p={4}>
                 <Text fontSize="2xl" fontWeight="bold" mb={4}>
-                    Revendedores
+                    Usuarios
                 </Text>
                 <Table variant="simple" colorScheme="gray" size="md" bg="white" shadow="md" borderRadius="md">
                     <Thead>
                         <Tr>
-                            <Th>Name</Th>
-                            <Th>Lastname</Th>
-                            <Th>Email</Th>
-                            <Th>Phone</Th>
-                            <Th>Active</Th>
+                            <Th>Nombre</Th>
+                            <Th>Apellido</Th>
+                            <Th>Correo</Th>
+                            <Th>Teléfono</Th>
+                            <Th>Activo</Th>
                             <Th>DNI</Th>
-                            <Th>Edit</Th>
+                            <Th>Editar</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
@@ -99,11 +99,11 @@ const ResellerList: React.FC = () => {
                                         {reseller.phone}
                                     </Text>
                                 </Td>
-                                <Td>{reseller.active ? 'Yes' : 'No'}</Td>
+                                <Td>{reseller.active ? 'Sí' : 'No'}</Td>
                                 <Td>{reseller.dni}</Td>
                                 <Td>
                                     <Button colorScheme="blue" size="sm" onClick={() => handleNavigate(reseller)}>
-                                        Edit
+                                        Editar
                                     </Button>
                                 </Td>
                             </Tr>

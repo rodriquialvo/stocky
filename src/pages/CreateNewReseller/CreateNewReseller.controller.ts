@@ -31,7 +31,7 @@ export const useCreateNewResellerController = (): CreateNewResellerController =>
   });
 
   const texts = {
-    title: reseller ? 'Editar Revendedor' : 'Crear revendedor',
+    title: reseller ? 'Editar Cliente' : 'Crear usuario',
     button: reseller ? 'Guardar cambios' : 'Crear revendedor',
   };
 

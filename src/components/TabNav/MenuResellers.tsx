@@ -17,7 +17,7 @@ const MenuResellers = () => {
                 color={"#ec0868"}
 
             >
-                Revendedores/as
+                Clientes
             </MenuButton>
             <MenuList>
                 <MenuItem as={Link} href={ROUTES.RESSELLERS_LIST}>
