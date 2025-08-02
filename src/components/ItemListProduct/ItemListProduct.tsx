@@ -101,7 +101,7 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
             <Flex direction="column" gap={2}>
               <Text><strong>Descripción:</strong> {productsWhitStocks[props.id]?.name}</Text>
               <Text><strong>Artículo:</strong> {productsWhitStocks[props.id]?.code.toString().toUpperCase()}</Text>
-              <Text><strong>Precio Minorista:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.retail)}</Text>
+              <Text><strong>Precio Final:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.retail)}</Text>
               {/* <Text><strong>Precio Revendedor:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.reseller)}</Text> */}
               {
                 productsWhitStocks[props.id]?.prices?.wholesale?.half_dozen && (  

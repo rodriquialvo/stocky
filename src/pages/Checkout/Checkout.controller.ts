@@ -7,6 +7,7 @@ import { CartAction } from '../../store/shoppingcart/actions';
 import { ROUTES } from '../../constants/Routes';
 import toast from 'react-hot-toast';
 import { SaleAction } from '../../store/sales/actions';
+import { WHATSAPP_NUMBER } from '../../constants/importantNumbers';
 
 export const useCheckoutController = (): CheckoutController => {
   const navigate = useNavigate();
@@ -111,7 +112,7 @@ export const useCheckoutController = (): CheckoutController => {
     setIsSubmitting(true);
     try {
       const message = generateWhatsAppMessage();
-      const whatsappNumber = '+5493513285531';
+      const whatsappNumber = WHATSAPP_NUMBER;
       const encodedMessage = encodeURIComponent(message);
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
       

@@ -145,6 +145,7 @@ export const CartAction = () => {
       setAddToCartStatus(getSuccessStatus());
       return response;
     } catch (e) {
+      console.log("Error adding to cart", e)
       setStatus(getErrorStatus(e as Error));
       throw e;
     }

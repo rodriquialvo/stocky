@@ -78,6 +78,7 @@ const ProductDetail = ({ color, price, text, isBold }: any) => {
 }
 
 const ProductPrices = ({ item }: any) => {
+  console.log("ITEM", item)
   return (
     <Box>
       <ProductPriceContainer>
@@ -109,7 +110,7 @@ const ButtonFinishPurchase = ({ status, onConfirmOrderPressed }: any) => {
       w={"full"}
       colorScheme={'pink'}
       onClick={onConfirmOrderPressed}
-    >Iniciar compra</Button>
+    >Finalizar compra</Button>
   )
 }
 
@@ -159,7 +160,6 @@ const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuan
                   <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Talle: {variant.variant.size_label}</Text>
                   <Text fontSize={"sm"} color={"gray.600"} textAlign={"left"} size={"sm"}>Color: {capitalizeFirstLetter(variant.variant.color)}</Text>
                 </Box>
-                <DeleteButton item={{ variant: variant.variant, product: item.product, is_wholesale_package: true }} onRemoveFromCartPressed={onRemoveFromCartPressed} />
               </Flex>
 
               <QuantityPicker
@@ -170,7 +170,7 @@ const VariantAccordion = ({ item, handleQuantityChange, statusCart, variantsQuan
                 isDisabled={statusCart.isFetching}
                 isSimpleWholesale={item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type === "simple"}
                 isWholesale={item.product.wholesale_data?.is_wholesaler}
-                disableButtons={item.product.wholesale_data?.is_wholesaler && item.product.wholesale_data?.package_type !== "simple"}
+                disableButtons
               />
             </Box>
           ))}
