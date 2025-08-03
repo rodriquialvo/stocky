@@ -102,14 +102,13 @@ const ItemListProduct: FC<ItemListProductProps> = props => {
               <Text><strong>Descripción:</strong> {productsWhitStocks[props.id]?.name}</Text>
               <Text><strong>Artículo:</strong> {productsWhitStocks[props.id]?.code.toString().toUpperCase()}</Text>
               <Text><strong>Precio Final:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.retail)}</Text>
-              {/* <Text><strong>Precio Revendedor:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.reseller)}</Text> */}
               {
-                productsWhitStocks[props.id]?.prices?.wholesale?.half_dozen && (  
+                !!productsWhitStocks[props.id]?.prices?.wholesale?.half_dozen && (  
                   <Text><strong>Precio Mayorista 6 unidades:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.wholesale?.half_dozen)}</Text>
                 )
               }
               {
-                productsWhitStocks[props.id]?.prices?.wholesale?.dozen && (
+                !!productsWhitStocks[props.id]?.prices?.wholesale?.dozen && (
                   <Text><strong>Precio Mayorista llevando por docena:</strong> {formattedNumberToMoney(productsWhitStocks[props.id]?.prices?.wholesale?.dozen)}</Text>
                 )
               }

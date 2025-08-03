@@ -13,8 +13,6 @@ import { Item } from '../../services/shoppingcart/dtos/generic';
 export const useCheckoutController = (): CheckoutController => {
   const navigate = useNavigate();
   const cart = useCartStore(state => state.cart);
-  const userLogged = useSessionStore(state => state.userLogged);
-  const { getCart, clearCart } = CartAction();
   
   const [formData, setFormData] = useState<CheckoutFormData>({
     name: '',
@@ -64,7 +62,7 @@ export const useCheckoutController = (): CheckoutController => {
     return cart.items.map((item: any, index: number) => {
       const productName = item.product.name;
       const quantity = item.quantity;
-      const price = item.variant?.price?.retail || item.product.price?.retail || 0;
+      const price = getPrice(item); // Usar la misma función que el resumen del carrito
       const totalPrice = price * quantity;
       const variantInfo = item.variant ? 
         ` (${item.variant.color || ''}${item.variant.color && item.variant.size ? ' - ' : ''}${item.variant.size || ''})` : '';
@@ -75,11 +73,8 @@ export const useCheckoutController = (): CheckoutController => {
   };
 
   const calculateTotal = (): number => {
-    if (!cart?.items) return 0;
-    return cart.items.reduce((total: number, item: any) => {
-      const price = item.variant?.price?.retail || item.product.price?.retail || 0;
-      return total + (price * item.quantity);
-    }, 0);
+    // Usar el mismo total que se muestra en el resumen del carrito
+    return cart?.total_retail || 0;
   };
 
   const generateWhatsAppMessage = (): string => {
